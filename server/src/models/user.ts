@@ -1,12 +1,20 @@
 import { DataTypes, Model, Sequelize } from "sequelize";
+import Role from "./role";
 
 class User extends Model {
   declare id: bigint;
+  declare role_id: bigint;
   declare name: string;
   declare password: string;
   declare email: string;
   declare phone: string;
-  declare active: boolean;
+  declare active: boolean; 
+
+  async checkRoleExist(): Promise<boolean>{
+    const role = await Role.findByPk(this.role_id);
+    if(role) return true;
+    return false;
+  }
 
   static initialize = (sequelize: Sequelize) => {
     User.init(
@@ -14,7 +22,12 @@ class User extends Model {
         id: {
             type: DataTypes.BIGINT,
             primaryKey: true,
-            autoIncrement: true
+            autoIncrement: true            
+        },   
+        
+        role_id: {
+            type: DataTypes.BIGINT,
+            allowNull: false
         },
         name: {
             type: DataTypes.STRING,
@@ -63,7 +76,7 @@ class User extends Model {
       },
       {
         sequelize: sequelize,
-        modelName: "user",
+        modelName: "user"
       }
     );
   };

@@ -27,7 +27,7 @@ export const sequelize = new Sequelize(
       acquire: 60000,
     },
     define: {
-      freezeTableName: true,
+      freezeTableName: true, 
     },
   }
 );
@@ -36,11 +36,13 @@ modelInitAll(sequelize);
 
 export const syncDb = async () => {
   try {
-    if (env.NODE_ENV === "production") {
-      await sequelize.sync();
-    } else {
-      await sequelize.sync({force: env.DATABASE_SYNC_FORCE === "true"});
-    }    
+    for(let key in sequelize.models){
+      if(key === 'role'){
+        sequelize.models[key].sync();
+      }else{
+        sequelize.models[key].sync({force: true}); 
+      }
+    } 
     return true;
   } catch (err) {
     throw err;

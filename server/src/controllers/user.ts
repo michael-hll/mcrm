@@ -4,10 +4,20 @@ import User from "../models/user";
 export const createUser: RequestHandler = async (req, res, next) => {
   try {
     const user = User.build({});
+    user.role_id = req.body.role_id;
     user.name = req.body.name;
     user.password = req.body.password;
     user.email = req.body.email;
     user.phone = req.body.phone;
+
+    // check role exists
+    const roleExists = await user.checkRoleExist();
+    if(!roleExists){
+      res.status(400).json({ result: "", message: "Role id doesn't exist in the database."});
+      return;
+    }
+
+    // save user
     const result = await user.save();
 
     res.status(201).json({ result: result, message: "Create user successfully." });
@@ -35,6 +45,14 @@ export const updateUser: RequestHandler<{ id: string }> = async (req, res, next)
       user.password = req.body.password || user.password;
       user.email = req.body.email || user.email;
       user.phone = req.body.phone || user.phone;
+
+      // check role exists
+      const roleExists = await user.checkRoleExist();
+      if(!roleExists){
+        res.status(400).json({ result: "", message: "Role id doesn't exist in the database."});
+        return;
+      }
+
       const result = await user.save();
       res.status(200).json({ result, message: "Update user successfully." });
     } else {
