@@ -4,3 +4,7 @@ dist
 node_modules
 package-lock.json
 .vscode
+nest-events-backend/
+nestcourse
+NestJs-The-Complete-Developer-Guide
+
