@@ -25,9 +25,9 @@ export class AuthService {
     return await bcrypt.hash(password, 12);
   }
 
-  async validateUser(username: string, password: string): Promise<any> {
+  async validateUser(email: string, password: string): Promise<any> {
     const user = await this.userRepository.findOne({
-      where: { username },
+      where: { email },
     });
 
     if (!user) {

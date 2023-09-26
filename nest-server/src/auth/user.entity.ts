@@ -18,9 +18,27 @@ export class User {
     @Column({unique: true, nullable: false})
     email: string;    
 
-    @Column({nullable: true})
+    @Column({nullable: true, default: ''})
     cellphone: string;
 
-    @Column({nullable: true})
+    @Column({nullable: true, default: ''})
     phone: string;
+
+    @Column({nullable: true, default: ''})
+    country: string;
+
+    @Column({nullable: true, default: ''})
+    city: string;
+
+    @Column({nullable: true, default: ''})
+    address1: string;
+
+    @Column({nullable: true, default: ''})
+    address2: string;
+
+    @Column({nullable: true, default: ''})
+    zipcode: string;
+
+    @Column({default: true})
+    active: boolean; 
 }

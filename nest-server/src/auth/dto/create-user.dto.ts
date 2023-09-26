@@ -1,4 +1,3 @@
-import { Transform } from "class-transformer";
 import { IsString, IsEmail, Length, isString, IsOptional, IsLowercase } from "class-validator";
 
 export class CreateUserDto {
@@ -24,4 +23,32 @@ export class CreateUserDto {
     @Length(5)
     @IsOptional()
     cellphone: string;
+
+    @IsString()
+    @Length(2)
+    @IsOptional()
+    country: string;
+
+    @IsString()
+    @Length(2)
+    @IsOptional()
+    city: string;
+
+    @IsString()
+    @Length(2)
+    @IsOptional()
+    address1: string;
+
+    @IsString()
+    @Length(2)
+    @IsOptional()
+    address2: string;
+
+    @IsString()
+    @Length(2)
+    @IsOptional()
+    zipcode: string;
+
+    @IsOptional()
+    active: boolean;
 }

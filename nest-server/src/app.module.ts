@@ -5,6 +5,7 @@ import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './auth/user.entity';
+import { TestauthModule } from './testauth/testauth.module';
 
 @Module({
   imports: [
@@ -24,7 +25,8 @@ import { User } from './auth/user.entity';
       entities: [User],
       synchronize: true
     }),
-    AuthModule,    
+    AuthModule,
+    TestauthModule,    
     ],
   controllers: [AppController],
   providers: [AppService],
