@@ -1,8 +1,8 @@
 import { Body, Controller, Get, Post, UseGuards, BadRequestException, UnauthorizedException, Logger, Patch, Param } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthGuard } from '@nestjs/passport';
-import { CurrentUser } from './current-user.decorator';
-import { User } from './user.entity';
+import { CurrentUser } from './decorator/current-user.decorator';
+import { User } from './entity/user.entity';
 import { UserDto } from './dto/user.dto';
 import { Serialize } from 'src/interceptors/serialize.interceptor';
 import { CreateUserDto } from './dto/create-user.dto';
