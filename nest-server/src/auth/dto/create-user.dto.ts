@@ -1,4 +1,5 @@
-import { IsString, IsEmail, Length, isString, IsOptional } from "class-validator";
+import { Transform } from "class-transformer";
+import { IsString, IsEmail, Length, isString, IsOptional, IsLowercase } from "class-validator";
 
 export class CreateUserDto {
 
@@ -11,6 +12,7 @@ export class CreateUserDto {
     password: string;
 
     @IsEmail()
+    @IsLowercase()
     email: string; 
 
     @IsString()

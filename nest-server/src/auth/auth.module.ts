@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { UserController } from './user.controller';
 import { UserService } from './user.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './user.entity';
@@ -16,12 +15,12 @@ import { JwtStrategy } from './jwt.Strategy';
       useFactory: () => ({
         secret: process.env.AUTH_SECRET,
         signOptions: {
-          expiresIn: '60m'
+          expiresIn: process.env.AUTH_EXPIRES_IN
         }
       })
     })  
   ],
-  providers: [AuthService, LocalStrategy, JwtStrategy, UserService],
-  controllers: [AuthController, UserController]
+  providers: [UserService, AuthService, LocalStrategy, JwtStrategy],
+  controllers: [AuthController]
 })
 export class AuthModule {}

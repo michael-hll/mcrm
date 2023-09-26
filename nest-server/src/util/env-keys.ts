@@ -7,7 +7,8 @@ declare global {
         DATABASE_PASSWORD: string;
         DATABASE_HOST: string;
         DATABASE_PORT: string; 
-        AUTH_SECRET;
+        AUTH_SECRET: string;
+        AUTH_EXPIRES_IN: string;
       }
     }
   }
