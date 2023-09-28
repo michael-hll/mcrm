@@ -4,7 +4,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { CurrentUser } from './decorator/current-user.decorator';
 import { User } from './entity/user.entity';
 import { UserDto } from './dto/user.dto';
-import { Serialize } from 'src/interceptors/serialize.interceptor';
+import { Serialize } from 'src/base/interceptors/serialize.interceptor'; 
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserService } from './user.service';
 import { UpdateUserDto } from './dto/update-user.dto';
