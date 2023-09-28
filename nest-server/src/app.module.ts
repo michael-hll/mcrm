@@ -4,6 +4,9 @@ import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { BaseModule } from './base/base.module';
+import { UsersModule } from './users/users.module';
+import { RolesModule } from './roles/roles.module';
+import { IamModule } from './iam/iam.module';
 import * as Joi from '@hapi/joi';
 
 @Module({
@@ -36,6 +39,9 @@ import * as Joi from '@hapi/joi';
         })
     }),
     BaseModule,
+    UsersModule,
+    RolesModule,
+    IamModule,
     ],
   controllers: [AppController],
   providers: [AppService]
