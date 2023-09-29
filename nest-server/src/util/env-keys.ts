@@ -13,6 +13,9 @@ declare global {
         JWT_TOKEN_AUDIENCE: string;
         JWT_TOKEN_ISSUER: string;
         JWT_ACCESS_TOKEN_TTL: string;
+        JWT_REFRESH_TOKEN_TTL: string;
+        REDIS_HOST: string;
+        REDIS_PORT: string;
       }
     }
   }

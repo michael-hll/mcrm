@@ -7,6 +7,7 @@ import { BaseModule } from './base/base.module';
 import { UsersModule } from './users/users.module';
 import { RolesModule } from './roles/roles.module';
 import { IamModule } from './iam/iam.module';
+import { RedisModule } from './redis/redis.module';
 import * as Joi from '@hapi/joi';
 
 @Module({
@@ -27,6 +28,9 @@ import * as Joi from '@hapi/joi';
         JWT_TOKEN_AUDIENCE: Joi.required(),
         JWT_TOKEN_ISSUER: Joi.required(),
         JWT_ACCESS_TOKEN_TTL: Joi.required(),
+        JWT_REFRESH_TOKEN_TTL: Joi.required(),
+        REDIS_HOST: Joi.required(),
+        REDIS_PORT: Joi.required(),
       }),
     }),
     TypeOrmModule.forRootAsync({
@@ -46,8 +50,9 @@ import * as Joi from '@hapi/joi';
     UsersModule,
     RolesModule,
     IamModule,
-    ],
+    RedisModule,
+  ],
   controllers: [AppController],
   providers: [AppService]
 })
-export class AppModule {}
+export class AppModule { }

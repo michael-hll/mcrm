@@ -11,12 +11,14 @@ import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthenticationGuard } from './authentication/guards/authentication.guard';
 import { AccessTokenGuard } from './authentication/guards/access-token.guard';
+import { RedisModule } from 'src/redis/redis.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([User]),
     JwtModule.registerAsync(jwtConfig.asProvider()),
     ConfigModule.forFeature(jwtConfig),
+    RedisModule,
   ],
   providers: [
     {
@@ -28,7 +30,8 @@ import { AccessTokenGuard } from './authentication/guards/access-token.guard';
       useClass: AuthenticationGuard, 
     },
     AccessTokenGuard,
-    AuthenticationService
+    //RefreshTokenIdsStorage,
+    AuthenticationService,
   ],
   controllers: [AuthenticationController]
 })

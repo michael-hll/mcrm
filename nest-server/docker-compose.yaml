@@ -11,6 +11,25 @@ services:
     ports:
       - 5432:5432
 
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin4_container
+    restart: always
+    ports:
+      - 8888:80
+    environment:
+      PGADMIN_DEFAULT_EMAIL: test@test.com
+      PGADMIN_DEFAULT_PASSWORD: Password123
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+  
+  redis:
+    image: redis
+    ports:
+      - 6379:6379
+    restart: always
+
 volumes:
   db:
     driver: local
+  pgadmin-data:
