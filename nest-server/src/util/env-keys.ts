@@ -9,6 +9,10 @@ declare global {
         DATABASE_PORT: string; 
         AUTH_SECRET: string;
         AUTH_EXPIRES_IN: string;
+        JWT_SECRET: string;
+        JWT_TOKEN_AUDIENCE: string;
+        JWT_TOKEN_ISSUER: string;
+        JWT_ACCESS_TOKEN_TTL: string;
       }
     }
   }

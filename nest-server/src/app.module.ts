@@ -22,7 +22,11 @@ import * as Joi from '@hapi/joi';
         DATABASE_PORT: Joi.number().default(5432),
         DATABASE_NAME: Joi.required(),
         DATABASE_USER: Joi.required(),
-        DATABASE_PASSWORD: Joi.required()
+        DATABASE_PASSWORD: Joi.required(),
+        JWT_SECRET: Joi.required(),
+        JWT_TOKEN_AUDIENCE: Joi.required(),
+        JWT_TOKEN_ISSUER: Joi.required(),
+        JWT_ACCESS_TOKEN_TTL: Joi.required(),
       }),
     }),
     TypeOrmModule.forRootAsync({

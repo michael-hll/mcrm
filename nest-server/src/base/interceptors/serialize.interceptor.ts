@@ -8,6 +8,11 @@ import {
   import { map } from 'rxjs/operators';
   import { plainToInstance } from 'class-transformer';
   
+  /**
+   * Filter out sensitive dto columns 
+   * @param dto 
+   * @returns 
+   */
   export function Serialize(dto: any) {
     return UseInterceptors(new SerializeInterceptor(dto));
   }
