@@ -12,6 +12,7 @@ import { CurrentUserData } from '../interfaces/active-user-data.interface';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { randomUUID } from 'crypto';
 import { RefreshTokenStorageService } from 'src/redis/refresh-token.storage';
+import { InvalidRefreshTokenError } from 'src/redis/invalid-refresh-token-error';
 
 @Injectable()
 export class AuthenticationService {
@@ -99,11 +100,12 @@ export class AuthenticationService {
       const isValid = await this.refreshTokenStorageService.validate(user.id.toString(), refreshTokenId);
       if (isValid) {
         await this.refreshTokenStorageService.invalidate(user.id.toString());
-      } else {
-        throw new Error('Refresh token is invalid.');
       }
       return await this.generateTokens(user);
     } catch (err) {
+      if(err instanceof InvalidRefreshTokenError){
+        throw new UnauthorizedException('Access denied.')
+      }
       throw new UnauthorizedException(err.message ?? '');
     }
   }
