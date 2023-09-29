@@ -11,8 +11,8 @@ import jwtConfig from '../config/jwt.config';
 import { CurrentUserData } from '../interfaces/active-user-data.interface';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { randomUUID } from 'crypto';
-import { RefreshTokenStorageService } from 'src/redis/refresh-token.storage';
-import { InvalidRefreshTokenError } from 'src/redis/invalid-refresh-token-error';
+import { RefreshTokenStorageService } from 'src/redis/token/refresh-token.storage';
+import { InvalidRefreshTokenError } from 'src/redis/token/invalid-refresh-token-error';
 
 @Injectable()
 export class AuthenticationService {
@@ -103,9 +103,6 @@ export class AuthenticationService {
       }
       return await this.generateTokens(user);
     } catch (err) {
-      if(err instanceof InvalidRefreshTokenError){
-        throw new UnauthorizedException('Access denied.')
-      }
       throw new UnauthorizedException(err.message ?? '');
     }
   }
