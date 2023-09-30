@@ -1,1 +1,1 @@
-export const ROLE_CODE_MIN_LENGTH = 3;
+export const ROLE_CODE_MIN_LENGTH = 2;

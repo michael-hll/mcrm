@@ -1,7 +1,7 @@
 import { IsString, IsEmail, Length, IsOptional, IsLowercase, ValidateNested, Validate } from "class-validator";
 import { UpdateUserRoleDto } from "./update-user-role.dto";
 import { Type } from "class-transformer";
-import { IsRowValueDuplicated } from "src/base/validators/object-duplicate.validator";
+import { IsRowValueDuplicated } from "src/base/validators/row-duplicate.validator";
 
 export class CreateUserDto {
 

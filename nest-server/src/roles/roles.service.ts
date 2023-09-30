@@ -1,26 +1,48 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
+import { Repository } from 'typeorm';
+import { Role } from './entities/role.entity';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class RolesService {
-  create(createRoleDto: CreateRoleDto) {
-    return 'This action adds a new role';
+  constructor(
+    @InjectRepository(Role)
+    private readonly rolesRepository: Repository<Role>
+  ) {}
+
+  async create(createRoleDto: CreateRoleDto) {
+    const role = this.rolesRepository.create({...createRoleDto});
+    return await this.rolesRepository.save(role);
   }
 
-  findAll() {
-    return `This action returns all roles`;
+  async findAll() {
+    return await this.rolesRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} role`;
+  findOne(code: string) {
+    const role = this.rolesRepository.findOne({where: { code: code.toUpperCase() }});
+    if(!role){
+      throw new NotFoundException('Role doesnot exists.');
+    }
+    return role;
   }
 
-  update(id: number, updateRoleDto: UpdateRoleDto) {
-    return `This action updates a #${id} role`;
+  async update(code: string, updateRoleDto: UpdateRoleDto) {
+    const role = await this.rolesRepository.findOne({where: { code: code.toUpperCase() }});
+    if(!role){
+      throw new NotFoundException('Role doesnot exists.');
+    }
+    Object.assign(role, updateRoleDto);
+    return await this.rolesRepository.save(role);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} role`;
+  async remove(code: string) {
+    const role = await this.rolesRepository.findOne({where: { code: code.toUpperCase() }});
+    if(!role){
+      throw new NotFoundException('Role doesnot exists.');
+    }
+    return await this.rolesRepository.remove(role);
   }
 }

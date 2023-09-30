@@ -27,11 +27,11 @@ import { Role } from 'src/roles/entities/role.entity';
       provide: HashingService,
       useClass: BcryptService
     },
-    /*
     {
       provide: APP_GUARD,
       useClass: AuthenticationGuard, 
     },
+    /*
     {
       provide: APP_GUARD,
       useClass: RolesGuard,

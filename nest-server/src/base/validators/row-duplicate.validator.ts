@@ -1,20 +1,19 @@
 import {
-    ValidateByOptions,
     ValidationArguments,
     ValidationOptions,
     ValidatorConstraint,
     ValidatorConstraintInterface,
-    registerDecorator
+    registerDecorator,
 } from 'class-validator';
 import { Injectable } from '@nestjs/common';
 
 /**
  * Use it on your dto column:
- * `@Validate(DuplicateRowsValidator, ['column-1','column-2',...])`
+ * `@Validate(RowDuplicateValidator, ['column-1','column-2',...])`
  */
 @ValidatorConstraint({ async: true })
 @Injectable()
-class DuplicateRowsValidator implements ValidatorConstraintInterface {
+class RowDuplicateValidator implements ValidatorConstraintInterface {
 
     async validate(
         items: object[],
@@ -50,7 +49,7 @@ export function IsRowValueDuplicated(options?: ValidationOptions, columnNames?: 
             target: o.constructor,
             propertyName,
             options,
-            validator: DuplicateRowsValidator,
+            validator: RowDuplicateValidator,
             async: true,
             constraints: columnNames
         })

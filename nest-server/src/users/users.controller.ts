@@ -8,7 +8,7 @@ import { Roles } from 'src/iam/authorization/decorators/roles.decorator';
 
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly usersService: UsersService) { }
 
   @Get()
   findAll(@CurrentUser() user: CurrentUserData) {
@@ -21,8 +21,9 @@ export class UsersController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: number, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(id, updateUserDto);
+  update(@Param('id') id: number, @Body() updateUserDto: UpdateUserDto,
+    @CurrentUser() currentUser: CurrentUserData) {
+    return this.usersService.update(id, updateUserDto, currentUser);
   }
 
   @Delete(':id')

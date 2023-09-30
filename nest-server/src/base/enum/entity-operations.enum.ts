@@ -1,6 +1,6 @@
 export enum EntityOperations {
-    CREATE = 'CREATE',
-    UPDATE = 'UPDATE',
-    DELETE = 'DELETE',
-    VIEW = 'VIEW',
+    CREATE = 'C',
+    UPDATE = 'U',
+    DELETE = 'D',
+    READ = 'R',
   }
