@@ -1,4 +1,4 @@
-import { ConflictException, Inject, Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/users/entities/user.entity';
 import { Repository } from 'typeorm';
@@ -8,16 +8,20 @@ import { SignInDto } from './dto/sign-in.dto';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigType } from '@nestjs/config';
 import jwtConfig from '../config/jwt.config';
-import { CurrentUserData } from '../interfaces/active-user-data.interface';
+import { CurrentUserData } from '../interfaces/current-user-data.interface';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { randomUUID } from 'crypto';
 import { RefreshTokenStorageService } from 'src/redis/token/refresh-token.storage.service';
+import { Role } from 'src/roles/entities/role.entity';
+import { RoleCodes } from '../authorization/enums/role.codes';
 
 @Injectable()
 export class AuthenticationService {
   constructor(
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
+    @InjectRepository(Role)
+    private readonly rolesRepository: Repository<Role>,
     private readonly hashingService: HashingService,
     private readonly jwtService: JwtService,
     @Inject(jwtConfig.KEY)
@@ -31,6 +35,12 @@ export class AuthenticationService {
       user.username = signUpDto.username;
       user.email = signUpDto.email;
       user.password = await this.hashingService.hash(signUpDto.password);
+      // assign default role: DEFAULT
+      const role = await this.rolesRepository.findOne({where: {code: RoleCodes.DEFAULT}});
+      if(!role){
+        throw new BadRequestException('Default role doesnot exist in your system');
+      }
+      user.roles = [role];
 
       await this.usersRepository.save(user);
       return true;
@@ -68,7 +78,7 @@ export class AuthenticationService {
         this.signToken<Partial<CurrentUserData>>(
           user.id,
           this.jwtConfigurations.accessTokenTtl,
-          { email: user.email }
+          { email: user.email}
         ),
         this.signToken(
           user.id,

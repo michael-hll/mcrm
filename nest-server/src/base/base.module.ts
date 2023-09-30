@@ -9,6 +9,8 @@ import { LoggingMiddleware } from './middlewares/logging/logging.middleware';
   providers: [
     //{provide: APP_GUARD, useClass: ApiKeyGuard}
   ],
+  exports: [
+  ]
 })
 export class BaseModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

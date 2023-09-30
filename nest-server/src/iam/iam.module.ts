@@ -12,10 +12,12 @@ import { APP_GUARD } from '@nestjs/core';
 import { AuthenticationGuard } from './authentication/guards/authentication.guard';
 import { AccessTokenGuard } from './authentication/guards/access-token.guard';
 import { RedisModule } from 'src/redis/redis.module';
+import { RolesGuard } from './authorization/guards/roles.guard';
+import { Role } from 'src/roles/entities/role.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([User, Role]),
     JwtModule.registerAsync(jwtConfig.asProvider()),
     ConfigModule.forFeature(jwtConfig),
     RedisModule,
@@ -25,12 +27,16 @@ import { RedisModule } from 'src/redis/redis.module';
       provide: HashingService,
       useClass: BcryptService
     },
+    /*
     {
       provide: APP_GUARD,
       useClass: AuthenticationGuard, 
     },
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
+    },*/
     AccessTokenGuard,
-    //RefreshTokenIdsStorage,
     AuthenticationService,
   ],
   controllers: [AuthenticationController]

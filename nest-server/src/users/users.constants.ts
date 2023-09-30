@@ -1,0 +1,1 @@
+export const USER_DEFAULT_ROLE = 'DEFAULT';

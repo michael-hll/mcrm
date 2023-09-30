@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { User } from 'src/users/entities/user.entity';
+import { Entity, Column, PrimaryColumn, ManyToMany } from 'typeorm';
 
 @Entity({name: "roles"})
 export class Role {
@@ -6,10 +7,7 @@ export class Role {
         Object.assign(this, partial);
     }
 
-    @PrimaryGeneratedColumn()
-    id: number;
-
-    @Column({nullable: false, unique: true})
+    @PrimaryColumn() 
     code: string;
 
     @Column({nullable: false})
@@ -17,4 +15,7 @@ export class Role {
 
     @Column({nullable: false})
     description: string;
+
+    @ManyToMany(type => User, user => user.roles)
+    users: User[];
 }

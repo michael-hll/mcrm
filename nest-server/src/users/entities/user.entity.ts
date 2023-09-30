@@ -1,4 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Role } from 'src/roles/entities/role.entity';
+import { Entity, PrimaryGeneratedColumn, Column, JoinTable, ManyToMany } from 'typeorm';
+import { USER_DEFAULT_ROLE } from '../users.constants';
 
 @Entity({name: "users"})
 export class User {
@@ -38,6 +40,20 @@ export class User {
 
     @Column({nullable: true, default: ''})
     zipcode: string;
+
+    @JoinTable({
+        name: "user_roles",
+        joinColumn: {
+            name: "user_id",
+            referencedColumnName: "id",
+        },
+        inverseJoinColumn: {
+            name: "role_code",
+            referencedColumnName: "code"
+        }
+    })
+    @ManyToMany(type => Role, role => role.users)
+    roles: Role[];
 
     @Column({default: true})
     active: boolean; 
