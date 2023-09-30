@@ -6,6 +6,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { EntityOperations } from 'src/base/enum/entity-operations.enum';
 import { CurrentUserData } from 'src/iam/interfaces/current-user-data.interface';
 import { Role } from 'src/roles/entities/role.entity';
+import { RoleCodes } from 'src/iam/authorization/enums/role.codes';
 
 @Injectable()
 export class UsersService {
@@ -21,7 +22,10 @@ export class UsersService {
     return await this.usersRepositories.find();
   }
 
-  async findOne(id: number) {
+  async findOne(id: number, currentUser: CurrentUserData) {
+    if(id !== currentUser.sub){
+      throw new UnauthorizedException('You can view other user details information.');
+    }
     const user = await this.usersRepositories.findOne({ where: { id } });
     if (!user) {
       throw new NotFoundException('User doesnot exists.')
@@ -71,7 +75,12 @@ export class UsersService {
         throw new NotFoundException(`Role '${r}' doesnot exists.`);
       }
     }
-
+    // cannot remove DEFAULT role for a user
+    for(const r of delRoles){
+      if(r === RoleCodes.DEFAULT){
+        throw new BadRequestException(`Role '${r}' is not allowed to delete.`)
+      }
+    }
     // start a transaction to update user role relations and user properties
     await this.usersRepositories.manager.transaction(
       async (transactionalEntityManager) => {

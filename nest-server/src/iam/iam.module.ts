@@ -14,6 +14,7 @@ import { AccessTokenGuard } from './authentication/guards/access-token.guard';
 import { RedisModule } from 'src/redis/redis.module';
 import { RolesGuard } from './authorization/guards/roles.guard';
 import { Role } from 'src/roles/entities/role.entity';
+import { AdminRoleGuard } from './authorization/guards/admin-role.guard';
 
 @Module({
   imports: [
