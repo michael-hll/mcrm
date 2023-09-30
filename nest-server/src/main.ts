@@ -4,6 +4,7 @@ import { Logger, ValidationPipe } from '@nestjs/common';
 import { HttpExceptionFilter } from './base/filters/http-exception.filter';
 import { WrapResponseInterceptor } from './base/interceptors/wrap-response.interceptor';
 import { TimeoutInterceptor } from './base/interceptors/timeout.interceptor';
+import { logDuplicateRoutes } from './util/log-duplicate-routes';
 
 async function bootstrap() {
   const logger = new Logger(bootstrap.name);
@@ -24,26 +25,7 @@ async function bootstrap() {
   );
   await app.listen(3000);
   
-  // List all routes
-  /*
-  const server = app.getHttpServer();
-  const router = server._events.request._router; 
-
-  const availableRoutes: [] = router.stack  
-    .map(layer => {  
-      if (layer.route) { 
-        return {
-          route: {
-            path: layer.route?.path,
-            method: layer.route?.stack[0].method,
-            R: layer.route,
-          },
-        };
-      }
-    })
-    .filter(item => item !== undefined);
-  console.log(availableRoutes);
-  */
-  
+  // validation on duplicate routes
+  logDuplicateRoutes(app);  
 }
 bootstrap();
