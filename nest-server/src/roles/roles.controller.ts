@@ -29,6 +29,6 @@ export class RolesController {
 
   @Delete(':code')
   remove(@Param('code') code: string) {
-    return this.rolesService.remove(code);
+    return this.rolesService.remove(code.toUpperCase());
   }
 }
