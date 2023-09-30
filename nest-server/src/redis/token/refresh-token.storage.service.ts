@@ -15,6 +15,12 @@ export class RefreshTokenStorageService {
         await this.redisService.set(this.getKey(key), tokenId);
     }
 
+    /**
+     * Throw error if token uuid is different then stored from redis
+     * @param key 
+     * @param tokenId 
+     * @returns 
+     */
     async validate(key: string, tokenId: string): Promise<boolean> {
         const storedId = await this.redisService.get(this.getKey(key));
         if(storedId !== tokenId){
@@ -23,6 +29,10 @@ export class RefreshTokenStorageService {
         return storedId === tokenId;
     }
 
+    /**
+     * Remove token uuid from redis
+     * @param key 
+     */
     async invalidate(key: string): Promise<void> {
         await this.redisService.del(this.getKey(key));
     }

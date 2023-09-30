@@ -71,6 +71,12 @@ export class AuthenticationService {
     return await this.generateTokens(user);
   }
 
+  /**
+   * 1. Generate a new token and a refresh token
+   * 2. Save refresh token UUID to payload and redis
+   * @param user 
+   * @returns 
+   */
   async generateTokens(user: User) {
     const refreshTokenId = randomUUID();
     try {
@@ -96,6 +102,16 @@ export class AuthenticationService {
     }
   }
 
+  /**
+   * 1. Verify refresh token use jwtService
+   * 2. Get sub and refresh token uuid from payload
+   * 3. Valid token uuid with redis
+   * 4. Remove old token uuid from redis
+   * 5. Finally generate a new token and a new refresh token
+   * 6. Store the new refresh token uuid to redis
+   * @param refreshTokenDto 
+   * @returns 
+   */
   async refreshTokens(refreshTokenDto: RefreshTokenDto) {
     try {
       const { sub, refreshTokenId } = await this.jwtService.verifyAsync<
