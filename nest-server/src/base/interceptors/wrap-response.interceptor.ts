@@ -9,6 +9,7 @@ export class WrapResponseInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const req = context.switchToHttp().getRequest<Request>();
     this.logger.log(`Request ${req.method} ${req.originalUrl}`);
-    return next.handle().pipe(map(data => ({data})));
+    //return next.handle().pipe(map(data => ({data})));
+    return next.handle();
   }
 }

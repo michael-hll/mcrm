@@ -15,6 +15,10 @@ export class RolesService {
   ) {}
 
   async create(createRoleDto: CreateRoleDto) {
+    
+    if(await this.rolesRepository.exist({where: {code: createRoleDto.code}})){
+      throw new BadRequestException(`Role '${createRoleDto.code}' already exists.`);
+    };
     const role = this.rolesRepository.create({...createRoleDto});
     return await this.rolesRepository.save(role);
   }

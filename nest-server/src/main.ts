@@ -9,7 +9,8 @@ import { logDuplicateRoutes } from './util/log-duplicate-routes';
 async function bootstrap() {
   const logger = new Logger(bootstrap.name);
   const app = await NestFactory.create(AppModule);  
-
+  app.enableCors();
+  
   app.useGlobalPipes(new ValidationPipe({
     whitelist: true,
     forbidNonWhitelisted: true,

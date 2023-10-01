@@ -1,13 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Req, UseGuards } from '@nestjs/common';
-import { UsersService } from './users.service';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { Body, Controller, Delete, Get, Param, Patch, UseGuards } from '@nestjs/common';
+import { Serialize } from 'src/base/interceptors/serialize.interceptor';
+import { AdminRoleGuard } from 'src/iam/authorization/guards/admin-role.guard';
 import { CurrentUser } from 'src/iam/decorators/current-user.decorator';
 import { CurrentUserData } from 'src/iam/interfaces/current-user-data.interface';
-import { RolesGuard } from 'src/iam/authorization/guards/roles.guard';
-import { Roles } from 'src/iam/authorization/decorators/roles.decorator';
-import { AdminRoleGuard } from 'src/iam/authorization/guards/admin-role.guard';
+import { ReturnUserDto } from './dto/return-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { UsersService } from './users.service';
 
 @Controller('users')
+@Serialize(ReturnUserDto)
 export class UsersController {
   constructor(private readonly usersService: UsersService) { }
 
