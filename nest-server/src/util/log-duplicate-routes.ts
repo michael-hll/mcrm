@@ -11,7 +11,7 @@ export function logDuplicateRoutes(app: INestApplication) {
                 return {
                     route: {
                         path: layer.route?.path,
-                        method: layer.route?.stack[0].method
+                        method: layer.route?.stack[0].method 
                     },
                 };
             }

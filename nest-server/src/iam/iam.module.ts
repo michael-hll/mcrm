@@ -1,20 +1,23 @@
 import { Module } from '@nestjs/common';
-import { BcryptService } from './hashing/bcrypt.service';
-import { HashingService } from './hashing/hashing.service';
-import { AuthenticationController } from './authentication/authentication.controller';
-import { AuthenticationService } from './authentication/authentication.service';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from 'src/users/entities/user.entity';
-import { JwtModule } from '@nestjs/jwt';
-import jwtConfig from './config/jwt.config';
 import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
-import { AuthenticationGuard } from './authentication/guards/authentication.guard';
-import { AccessTokenGuard } from './authentication/guards/access-token.guard';
+import { JwtModule } from '@nestjs/jwt';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { RedisModule } from 'src/redis/redis.module';
-import { RolesGuard } from './authorization/guards/roles.guard';
 import { Role } from 'src/roles/entities/role.entity';
-import { AdminRoleGuard } from './authorization/guards/admin-role.guard';
+import { User } from 'src/users/entities/user.entity';
+import { AuthenticationController } from './authentication/authentication.controller';
+import { AuthenticationService } from './authentication/authentication.service';
+import { AccessTokenGuard } from './authentication/guards/access-token.guard';
+import { AuthenticationGuard } from './authentication/guards/authentication.guard';
+import { AuthorizationController } from './authorization/authorization.controller';
+import { AuthorizationService } from './authorization/authorization.service';
+import jwtConfig from './config/jwt.config';
+import { BcryptService } from './hashing/bcrypt.service';
+import { HashingService } from './hashing/hashing.service';
+import { DiscoveryModule } from '@golevelup/nestjs-discovery';
+import { BaseModule } from 'src/base/base.module';
+import { NAME } from 'src/base/decorators/name.decorator';
 
 @Module({
   imports: [
@@ -22,6 +25,7 @@ import { AdminRoleGuard } from './authorization/guards/admin-role.guard';
     JwtModule.registerAsync(jwtConfig.asProvider()),
     ConfigModule.forFeature(jwtConfig),
     RedisModule,
+    DiscoveryModule,
   ],
   providers: [
     {
@@ -37,9 +41,14 @@ import { AdminRoleGuard } from './authorization/guards/admin-role.guard';
       provide: APP_GUARD,
       useClass: RolesGuard,
     },*/
+    {
+      provide: NAME,
+      useValue: 'Auth Module'
+    },
     AccessTokenGuard,
     AuthenticationService,
+    AuthorizationService,
   ],
-  controllers: [AuthenticationController]
+  controllers: [AuthenticationController, AuthorizationController]
 })
-export class IamModule {}
+export class IamModule extends BaseModule {}
