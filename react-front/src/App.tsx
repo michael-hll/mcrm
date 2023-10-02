@@ -1,9 +1,10 @@
 import React from 'react';
+import HomeRoutes from './routes/HomeRoutes';
 
 function App() {
   return (
     <>
-      <h1>Hello React</h1>
+      <HomeRoutes />
     </>
   );
 }

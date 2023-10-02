@@ -14,6 +14,8 @@ import { randomUUID } from 'crypto';
 import { RefreshTokenStorageService } from 'src/redis/token/refresh-token.storage.service';
 import { Role } from 'src/roles/entities/role.entity';
 import { RoleCodes } from '../authorization/enums/role.codes';
+import { CreateRoleDto } from 'src/roles/dto/create-role.dto';
+import { DefaultUser } from './enums/default-user.enum';
 
 @Injectable()
 export class AuthenticationService {
@@ -29,6 +31,49 @@ export class AuthenticationService {
     private readonly refreshTokenStorageService: RefreshTokenStorageService,
   ) { }
 
+  async init() {
+    // create default/admin roles
+    const roles = [
+      {
+        code: RoleCodes.ADMIN,
+        name: 'Administrator',
+        description: 'An administrator role can update or delete user roles etc.',
+      },
+      {
+        code: RoleCodes.DEFAULT,
+        name: 'Default Role',
+        description: 'When user sign up this default role will be assigned to the user.',
+      }];
+    await this.createDefaultRoles(roles);
+    // create default admin user
+    await this.createDefaultUsers();
+  }
+
+  private async createDefaultUsers() {
+    const exists = await this.usersRepository.exist({ where: { email: DefaultUser.Email }})
+    if(!exists){
+      const user = this.usersRepository.create({
+        username: DefaultUser.Username,
+        password: await this.hashingService.hash(DefaultUser.Password),
+        email: DefaultUser.Email,
+        roles: [{
+          code: RoleCodes.ADMIN,
+        }],
+      });
+      await this.usersRepository.save(user);
+    }    
+  }
+
+  private async createDefaultRoles(roles: CreateRoleDto[]) {
+    for (let role of roles) {
+      let exists = await this.rolesRepository.exist({ where: { code: role.code } });
+      if (!exists) {
+        const roleEntity = this.rolesRepository.create(role);
+        await this.rolesRepository.save(roleEntity);
+      }
+    }
+  }
+
   async signUp(signUpDto: SignUpDto) {
     try {
       const user = new User();
@@ -36,8 +81,8 @@ export class AuthenticationService {
       user.email = signUpDto.email;
       user.password = await this.hashingService.hash(signUpDto.password);
       // assign default role: DEFAULT
-      const role = await this.rolesRepository.findOne({where: {code: RoleCodes.DEFAULT}});
-      if(!role){
+      const role = await this.rolesRepository.findOne({ where: { code: RoleCodes.DEFAULT } });
+      if (!role) {
         throw new BadRequestException('Default role doesnot exist in your system');
       }
       user.roles = [role];
@@ -84,7 +129,7 @@ export class AuthenticationService {
         this.signToken<Partial<CurrentUserData>>(
           user.id,
           this.jwtConfigurations.accessTokenTtl,
-          { email: user.email}
+          { email: user.email }
         ),
         this.signToken(
           user.id,

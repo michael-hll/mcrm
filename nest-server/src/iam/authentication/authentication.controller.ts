@@ -13,6 +13,12 @@ import { Name } from 'src/base/decorators/name.decorator';
 export class AuthenticationController {
   constructor(private readonly authService: AuthenticationService) {}
 
+  @Post('init')
+  @Name('Initialize User/Roles')
+  init() {
+    return this.authService.init();
+  }
+  
   @Post('sign-up')
   @Name('Sign Up')
   signUp(@Body() signUpDto: SignUpDto) {
