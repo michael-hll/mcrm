@@ -1,8 +1,5 @@
-import { IsString, IsEmail, Length, IsOptional, IsLowercase, ValidateNested, Validate } from "class-validator";
-import { UpdateUserRoleDto } from "./update-user-role.dto";
-import { Type } from "class-transformer";
-import { IsRowValueDuplicated } from "src/base/validators/row-duplicate.validator";
 import { Exclude, Expose } from "class-transformer";
+import { UpdateUserRoleDto } from "./update-user-role.dto";
 
 export class ReturnUserDto {
 
