@@ -24,7 +24,7 @@ async function bootstrap() {
     new WrapResponseInterceptor(),
     new TimeoutInterceptor()
   );
-  await app.listen(3000);
+  await app.listen(3001);
   
   // validation on duplicate routes
   logDuplicateRoutes(app);  
