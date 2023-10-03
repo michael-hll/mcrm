@@ -18,10 +18,11 @@ import { HashingService } from './hashing/hashing.service';
 import { DiscoveryModule } from '@golevelup/nestjs-discovery';
 import { BaseModule } from 'src/base/base.module';
 import { NAME } from 'src/base/decorators/name.decorator';
+import { Api } from './authorization/apis/entities/api.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Role]),
+    TypeOrmModule.forFeature([User, Role, Api]),
     JwtModule.registerAsync(jwtConfig.asProvider()),
     ConfigModule.forFeature(jwtConfig),
     RedisModule,

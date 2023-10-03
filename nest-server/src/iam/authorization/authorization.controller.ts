@@ -1,4 +1,4 @@
-import { Controller, Post, UseGuards } from '@nestjs/common';
+import { Controller, Post, Query, UseGuards } from '@nestjs/common';
 import { AdminRoleGuard } from './guards/admin-role.guard';
 import { AuthorizationService } from './authorization.service';
 import { Name } from 'src/base/decorators/name.decorator';
@@ -13,7 +13,7 @@ export class AuthorizationController {
   @Post('register-routes')
   @Name('Register Routes')
   @UseGuards(AdminRoleGuard)
-  registerRoutes() {
-    this.authorizationService.registerRoutes();
+  registerRoutes(@Query('save') save: boolean) {
+    this.authorizationService.registerRoutes(save);
   }
 }
