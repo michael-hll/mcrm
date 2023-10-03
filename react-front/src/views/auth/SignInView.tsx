@@ -73,9 +73,9 @@ const SignInView = () => {
       direction="column"
       alignItems="center"
       justifyContent="center"
-      sx={{ minHeight: '100vh' }}
+      sx={{ minHeight: '100vh' }} // height: 100vh = 100% of the viewport height
     >
-      <Grid item xs={3}>
+      <Grid item xs={3} sx={{width: "400px"}}>
         <AppForm onSubmit={handleFormSubmit}>
           <Card>
             <CardHeader title="Login with Email" />
@@ -120,10 +120,10 @@ const SignInView = () => {
                 </AppAlert>
               ) : null}
               <Grid container justifyContent="center" alignItems="center">
-                <AppButton type="submit" disabled={!isFormValid()}>
+                <AppButton type="submit" color="primary" disabled={!isFormValid()}>
                   Login with Email
                 </AppButton>
-                <Button variant="text" color="inherit" component={AppLink} to="/auth/signup">
+                <Button variant="text" color="primary" component={AppLink} to="/auth/signup">
                   Sign Up?
                 </Button>
               </Grid>

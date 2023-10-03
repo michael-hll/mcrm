@@ -1,5 +1,5 @@
 import { Role } from 'src/roles/entities/role.entity';
-import { Entity, PrimaryGeneratedColumn, Column, JoinTable, ManyToMany, PrimaryColumn } from 'typeorm';
+import { Entity, Column, JoinTable, ManyToMany, PrimaryColumn } from 'typeorm';
 
 @Entity({name: "apis"})
 export class Api {
