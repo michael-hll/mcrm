@@ -1,3 +1,4 @@
+import { Api } from 'src/iam/authorization/apis/entities/api.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Entity, Column, PrimaryColumn, ManyToMany } from 'typeorm';
 
@@ -18,4 +19,7 @@ export class Role {
 
     @ManyToMany(type => User, user => user.roles)
     users: User[];
+
+    @ManyToMany(type => Api, api => api.roles)
+    api: Api[];
 }

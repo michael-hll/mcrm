@@ -17,7 +17,7 @@ export class AuthorizationService {
     private readonly apisRepository: Repository<Api>,
   ) { }
 
-  async registerRoutes(save : boolean = false) { 
+  async registerRoutes(sync: boolean = false) {
     const namedControllers = await this.discover.controllersWithMetaAtKey<string>(NAME);
     for (const controller of namedControllers) {
       this.namedControllers.set(
@@ -44,21 +44,21 @@ export class AuthorizationService {
           api_name: route.meta
         });
 
-      if (this.namedControllers.has(parentKey)) {        
+      if (this.namedControllers.has(parentKey)) {
         this.logger.debug(`ROUTE: ${key} => ${moduleName},${this.namedControllers.get(parentKey)},${route.meta}`)
       } else {
         hasErrors = true;
         this.logger.error(`Route '${key} => ${route.meta}' has no parent named controller.`);
       }
     }
-    if(!hasErrors && save){
+    if (!hasErrors && sync) {
       await this.saveRoutes();
     }
   }
 
   async saveRoutes() {
-    const apis: Api[] = [];
-    for(let key of this.namedRoutes.keys()){
+    let apis: Api[] = [];
+    for (let key of this.namedRoutes.keys()) {
       apis.push(new Api({
         key: key,
         module: this.namedRoutes.get(key).module,
@@ -69,8 +69,37 @@ export class AuthorizationService {
         api_name: this.namedRoutes.get(key).api_name,
       }))
     }
+
+    // prepare data for sync...
+    const old_apis = await this.apisRepository
+      .createQueryBuilder("a")
+      .select(["a.key"])
+      .getMany();
+    const old_keys = new Set(old_apis.map(api => api.key));
+    const same_keys = new Set(
+      apis.filter(api => old_keys.has(api.key))
+        .map(api => api.key));
+    const del_keys = new Set(
+      old_apis.filter(api => !same_keys.has(api.key))
+        .map(api => api.key)
+    );
+    const new_apis = apis.filter(api => !old_keys.has(api.key));
     const entities = this.apisRepository.create(apis);
-    await this.apisRepository.createQueryBuilder().delete().execute();
-    await this.apisRepository.save(entities);
+
+    // start a transaction manager 
+    this.apisRepository.manager.transaction(
+      async (transactionalEntityManager) => {
+        // delete not used apis and relations
+        for (let del of del_keys) {
+          const api = old_apis.find(api => api.key === del);
+          await transactionalEntityManager
+            .createQueryBuilder()
+            .relation(Api, 'roles')
+            .of(api)
+            .remove(del);
+          await this.apisRepository.remove(api);
+        }
+        await this.apisRepository.save(entities);
+      });
   }
 }

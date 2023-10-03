@@ -13,7 +13,7 @@ export class AuthorizationController {
   @Post('register-routes')
   @Name('Register Routes')
   @UseGuards(AdminRoleGuard)
-  registerRoutes(@Query('save') save: boolean) {
+  registerRoutes(@Query('sync') save: boolean) {
     this.authorizationService.registerRoutes(save);
   }
 }

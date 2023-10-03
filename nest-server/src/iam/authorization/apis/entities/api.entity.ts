@@ -30,4 +30,18 @@ export class Api {
 
     @Column({nullable: false})
     api_name: string;
+
+    @JoinTable({
+        name: "api_roles",
+        joinColumn: {
+            name: "api_key",
+            referencedColumnName: "key",
+        },
+        inverseJoinColumn: {
+            name: "role_code",
+            referencedColumnName: "code"
+        }
+    })
+    @ManyToMany(type => Role, role => role.users)
+    roles: Role[];
 }
