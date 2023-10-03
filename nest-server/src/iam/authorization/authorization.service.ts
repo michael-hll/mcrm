@@ -1,13 +1,18 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { DiscoveryService } from '@golevelup/nestjs-discovery';
 import { BaseModule } from 'src/base/base.module';
 import { NAME } from 'src/base/decorators/name.decorator';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Api } from './apis/entities/api.entity';
 import { Repository } from 'typeorm';
+import { UpdateApiRoleManyDto } from './apis/dtos/update-api-roles.dto';
+import { UpdateApiRoleDto } from './apis/dtos/update-api-role.dto';
+import { EntityOperations } from 'src/base/enum/entity-operations.enum';
+import { Role } from 'src/roles/entities/role.entity';
 
 @Injectable()
 export class AuthorizationService {
+  
   private logger = new Logger(AuthorizationService.name);
   private namedControllers = new Map<string, string>();
   private namedRoutes = new Map<string, any>();
@@ -15,6 +20,8 @@ export class AuthorizationService {
     private readonly discover: DiscoveryService,
     @InjectRepository(Api)
     private readonly apisRepository: Repository<Api>,
+    @InjectRepository(Role)
+    private readonly rolesRepository: Repository<Role>,
   ) { }
 
   async registerRoutes(sync: boolean = false) {
@@ -56,7 +63,7 @@ export class AuthorizationService {
     }
   }
 
-  async saveRoutes() {
+  private async saveRoutes() {
     let apis: Api[] = [];
     for (let key of this.namedRoutes.keys()) {
       apis.push(new Api({
@@ -101,5 +108,57 @@ export class AuthorizationService {
         }
         await this.apisRepository.save(entities);
       });
+  }
+
+  async grantApiRoles(updateApiRoleManyDto: UpdateApiRoleManyDto) {
+    updateApiRoleManyDto.apis.forEach(async api => {
+      let entity = await this.apisRepository.findOne({
+        where: { key: api.api_key }
+      });
+      if (!entity) {
+        throw new NotFoundException(`Api key '${api.api_key}' doesnot exists.`)
+      }
+      // Update api role relations
+      let addRoles: string[] = [];
+      let delRoles: string[] = [];
+      if (api.roles) {
+        addRoles = api.roles
+          .filter(role => role.operation === EntityOperations.CREATE)
+          .map(role => role.code) ?? [];
+        delRoles = api.roles
+          .filter(role => role.operation === EntityOperations.DELETE)
+          .map(role => role.code) ?? [];
+      }
+      // skip added roles already exists
+      if (addRoles.length > 0) {
+        const existingRoles = await this.apisRepository
+          .createQueryBuilder()
+          .relation(Api, 'roles')
+          .of(entity)
+          .loadMany();
+        const roleSet = new Set(existingRoles.map(role => role.code));
+        addRoles = addRoles.filter(code => !roleSet.has(code));
+      }
+      // check new role exists for better error message
+      for(const r of addRoles){
+        const exists = await this.rolesRepository.exist({where: {code: r}});
+        if(!exists){
+          throw new NotFoundException(`Role '${r}' doesnot exists.`);
+        }
+      }
+      // start a transaction to update user role relations and user properties
+      await this.apisRepository.manager.transaction(
+        async (transactionalEntityManager) => {
+          // update roles
+          await transactionalEntityManager
+            .createQueryBuilder()
+            .relation(Api, 'roles')
+            .of(entity)
+            .addAndRemove(addRoles, delRoles);
+        }).catch((err) => {
+          this.logger.error('update api role failed with error: ', err);
+          throw new BadRequestException(`Update user failed with error: ${err.message}`);
+        })
+    })
   }
 }
