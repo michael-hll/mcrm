@@ -7,10 +7,10 @@ import { PALETTE_COLORS } from './colors';
 export const LIGHT_THEME: ThemeOptions = {
   palette: {
     mode: 'light',
-    // background: {
-    //   paper: '#f5f5f5', // Gray 100 - Background of "Paper" based component
-    //   default: '#FFFFFF',
-    // },
+    background: {
+      paper: '#e9ecef', // Gray 100 - Background of "Paper" based component
+      default: '#f1f3f5',
+    },
     ...PALETTE_COLORS,
   },
 };

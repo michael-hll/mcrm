@@ -1,4 +1,4 @@
-import { Box, Button, Card, CardContent, CardHeader, Container, Grid, InputAdornment, TextField } from "@mui/material";
+import { Box, Button, Card, CardContent, CardHeader, CardMedia, Container, Grid, InputAdornment, TextField, Typography } from "@mui/material";
 import AppForm from "../../components/app-form/AppForm";
 import AppButton from "../../components/app-button/AppButton";
 import AppLink from "../../components/app-link/AppLink";
@@ -50,6 +50,7 @@ const SignInView = () => {
   const handleFormSubmit = useCallback(
     async (event: SyntheticEvent) => {
       event.preventDefault();
+      appStore.setDarkMode(!appStore.darkMode);
       signIn(values.email, values.password)
         .then(response => {
           appStore.set({ currentUser: { email: values.email }, isAuthenticated: true })
@@ -72,14 +73,26 @@ const SignInView = () => {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        bgcolor: '#cfe8fc',
         height: '100vh'
       }}>
         <AppForm onSubmit={handleFormSubmit}>
-          <Card>
-            <CardHeader title="Login with Email" />
+          <Card sx={{ maxWidth: 500 }}>
+            <CardMedia
+              sx={{ height: 200 }}
+              image="/images/cat.jpeg"
+            />
             <CardContent>
+              <Typography gutterBottom variant="h4" 
+                component="div" 
+                sx={{
+                  textAlign: 'left',
+                  margin: '0px 0px 20px 10px',
+                  padding: '0px',                  
+                }}>                
+                Login
+              </Typography>
               <TextField
+                sx={{margin: '0px'}}
                 required
                 label="Email"
                 name="email"
@@ -90,6 +103,7 @@ const SignInView = () => {
                 {...SHARED_CONTROL_PROPS}
               />
               <TextField
+                sx={{margin: '0px'}}
                 required
                 type={showPassword ? 'text' : 'password'}
                 label="Password"
