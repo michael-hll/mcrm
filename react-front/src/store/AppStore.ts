@@ -2,7 +2,6 @@ import { createWithEqualityFn } from 'zustand/traditional'
 import { shallow } from 'zustand/shallow'
 import { mountStoreDevtool } from 'simple-zustand-devtools';
 import { Store } from './interfaces/Store';
-import { light } from '@mui/material/styles/createPalette';
 
 const useAppStore = createWithEqualityFn<Store>(set => ({
   isAuthenticated: false,

@@ -50,7 +50,6 @@ const SignInView = () => {
   const handleFormSubmit = useCallback(
     async (event: SyntheticEvent) => {
       event.preventDefault();
-      appStore.setDarkMode(!appStore.darkMode);
       signIn(values.email, values.password)
         .then(response => {
           appStore.set({ currentUser: { email: values.email }, isAuthenticated: true })
@@ -92,7 +91,7 @@ const SignInView = () => {
                 Login
               </Typography>
               <TextField
-                sx={{margin: '0px'}}
+                sx={{margin: '0px 0px 15px 0px', width:'470px'}}
                 required
                 label="Email"
                 name="email"
@@ -103,7 +102,7 @@ const SignInView = () => {
                 {...SHARED_CONTROL_PROPS}
               />
               <TextField
-                sx={{margin: '0px'}}
+                sx={{margin: '0px 0px 15px 0px', width:'470px'}}
                 required
                 type={showPassword ? 'text' : 'password'}
                 label="Password"

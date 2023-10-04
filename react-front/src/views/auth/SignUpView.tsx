@@ -10,6 +10,10 @@ import {
   FormControlLabel,
   InputAdornment,
   LinearProgress,
+  Container,
+  Box,
+  CardMedia,
+  Typography,
 } from '@mui/material';
 import { SHARED_CONTROL_PROPS, eventPreventDefault, useAppForm } from '../../utils/form';
 import AppForm from '../../components/app-form/AppForm';
@@ -127,8 +131,8 @@ const SignUpView = () => {
           return navigate('/auth', { replace: true });
         }).catch(err => {
           setError('Can not create user for given email, if you already have account please sign in');
-        return; // Unsuccessful signup
-        })      
+          return; // Unsuccessful signup
+        })
     },
     [values, navigate]
   );
@@ -138,86 +142,111 @@ const SignUpView = () => {
   if (loading) return <LinearProgress />;
 
   return (
-    <AppForm onSubmit={handleFormSubmit}>
-      <Card>
-        <CardHeader title="Sign Up" />
-        <CardContent>
-          <TextField
-            required
-            label="Email"
-            name="email"
-            value={values.email}
-            error={fieldHasError('email')}
-            helperText={fieldGetError('email') || ' '}
-            onChange={onFieldChange}
-            {...SHARED_CONTROL_PROPS}
-          />
-          <TextField
-            required
-            label="User Name"
-            name="username"
-            value={values.username}
-            error={fieldHasError('username')}
-            helperText={fieldGetError('username') || ' '}
-            onChange={onFieldChange}
-            {...SHARED_CONTROL_PROPS}
-          />
-          <TextField
-            required
-            type={showPassword ? 'text' : 'password'}
-            label="Password"
-            name="password"
-            value={values.password}
-            error={fieldHasError('password')}
-            helperText={fieldGetError('password') || ' '}
-            onChange={onFieldChange}
-            {...SHARED_CONTROL_PROPS}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <AppIconButton
-                    aria-label="toggle password visibility"
-                    icon={showPassword ? 'visibilityon' : 'visibilityoff'}
-                    title={showPassword ? 'Hide Password' : 'Show Password'}
-                    onClick={handleShowPasswordClick}
-                    onMouseDown={eventPreventDefault}
-                  />
-                </InputAdornment>
-              ),
-            }}
-          />
-          {!showPassword && (
-            <TextField
-              required
-              type="password"
-              label="Confirm Password"
-              name="confirmPassword"
-              value={values.confirmPassword}
-              error={fieldHasError('confirmPassword')}
-              helperText={fieldGetError('confirmPassword') || ' '}
-              onChange={onFieldChange}
-              {...SHARED_CONTROL_PROPS}
+    <Container maxWidth={false} disableGutters>
+      <Box sx={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '100vh'
+      }}>
+        <AppForm onSubmit={handleFormSubmit}>
+          <Card sx={{ maxWidth: 500 }}>
+            <CardMedia
+              sx={{ height: 200 }}
+              image="/images/cat.jpeg"
             />
-          )}
-          <FormControlLabel
-            control={<Checkbox required name="agree" checked={agree} onChange={handleAgreeClick} />}
-            label="You must agree with Terms of Use and Privacy Policy to use our service"
-          />
+            <CardContent>
+              <Typography gutterBottom variant="h4"
+                component="div"
+                sx={{
+                  textAlign: 'left',
+                  margin: '0px 0px 20px 10px',
+                  padding: '0px',
+                }}>
+                Sign Up
+              </Typography>
+              <TextField
+                sx={{ margin: '0px 0px 15px 0px', width: '470px' }}
+                required
+                label="Email"
+                name="email"
+                value={values.email}
+                error={fieldHasError('email')}
+                helperText={fieldGetError('email') || ' '}
+                onChange={onFieldChange}
+                {...SHARED_CONTROL_PROPS}
+              />
+              <TextField
+                sx={{ margin: '0px 0px 15px 0px', width: '470px' }}
+                required
+                label="User Name"
+                name="username"
+                value={values.username}
+                error={fieldHasError('username')}
+                helperText={fieldGetError('username') || ' '}
+                onChange={onFieldChange}
+                {...SHARED_CONTROL_PROPS}
+              />
+              <TextField
+                sx={{ margin: '0px 0px 15px 0px', width: '470px' }}
+                required
+                type={showPassword ? 'text' : 'password'}
+                label="Password"
+                name="password"
+                value={values.password}
+                error={fieldHasError('password')}
+                helperText={fieldGetError('password') || ' '}
+                onChange={onFieldChange}
+                {...SHARED_CONTROL_PROPS}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <AppIconButton
+                        aria-label="toggle password visibility"
+                        icon={showPassword ? 'visibilityon' : 'visibilityoff'}
+                        title={showPassword ? 'Hide Password' : 'Show Password'}
+                        onClick={handleShowPasswordClick}
+                        onMouseDown={eventPreventDefault}
+                      />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+              {!showPassword && (
+                <TextField
+                  sx={{ margin: '0px 0px 15px 0px', width: '470px' }}
+                  required
+                  type="password"
+                  label="Confirm Password"
+                  name="confirmPassword"
+                  value={values.confirmPassword}
+                  error={fieldHasError('confirmPassword')}
+                  helperText={fieldGetError('confirmPassword') || ' '}
+                  onChange={onFieldChange}
+                  {...SHARED_CONTROL_PROPS}
+                />
+              )}
+              <FormControlLabel
+                control={<Checkbox required name="agree" checked={agree} onChange={handleAgreeClick} />}
+                label="You must agree with Terms of Use and Privacy Policy"
+              />
 
-          {error ? (
-            <AppAlert severity="error" onClose={handleCloseError}>
-              {error}
-            </AppAlert>
-          ) : null}
+              {error ? (
+                <AppAlert severity="error" onClose={handleCloseError}>
+                  {error}
+                </AppAlert>
+              ) : null}
 
-          <Grid container justifyContent="center" alignItems="center">
-            <AppButton type="submit" disabled={!(isFormValid() && agree)}>
-              Confirm and Sign Up
-            </AppButton>
-          </Grid>
-        </CardContent>
-      </Card>
-    </AppForm>
+              <Grid container justifyContent="center" alignItems="center">
+                <AppButton type="submit" disabled={!(isFormValid() && agree)}>
+                  Confirm and Sign Up
+                </AppButton>
+              </Grid>
+            </CardContent>
+          </Card>
+        </AppForm>
+      </Box>
+    </Container >
   );
 };
 
