@@ -6,11 +6,9 @@ import ErrorBoundary from './components/ErrorBoundary';
 
 function App() {
   return (
-    <ErrorBoundary name="App">
-      <AppThemeProvider>
-        <HomeRoutes />
-      </AppThemeProvider>
-    </ErrorBoundary>
+    <AppThemeProvider>
+      <HomeRoutes />
+    </AppThemeProvider>
   );
 }
 

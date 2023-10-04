@@ -7,7 +7,7 @@ const HomeRoutes = () => {
     
       <DefaultLayout>
         <Routes>
-          <Route path='/' element={<h1>Welcome</h1>} />
+          <Route path='/' element={<DefaultLayout />} />
           <Route path='/auth/*' element={<AuthRoutes />} />
         </Routes>
       </DefaultLayout>

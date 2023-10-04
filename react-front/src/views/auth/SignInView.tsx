@@ -72,7 +72,7 @@ const SignInView = () => {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        height: '100vh'
+        height: '95vh'
       }}>
         <AppForm onSubmit={handleFormSubmit}>
           <Card sx={{ maxWidth: 500 }}>
