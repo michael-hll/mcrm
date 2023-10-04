@@ -3,6 +3,7 @@ import { RefreshTokenStorageService } from './token/refresh-token.storage.servic
 import { RedisService } from './redis.service';
 import { NAME } from 'src/base/decorators/name.decorator';
 import { BaseModule } from 'src/base/base.module';
+import { Base } from 'src/base/base';
 
 @Module({
   imports: [
@@ -10,11 +11,11 @@ import { BaseModule } from 'src/base/base.module';
   providers: [
     RefreshTokenStorageService, 
     RedisService,
-    {
-      provide: NAME,
-      useValue: 'Redis Module',
-    }
   ],
   exports: [RefreshTokenStorageService]
 })
-export class RedisModule extends BaseModule{}
+export class RedisModule extends Base{
+  getModuleName(): string {
+    return 'Redis Module';
+  }
+}

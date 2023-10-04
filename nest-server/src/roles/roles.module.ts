@@ -6,6 +6,7 @@ import { Role } from './entities/role.entity';
 import { User } from 'src/users/entities/user.entity';
 import { BaseModule } from 'src/base/base.module';
 import { NAME } from 'src/base/decorators/name.decorator';
+import { Base } from 'src/base/base';
 
 @Module({
   imports: [
@@ -14,10 +15,10 @@ import { NAME } from 'src/base/decorators/name.decorator';
   controllers: [RolesController],
   providers: [
     RolesService,
-    {
-      provide: NAME,
-      useValue: 'Roles Module',
-    },
   ],
 })
-export class RolesModule extends BaseModule {}
+export class RolesModule extends Base {
+  getModuleName(): string {
+    return 'Rolse Module';
+  }
+}

@@ -58,6 +58,9 @@ export class AuthenticationService {
         email: DefaultUser.Email,
         roles: [{
           code: RoleCodes.ADMIN,
+        },
+        {
+          code: RoleCodes.DEFAULT,
         }],
       });
       await this.usersRepository.save(user);

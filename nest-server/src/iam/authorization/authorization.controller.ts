@@ -1,13 +1,13 @@
-import { Body, Controller, Logger, Patch, Post, Query, UseGuards } from '@nestjs/common';
-import { AdminRoleGuard } from './guards/admin-role.guard';
-import { AuthorizationService } from './authorization.service';
+import { Body, Controller, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import { UseAdmin } from 'src/base/decorators/admin.decorator';
+import { ModuleClassName } from 'src/base/decorators/module-name.decorator';
 import { Name } from 'src/base/decorators/name.decorator';
-import { CurrentUser } from '../decorators/current-user.decorator';
 import { UpdateApiRoleManyDto } from './apis/dtos/update-api-roles.dto';
-import { UpdateApiRoleDto } from './apis/dtos/update-api-role.dto';
+import { AuthorizationService } from './authorization.service';
 
 @Controller('authorization')
 @Name('Authorization')
+@ModuleClassName('IamModule')
 export class AuthorizationController {
   constructor(
     private readonly authorizationService: AuthorizationService,
@@ -20,7 +20,7 @@ export class AuthorizationController {
    */
   @Post('register-routes')
   @Name('Register Routes')
-  @UseGuards(AdminRoleGuard)
+  @UseAdmin()
   registerRoutes(@Query('sync') sync: boolean) {
     this.authorizationService.registerRoutes(sync);
   }
@@ -32,7 +32,7 @@ export class AuthorizationController {
    */
   @Patch('api-roles')
   @Name('Maintain Api Roles')
-  @UseGuards(AdminRoleGuard)
+  @UseAdmin()
   async grantApiRoutes(@Body() updateApiRoleManyDto: UpdateApiRoleManyDto) {
     return await this.authorizationService.grantApiRoles(updateApiRoleManyDto); 
   }

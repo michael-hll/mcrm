@@ -67,15 +67,14 @@ const SignInView = () => {
   const handleCloseError = useCallback(() => setError(undefined), []);
 
   return (
-    <Grid
-      container
-      spacing={0}
-      direction="column"
-      alignItems="center"
-      justifyContent="center"
-      sx={{ minHeight: '100vh' }} // height: 100vh = 100% of the viewport height
-    >
-      <Grid item xs={3} sx={{width: "400px"}}>
+    <Container maxWidth={false} disableGutters>
+      <Box sx={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        bgcolor: '#cfe8fc',
+        height: '100vh'
+      }}>
         <AppForm onSubmit={handleFormSubmit}>
           <Card>
             <CardHeader title="Login with Email" />
@@ -130,9 +129,8 @@ const SignInView = () => {
             </CardContent>
           </Card>
         </AppForm>
-      </Grid>
-    </Grid>
-
+      </Box>
+    </Container>
   );
 };
 

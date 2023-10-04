@@ -2,16 +2,16 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, SetMetada
 import { RolesService } from './roles.service';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
-import { AdminRoleGuard } from 'src/iam/authorization/guards/admin-role.guard';
 import { Name } from 'src/base/decorators/name.decorator';
+import { ModuleClassName } from 'src/base/decorators/module-name.decorator';
 
 @Controller('roles')
 @Name('Roles')
+@ModuleClassName('RolesModule')
 export class RolesController {
   constructor(private readonly rolesService: RolesService) {}
 
   @Post()
-  @UseGuards(AdminRoleGuard)
   @Name('Create')
   create(@Body() createRoleDto: CreateRoleDto) {
     return this.rolesService.create(createRoleDto);
@@ -31,14 +31,12 @@ export class RolesController {
 
   @Patch(':code')
   @Name('Update')
-  @UseGuards(AdminRoleGuard)
   update(@Param('code') code: string, @Body() updateRoleDto: UpdateRoleDto) {
     return this.rolesService.update(code, updateRoleDto);
   }
 
   @Delete(':code')
   @Name('Delete')
-  @UseGuards(AdminRoleGuard)
   remove(@Param('code') code: string) {
     return this.rolesService.remove(code.toUpperCase());
   }

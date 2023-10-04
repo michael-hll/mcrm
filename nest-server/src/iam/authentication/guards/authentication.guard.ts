@@ -6,6 +6,7 @@ import { AUTH_TYPE_KEY } from '../decorators/auth.decorator';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/users/entities/user.entity';
 import { Repository } from 'typeorm';
+import { RolesGuard } from 'src/iam/authorization/guards/roles.guard';
 
 @Injectable()
 export class AuthenticationGuard implements CanActivate {
@@ -18,6 +19,7 @@ export class AuthenticationGuard implements CanActivate {
   constructor(
     private readonly reflector: Reflector,
     private readonly accessTokenGuard: AccessTokenGuard,
+    private readonly rolesGuard: RolesGuard,
   ) {}
   async canActivate(
     context: ExecutionContext,
@@ -26,13 +28,25 @@ export class AuthenticationGuard implements CanActivate {
       AUTH_TYPE_KEY,
       [context.getHandler(), context.getClass()],
     ) ?? [AuthenticationGuard.defaultAuthType];
+    if(authTypes.indexOf(AuthType.None) >= 0) return true;
     const guards = authTypes.map(type => this.authTypeGuardMap[type]).flat();
     let error = new UnauthorizedException();
+    let authPass = false;
     for (const instance of guards) {
       const canActivate = await Promise.resolve(
-        instance.canActivate(context),
+        instance.canActivate(context)
       ).catch(err => {error = err;});
       if(canActivate) {
+        authPass = true;
+      }
+    }
+
+    // check roles guard
+    if(authPass){
+      const canActivate = await Promise.resolve(
+        this.rolesGuard.canActivate(context)
+      ).catch(err => {error = err;});
+      if(canActivate){
         return true;
       }
     }
