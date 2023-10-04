@@ -7,10 +7,12 @@ import { User } from 'src/users/entities/user.entity';
 import { BaseModule } from 'src/base/base.module';
 import { NAME } from 'src/base/decorators/name.decorator';
 import { Base } from 'src/base/base';
+import { RedisModule } from 'src/redis/redis.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Role,User]),
+    RedisModule,
   ],
   controllers: [RolesController],
   providers: [

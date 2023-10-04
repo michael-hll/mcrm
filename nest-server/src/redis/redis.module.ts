@@ -1,18 +1,21 @@
 import { Module } from '@nestjs/common';
-import { RefreshTokenStorageService } from './token/refresh-token.storage.service';
-import { RedisService } from './redis.service';
-import { NAME } from 'src/base/decorators/name.decorator';
-import { BaseModule } from 'src/base/base.module';
 import { Base } from 'src/base/base';
+import { RedisService } from './redis.service';
+import { RoleCacheService } from './role/role.cache.service';
+import { RefreshTokenCacheService } from './token/refresh-token.cache.service';
 
 @Module({
   imports: [
   ],
   providers: [
-    RefreshTokenStorageService, 
+    RefreshTokenCacheService, 
+    RoleCacheService,
     RedisService,
   ],
-  exports: [RefreshTokenStorageService]
+  exports: [
+    RefreshTokenCacheService,
+    RoleCacheService,
+  ]
 })
 export class RedisModule extends Base{
   getModuleName(): string {

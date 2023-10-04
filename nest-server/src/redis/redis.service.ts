@@ -28,4 +28,8 @@ export class RedisService implements OnApplicationBootstrap, OnApplicationShutdo
     async del(key: string) {
         return await this.redisClient.del(key);
     }
+
+    async keys(pattern: string){
+        return await this.redisClient.keys(pattern);
+    }
 }

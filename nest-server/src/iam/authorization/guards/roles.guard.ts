@@ -9,6 +9,7 @@ import { Repository } from 'typeorm';
 import { Api } from '../apis/entities/api.entity';
 import { IS_ADMIN_ONLY } from 'src/base/decorators/admin.decorator';
 import { RoleCodes } from '../enums/role.codes';
+import { RoleCacheService } from 'src/redis/role/role.cache.service';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -17,7 +18,8 @@ export class RolesGuard implements CanActivate {
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
     @InjectRepository(Api)
-    private readonly apisRepository: Repository<Api>,) { }
+    private readonly apisRepository: Repository<Api>,
+    private readonly roleCachService: RoleCacheService) { }
 
   async canActivate(
     context: ExecutionContext,
@@ -31,7 +33,17 @@ export class RolesGuard implements CanActivate {
 
       // get current user roles
       const userEntity = await this.usersRepository.findOne({ where: {id: user.sub }, relations: ['roles']});
-      const userRoles = new Set(userEntity.roles.map(role => role.code));
+      if(!userEntity){
+        throw error;
+      }
+      const cachedUserRoles = await this.roleCachService.get(user.sub.toString());
+      let userRoles: Set<string>;
+      if(cachedUserRoles){
+        userRoles = new Set(JSON.parse(cachedUserRoles));
+      }else{
+        userRoles = new Set(userEntity.roles.map(role => role.code));
+        this.roleCachService.set(user.sub.toString(), JSON.stringify(userEntity.roles.map(role => role.code)));
+      }
 
       // check is amdin only role
       const isAdminOnly = this.reflector.get(IS_ADMIN_ONLY, context.getHandler());
@@ -51,7 +63,14 @@ export class RolesGuard implements CanActivate {
       }
       
       // check user has api access rights
-      const apiRoles = new Set(api.roles.map(role => role.code));
+      const cachedApiRoles = await this.roleCachService.get(apiKey); 
+      let apiRoles: Set<string>;
+      if(cachedApiRoles){
+        apiRoles = new Set(JSON.parse(cachedApiRoles));
+      }else{
+        apiRoles = new Set(api.roles.map(role => role.code));
+        this.roleCachService.set(apiKey, JSON.stringify(api.roles.map(role => role.code)));
+      }
       for(let apiRole of apiRoles){
         if(userRoles.has(apiRole)){
           return true;  

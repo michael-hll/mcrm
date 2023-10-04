@@ -1,16 +1,16 @@
 import { Module } from '@nestjs/common';
-import { UsersService } from './users.service';
-import { UsersController } from './users.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from './entities/user.entity';
-import { Role } from 'src/roles/entities/role.entity';
-import { BaseModule } from 'src/base/base.module';
-import { NAME } from 'src/base/decorators/name.decorator';
 import { Base } from 'src/base/base';
+import { RedisModule } from 'src/redis/redis.module';
+import { Role } from 'src/roles/entities/role.entity';
+import { User } from './entities/user.entity';
+import { UsersController } from './users.controller';
+import { UsersService } from './users.service';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([User,Role]),
+    RedisModule,
   ],
   controllers: [UsersController],
   providers: [

@@ -5,13 +5,15 @@ import { Repository } from 'typeorm';
 import { Role } from './entities/role.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RoleCodes } from 'src/iam/authorization/enums/role.codes';
+import { RoleCacheService } from 'src/redis/role/role.cache.service';
 
 @Injectable()
 export class RolesService {
   private readonly logger = new Logger(RolesService.name);
   constructor(
     @InjectRepository(Role)
-    private readonly rolesRepository: Repository<Role>
+    private readonly rolesRepository: Repository<Role>,
+    private readonly roleCacheService: RoleCacheService,
   ) {}
 
   async create(createRoleDto: CreateRoleDto) {
@@ -71,6 +73,8 @@ export class RolesService {
         this.logger.error('delete role failed with error: ', err);
         throw new BadRequestException(`Delete user failed with error: ${err.message}`);
       })
+    // remove all linked roles from cache
+    this.roleCacheService.delRole(code);
     return true;
   }
 }

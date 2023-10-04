@@ -7,6 +7,7 @@ import { EntityOperations } from 'src/base/enum/entity-operations.enum';
 import { CurrentUserData } from 'src/iam/interfaces/current-user-data.interface';
 import { Role } from 'src/roles/entities/role.entity';
 import { RoleCodes } from 'src/iam/authorization/enums/role.codes';
+import { RoleCacheService } from 'src/redis/role/role.cache.service';
 
 @Injectable()
 export class UsersService {
@@ -16,6 +17,7 @@ export class UsersService {
     private readonly usersRepositories: Repository<User>,
     @InjectRepository(Role)
     private readonly rolesRepositories: Repository<Role>,
+    private readonly roleCacheService: RoleCacheService,
   ) { }
 
   async findAll() {
@@ -99,6 +101,9 @@ export class UsersService {
         this.logger.error('update user failed with error: ', err);
         throw new BadRequestException(`Update user failed with error: ${err.message}`);
       })
+    
+    // clear current user roles from cache
+    this.roleCacheService.del(id.toString());
     return true;
   }
 
@@ -124,6 +129,8 @@ export class UsersService {
         this.logger.error('delete user failed with error: ', err);
         throw new BadRequestException(`Delete user failed with error: ${err.message}`);
       })
+    // clear current user roles from cache
+    this.roleCacheService.del(id.toString());
     return true;
   }
 }

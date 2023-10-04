@@ -6,9 +6,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Api } from './apis/entities/api.entity';
 import { Repository } from 'typeorm';
 import { UpdateApiRoleManyDto } from './apis/dtos/update-api-roles.dto';
-import { UpdateApiRoleDto } from './apis/dtos/update-api-role.dto';
 import { EntityOperations } from 'src/base/enum/entity-operations.enum';
 import { Role } from 'src/roles/entities/role.entity';
+import { RoleCacheService } from 'src/redis/role/role.cache.service';
 
 @Injectable()
 export class AuthorizationService {
@@ -22,6 +22,7 @@ export class AuthorizationService {
     private readonly apisRepository: Repository<Api>,
     @InjectRepository(Role)
     private readonly rolesRepository: Repository<Role>,
+    private readonly roleCacheService: RoleCacheService,
   ) { }
 
   async registerRoutes(sync: boolean = false) {
@@ -159,6 +160,9 @@ export class AuthorizationService {
           this.logger.error('update api role failed with error: ', err);
           throw new BadRequestException(`Update user failed with error: ${err.message}`);
         })
+      
+      // clear role cache
+      this.roleCacheService.del(api.api_key);
     })
   }
 }

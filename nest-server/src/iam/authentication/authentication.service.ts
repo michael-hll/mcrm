@@ -11,7 +11,7 @@ import jwtConfig from '../config/jwt.config';
 import { CurrentUserData } from '../interfaces/current-user-data.interface';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { randomUUID } from 'crypto';
-import { RefreshTokenStorageService } from 'src/redis/token/refresh-token.storage.service';
+import { RefreshTokenCacheService } from 'src/redis/token/refresh-token.cache.service';
 import { Role } from 'src/roles/entities/role.entity';
 import { RoleCodes } from '../authorization/enums/role.codes';
 import { CreateRoleDto } from 'src/roles/dto/create-role.dto';
@@ -28,7 +28,7 @@ export class AuthenticationService {
     private readonly jwtService: JwtService,
     @Inject(jwtConfig.KEY)
     private readonly jwtConfigurations: ConfigType<typeof jwtConfig>,
-    private readonly refreshTokenStorageService: RefreshTokenStorageService,
+    private readonly refreshTokenCacheService: RefreshTokenCacheService,
   ) { }
 
   async init() {
@@ -140,7 +140,7 @@ export class AuthenticationService {
           refreshTokenId,
         }),
       ]);
-      await this.refreshTokenStorageService.insert(user.id.toString(), refreshTokenId);
+      await this.refreshTokenCacheService.insert(user.id.toString(), refreshTokenId);
       return {
         accessToken,
         refreshToken,
@@ -170,9 +170,9 @@ export class AuthenticationService {
           issuer: this.jwtConfigurations.issuer,
         });
       const user = await this.usersRepository.findOneByOrFail({ id: sub });
-      const isValid = await this.refreshTokenStorageService.validate(user.id.toString(), refreshTokenId);
+      const isValid = await this.refreshTokenCacheService.validate(user.id.toString(), refreshTokenId);
       if (isValid) {
-        await this.refreshTokenStorageService.invalidate(user.id.toString());
+        await this.refreshTokenCacheService.invalidate(user.id.toString());
       }
       return await this.generateTokens(user);
     } catch (err) {

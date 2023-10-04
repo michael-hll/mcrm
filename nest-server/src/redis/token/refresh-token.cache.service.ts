@@ -3,8 +3,8 @@ import { InvalidRefreshTokenError } from "./invalid-refresh-token-error";
 import { RedisService } from "../redis.service";
 
 @Injectable()
-export class RefreshTokenStorageService {
-    private readonly logger = new Logger(RefreshTokenStorageService.name);
+export class RefreshTokenCacheService {
+    private readonly logger = new Logger(RefreshTokenCacheService.name);
     private readonly KEY_PREFIX = '$TOKEN$';  
     
     constructor(
