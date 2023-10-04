@@ -24,31 +24,41 @@ export class RolesGuard implements CanActivate {
   ): Promise<boolean> {
     const error = new UnauthorizedException();
     
-    const user: CurrentUserData = context.switchToHttp().getRequest()[
-      REQUEST_USER_KEY
-    ];
-    const userEntity = await this.usersRepository.findOne({ where: {id: user.sub }, relations: ['roles']});
-    const userRoles = new Set(userEntity.roles.map(role => role.code));
-    const isAdminOnly = this.reflector.get(IS_ADMIN_ONLY, context.getHandler());
-    if(isAdminOnly && userRoles.has(RoleCodes.ADMIN)) {
-      return true;
-    }
+    try{
+      const user: CurrentUserData = context.switchToHttp().getRequest()[
+        REQUEST_USER_KEY
+      ];
 
-    const moduleName = this.reflector.get(MODULE_CLASS_NAME, context.getClass());
-    if(!moduleName){
-      throw new BadRequestException('Doesnot found the api module name.');
-    }
-    const apiKey = `${moduleName}.${context.getClass().name}.${context.getHandler().name}`;
-    const api = await this.apisRepository.findOne({where: { key: apiKey}, relations: ['roles']});
-    if(!api){
-      throw new BadRequestException(`Api key '${apiKey}' doesnot exists.`)
-    }
-    
-    const apiRoles = new Set(api.roles.map(role => role.code));
-    for(let apiRole of apiRoles){
-      if(userRoles.has(apiRole)){
+      // get current user roles
+      const userEntity = await this.usersRepository.findOne({ where: {id: user.sub }, relations: ['roles']});
+      const userRoles = new Set(userEntity.roles.map(role => role.code));
+
+      // check is amdin only role
+      const isAdminOnly = this.reflector.get(IS_ADMIN_ONLY, context.getHandler());
+      if(isAdminOnly && userRoles.has(RoleCodes.ADMIN)) {
         return true;
       }
+      
+      // get api roles
+      const moduleName = this.reflector.get(MODULE_CLASS_NAME, context.getClass());
+      if(!moduleName){
+        throw new BadRequestException('Doesnot found the api module name.');
+      }
+      const apiKey = `${moduleName}.${context.getClass().name}.${context.getHandler().name}`;
+      const api = await this.apisRepository.findOne({where: { key: apiKey}, relations: ['roles']});
+      if(!api){
+        throw new BadRequestException(`Api key '${apiKey}' doesnot exists.`)
+      }
+      
+      // check user has api access rights
+      const apiRoles = new Set(api.roles.map(role => role.code));
+      for(let apiRole of apiRoles){
+        if(userRoles.has(apiRole)){
+          return true;  
+        }
+      }
+    }catch(err){
+      throw new BadRequestException(err.message);
     }
     throw error;
   }
