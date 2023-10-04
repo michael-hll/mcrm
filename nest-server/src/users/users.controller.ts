@@ -7,11 +7,13 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersService } from './users.service';
 import { Name } from 'src/base/decorators/name.decorator';
 import { ModuleClassName } from 'src/base/decorators/module-name.decorator';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('users')
 @Name('Users')
 @ModuleClassName('UsersModule')
 @Serialize(ReturnUserDto)
+@ApiTags('Users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) { }
 
