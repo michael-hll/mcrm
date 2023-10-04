@@ -7,7 +7,7 @@ export const CurrentUser = createParamDecorator(
     const request = ctx.switchToHttp().getRequest();
     let user: CurrentUserData | undefined = request[REQUEST_USER_KEY];
     if(user){
-      user = {sub: user.sub, email: user.email};
+      user = {sub: user.sub, username: user.username, email: user.email};
     }
     return field ? user?.[field] : user;
   },

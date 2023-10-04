@@ -132,7 +132,7 @@ export class AuthenticationService {
         this.signToken<Partial<CurrentUserData>>(
           user.id,
           this.jwtConfigurations.accessTokenTtl,
-          { email: user.email }
+          { username: user.username, email: user.email }
         ),
         this.signToken(
           user.id,
