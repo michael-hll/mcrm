@@ -25,58 +25,58 @@ export class RolesGuard implements CanActivate {
     context: ExecutionContext,
   ): Promise<boolean> {
     const error = new UnauthorizedException();
-    
-    try{
+
+    try {
       const user: CurrentUserData = context.switchToHttp().getRequest()[
         REQUEST_USER_KEY
       ];
 
       // get current user roles
-      const userEntity = await this.usersRepository.findOne({ where: {id: user.sub }, relations: ['roles']});
-      if(!userEntity){
+      const userEntity = await this.usersRepository.findOne({ where: { id: user.sub }, relations: ['roles'] });
+      if (!userEntity) {
         throw error;
       }
       const cachedUserRoles = await this.roleCachService.get(user.sub.toString());
       let userRoles: Set<string>;
-      if(cachedUserRoles){
+      if (cachedUserRoles) {
         userRoles = new Set(JSON.parse(cachedUserRoles));
-      }else{
+      } else {
         userRoles = new Set(userEntity.roles.map(role => role.code));
         this.roleCachService.set(user.sub.toString(), JSON.stringify(userEntity.roles.map(role => role.code)));
       }
 
       // check is amdin only role
       const isAdminOnly = this.reflector.get(IS_ADMIN_ONLY, context.getHandler());
-      if(isAdminOnly){
+      if (isAdminOnly) {
         return userRoles.has(RoleCodes.ADMIN);
       }
-      
+
       // get api roles
       const moduleName = this.reflector.get(MODULE_CLASS_NAME, context.getClass());
-      if(!moduleName){
+      if (!moduleName) {
         throw new BadRequestException('Doesnot found the api module name.');
       }
       const apiKey = `${moduleName}.${context.getClass().name}.${context.getHandler().name}`;
-      const api = await this.apisRepository.findOne({where: { key: apiKey}, relations: ['roles']});
-      if(!api){
-        throw new BadRequestException(`Api key '${apiKey}' doesnot exists.`)
-      }
-      
+
       // check user has api access rights
-      const cachedApiRoles = await this.roleCachService.get(apiKey); 
+      const cachedApiRoles = await this.roleCachService.get(apiKey);
       let apiRoles: Set<string>;
-      if(cachedApiRoles){
+      if (cachedApiRoles) {
         apiRoles = new Set(JSON.parse(cachedApiRoles));
-      }else{
+      } else {
+        const api = await this.apisRepository.findOne({ where: { key: apiKey }, relations: ['roles'] });
+        if (!api) {
+          throw new BadRequestException(`Api key '${apiKey}' doesnot exists.`)
+        }
         apiRoles = new Set(api.roles.map(role => role.code));
         this.roleCachService.set(apiKey, JSON.stringify(api.roles.map(role => role.code)));
       }
-      for(let apiRole of apiRoles){
-        if(userRoles.has(apiRole)){
-          return true;  
+      for (let apiRole of apiRoles) {
+        if (userRoles.has(apiRole)) {
+          return true;
         }
       }
-    }catch(err){
+    } catch (err) {
       throw new BadRequestException(err.message);
     }
     throw error;
