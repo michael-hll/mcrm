@@ -1,7 +1,4 @@
-import { IsString, IsEmail, Length, IsOptional, IsLowercase, ValidateNested, Validate } from "class-validator";
-import { UpdateUserRoleDto } from "./update-user-role.dto";
-import { Type } from "class-transformer";
-import { IsRowValueDuplicated } from "src/base/validators/row-duplicate.validator";
+import { IsEmail, IsLowercase, IsOptional, IsString, Length } from "class-validator";
 import { ApiProperty } from "@nestjs/swagger";
 
 export class CreateUserDto {
@@ -66,11 +63,4 @@ export class CreateUserDto {
     @IsOptional()
     @ApiProperty()
     active: boolean;
-
-    @IsOptional()
-    @ValidateNested({each: true})
-    @Type(() => UpdateUserRoleDto)
-    @IsRowValueDuplicated({}, ['code'])
-    @ApiProperty({isArray: true, type: UpdateUserRoleDto})
-    roles: UpdateUserRoleDto[];
 }

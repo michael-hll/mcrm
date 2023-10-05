@@ -4,7 +4,7 @@ import { EntityOperations } from "src/base/enum/entity-operations.enum";
 import { ROLE_CODE_MIN_LENGTH } from "src/roles/roles.constants";
 
 
-export class UpdateUserRoleDto {
+export class UpdateRolesDto {
 
     @IsString()
     @Length(ROLE_CODE_MIN_LENGTH)

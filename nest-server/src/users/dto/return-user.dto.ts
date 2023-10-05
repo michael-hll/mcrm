@@ -1,5 +1,4 @@
 import { Exclude, Expose } from "class-transformer";
-import { UpdateUserRoleDto } from "./update-user-role.dto";
 
 export class ReturnUserDto {
 
@@ -35,7 +34,4 @@ export class ReturnUserDto {
 
     @Expose()
     active: boolean;
-
-    @Expose()
-    roles: UpdateUserRoleDto[];
 }

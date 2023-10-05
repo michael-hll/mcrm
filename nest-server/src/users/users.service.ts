@@ -8,6 +8,7 @@ import { CurrentUserData } from 'src/iam/interfaces/current-user-data.interface'
 import { Role } from 'src/roles/entities/role.entity';
 import { RoleCodes } from 'src/iam/authorization/enums/role.codes';
 import { RoleCacheService } from 'src/redis/role/role.cache.service';
+import { UpdateUserRolesDto } from './dto/update-user-roles.dto';
 
 @Injectable()
 export class UsersService {
@@ -35,9 +36,6 @@ export class UsersService {
     return user;
   }
 
-  /**
-   * Update user except password
-   */
   async update(id: number, updateUserDto: UpdateUserDto, currentUser: CurrentUserData) {
     // only current user itself can update
     if (id !== currentUser.sub) {
@@ -49,14 +47,30 @@ export class UsersService {
     if (!user) {
       throw new NotFoundException('User doesnot exists.')
     }
+    Object.assign(user, updateUserDto);
+    await this.usersRepositories.save(user);
+    return true;
+  }
+
+  /**
+   * Update user except password
+   */
+  async updateRoles(id: number, updateUserRolesDto: UpdateUserRolesDto) {
+    // only current user itself can update
+    let user = await this.usersRepositories.findOne({
+      where: { id }
+    });
+    if (!user) {
+      throw new NotFoundException('User doesnot exists.')
+    }
     // Update user role relations
     let addRoles: string[] = [];
     let delRoles: string[] = [];
-    if (updateUserDto.roles) {
-      addRoles = updateUserDto.roles
+    if (updateUserRolesDto.roles) {
+      addRoles = updateUserRolesDto.roles
         .filter(role => role.operation === EntityOperations.CREATE)
         .map(role => role.code) ?? [];
-      delRoles = updateUserDto.roles
+      delRoles = updateUserRolesDto.roles
         .filter(role => role.operation === EntityOperations.DELETE)
         .map(role => role.code) ?? [];
     }
@@ -92,11 +106,6 @@ export class UsersService {
           .relation(User, 'roles')
           .of(user)
           .addAndRemove(addRoles, delRoles);
-
-        // update user
-        const { roles, ...newUserProps } = updateUserDto;
-        Object.assign(user, newUserProps)
-        await transactionalEntityManager.save(user);
       }).catch((err) => {
         this.logger.error('update user failed with error: ', err);
         throw new BadRequestException(`Update user failed with error: ${err.message}`);

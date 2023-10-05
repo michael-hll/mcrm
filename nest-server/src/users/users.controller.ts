@@ -8,6 +8,7 @@ import { UsersService } from './users.service';
 import { Name } from 'src/base/decorators/name.decorator';
 import { ModuleClassName } from 'src/base/decorators/module-name.decorator';
 import { ApiTags } from '@nestjs/swagger';
+import { UpdateUserRolesDto } from './dto/update-user-roles.dto';
 
 @Controller('users')
 @Name('Users')
@@ -34,6 +35,12 @@ export class UsersController {
   update(@Param('id') id: number, @Body() updateUserDto: UpdateUserDto,
     @CurrentUser() currentUser: CurrentUserData) {
     return this.usersService.update(id, updateUserDto, currentUser);
+  }
+
+  @Patch('roles/:id')
+  @Name('Update User Roles')
+  updateRoles(@Param('id') id: number, @Body() updateUserRolesDto: UpdateUserRolesDto) {
+    return this.usersService.updateRoles(id, updateUserRolesDto);
   }
 
   @Delete(':id')
