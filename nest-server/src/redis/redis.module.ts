@@ -3,6 +3,7 @@ import { Base } from 'src/base/base';
 import { RedisService } from './redis.service';
 import { RoleCacheService } from './role/role.cache.service';
 import { RefreshTokenCacheService } from './token/refresh-token.cache.service';
+import { RedisController } from './redis.controller';
 
 @Module({
   imports: [
@@ -15,7 +16,8 @@ import { RefreshTokenCacheService } from './token/refresh-token.cache.service';
   exports: [
     RefreshTokenCacheService,
     RoleCacheService,
-  ]
+  ],
+  controllers: [RedisController]
 })
 export class RedisModule extends Base{
   getModuleName(): string {

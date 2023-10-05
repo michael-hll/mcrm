@@ -16,9 +16,11 @@ import { Role } from 'src/roles/entities/role.entity';
 import { RoleCodes } from '../authorization/enums/role.codes';
 import { CreateRoleDto } from 'src/roles/dto/create-role.dto';
 import { DefaultUser } from './enums/default-user.enum';
+import { UpdatePasswordDto } from './dto/update-password.dto';
 
 @Injectable()
 export class AuthenticationService {
+  
   constructor(
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
@@ -117,6 +119,28 @@ export class AuthenticationService {
     }
 
     return await this.generateTokens(user);
+  }
+
+  async updatePassword(updatePasswordDto: UpdatePasswordDto) {
+    const user = await this.usersRepository.findOneBy({
+      email: updatePasswordDto.email,
+    });
+    if (!user) {
+      throw new UnauthorizedException('User doesnot exist.');
+    }
+    const isEqual = await this.hashingService.compare(
+      updatePasswordDto.password,
+      user.password,
+    );
+    if (!isEqual) {
+      throw new UnauthorizedException('Old password is wrong.')
+    }
+    user.password = await this.hashingService.hash(updatePasswordDto.newpassword);
+    await this.usersRepository.save(user);
+
+    // clear refresh token hash
+    this.refreshTokenCacheService.invalidate(user.id.toString());
+    return true;
   }
 
   /**

@@ -37,7 +37,6 @@ export class AuthorizationController {
    */
   @Patch('api-roles')
   @Name('Maintain Api Roles')
-  @UseAdmin()
   async grantApiRoutes(@Body() updateApiRoleManyDto: UpdateApiRoleManyDto) {
     return await this.authorizationService.grantApiRoles(updateApiRoleManyDto); 
   }

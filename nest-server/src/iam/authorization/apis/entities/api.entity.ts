@@ -31,6 +31,9 @@ export class Api {
     @Column({nullable: false})
     api_name: string;
 
+    @Column({nullable: false, default: false})
+    is_amdin: boolean;
+
     @JoinTable({
         name: "api_roles",
         joinColumn: {

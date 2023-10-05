@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { DiscoveryService } from '@golevelup/nestjs-discovery';
+import { DiscoveredMethodWithMeta, DiscoveryService } from '@golevelup/nestjs-discovery';
 import { BaseModule } from 'src/base/base.module';
 import { NAME } from 'src/base/decorators/name.decorator';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -9,6 +9,7 @@ import { UpdateApiRoleManyDto } from './apis/dtos/update-api-roles.dto';
 import { EntityOperations } from 'src/base/enum/entity-operations.enum';
 import { Role } from 'src/roles/entities/role.entity';
 import { RoleCacheService } from 'src/redis/role/role.cache.service';
+import { IS_ADMIN_ONLY } from 'src/base/decorators/admin.decorator';
 
 @Injectable()
 export class AuthorizationService {
@@ -26,6 +27,9 @@ export class AuthorizationService {
   ) { }
 
   async registerRoutes(sync: boolean = false) {
+    this.namedControllers.clear();
+    this.namedRoutes.clear();
+    // Get all named controllers
     const namedControllers = await this.discover.controllersWithMetaAtKey<string>(NAME);
     for (const controller of namedControllers) {
       this.namedControllers.set(
@@ -33,6 +37,17 @@ export class AuthorizationService {
         controller.discoveredClass.name,
         controller.meta)
     }
+    
+    // get all controller methods with useAdmin() decorators
+    const useAdminsMethods = await this.discover.controllerMethodsWithMetaAtKey<boolean>(IS_ADMIN_ONLY);
+    const useAdminsMethodsSet = new Set(useAdminsMethods.map(route => {
+      const parentKey = route.discoveredMethod.parentClass.parentModule.name + '.' +
+        route.discoveredMethod.parentClass.name;
+      const key = parentKey + '.' + route.discoveredMethod.methodName;
+      return key;
+    }));
+
+    // get all named routes
     const namedRoutes = await this.discover.controllerMethodsWithMetaAtKey<string>(NAME);
     let hasErrors = false;
     for (let route of namedRoutes) {
@@ -49,7 +64,8 @@ export class AuthorizationService {
           controller: route.discoveredMethod.parentClass.name,
           controller_name: this.namedControllers.get(parentKey),
           api: route.discoveredMethod.methodName,
-          api_name: route.meta
+          api_name: route.meta,
+          is_admin: useAdminsMethodsSet.has(key),
         });
 
       if (this.namedControllers.has(parentKey)) {
@@ -75,23 +91,17 @@ export class AuthorizationService {
         controller_name: this.namedRoutes.get(key).controller_name,
         api: this.namedRoutes.get(key).api,
         api_name: this.namedRoutes.get(key).api_name,
+        is_amdin: this.namedRoutes.get(key).is_admin,
       }))
     }
+    const api_keys = new Set(apis.map(api => api.key));
 
     // prepare data for sync...
-    const old_apis = await this.apisRepository
-      .createQueryBuilder("a")
-      .select(["a.key"])
-      .getMany();
-    const old_keys = new Set(old_apis.map(api => api.key));
-    const same_keys = new Set(
-      apis.filter(api => old_keys.has(api.key))
-        .map(api => api.key));
+    const old_apis = await this.apisRepository.find();
     const del_keys = new Set(
-      old_apis.filter(api => !same_keys.has(api.key))
+      old_apis.filter(api => !api_keys.has(api.key))
         .map(api => api.key)
     );
-    const new_apis = apis.filter(api => !old_keys.has(api.key));
     const entities = this.apisRepository.create(apis);
 
     // start a transaction manager 

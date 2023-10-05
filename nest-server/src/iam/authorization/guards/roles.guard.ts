@@ -47,8 +47,8 @@ export class RolesGuard implements CanActivate {
 
       // check is amdin only role
       const isAdminOnly = this.reflector.get(IS_ADMIN_ONLY, context.getHandler());
-      if(isAdminOnly && userRoles.has(RoleCodes.ADMIN)) {
-        return true;
+      if(isAdminOnly){
+        return userRoles.has(RoleCodes.ADMIN);
       }
       
       // get api roles

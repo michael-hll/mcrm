@@ -1,4 +1,4 @@
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import { Body, Controller, HttpCode, HttpStatus, Patch, Post } from '@nestjs/common';
 import { AuthenticationService } from './authentication.service';
 import { SignUpDto } from './dto/sign-up.dto';
 import { SignInDto } from './dto/sign-in.dto';
@@ -7,6 +7,7 @@ import { AuthType } from './enums/auth-type.enum';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { Name } from 'src/base/decorators/name.decorator';
 import { ApiAcceptedResponse, ApiHeader, ApiProperty, ApiTags } from '@nestjs/swagger';
+import { UpdatePasswordDto } from './dto/update-password.dto';
 
 @Auth(AuthType.None)
 @Controller('authentication')
@@ -44,6 +45,13 @@ export class AuthenticationController {
   @Name('Sign In')
   signIn(@Body() signInDto: SignInDto) {
     return this.authService.singIn(signInDto);
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Patch('update-password')
+  @Name('Update Password')
+  updatePassword(@Body() updatePasswordDto: UpdatePasswordDto) {
+    return this.authService.updatePassword(updatePasswordDto);
   }
 
   @HttpCode(HttpStatus.OK)
