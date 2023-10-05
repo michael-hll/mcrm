@@ -6,7 +6,7 @@ import { Name } from 'src/base/decorators/name.decorator';
 import { ModuleClassName } from 'src/base/decorators/module-name.decorator';
 import { ApiTags } from '@nestjs/swagger';
 
-@Controller('roles')
+@Controller('role')
 @Name('Roles')
 @ModuleClassName('RolesModule')
 @ApiTags('Roles')

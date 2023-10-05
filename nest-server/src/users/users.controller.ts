@@ -10,7 +10,7 @@ import { ModuleClassName } from 'src/base/decorators/module-name.decorator';
 import { ApiTags } from '@nestjs/swagger';
 import { UpdateUserRolesDto } from './dto/update-user-roles.dto';
 
-@Controller('users')
+@Controller('user')
 @Name('Users')
 @ModuleClassName('UsersModule')
 @Serialize(ReturnUserDto)

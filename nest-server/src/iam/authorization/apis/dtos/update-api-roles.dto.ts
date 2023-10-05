@@ -1,8 +1,8 @@
 import { Type } from "class-transformer";
 import { IsArray, IsString, ValidateNested } from "class-validator";
 import { IsRowValueDuplicated } from "src/base/validators/row-duplicate.validator";
-import { UpdateApiRoleDto } from "./update-api-role.dto";
 import { ApiProperty } from "@nestjs/swagger";
+import { UpdateRolesDto } from "src/base/dto/update-roles.dto";
 
 class UpdateApiRoleMany {
 
@@ -12,10 +12,10 @@ class UpdateApiRoleMany {
 
     @IsArray()
     @ValidateNested({each: true})
-    @Type(() => UpdateApiRoleDto)
+    @Type(() => UpdateRolesDto)
     @IsRowValueDuplicated({}, ['code']) 
-    @ApiProperty({type: UpdateApiRoleDto, isArray: true})
-    roles: UpdateApiRoleDto[]
+    @ApiProperty({type: UpdateRolesDto, isArray: true})
+    roles: UpdateRolesDto[]
 }
 
 export class UpdateApiRoleManyDto {
