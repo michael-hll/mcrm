@@ -6,8 +6,8 @@ import { useEventLogout, useEventSwitchDarkMode, useIsAuthenticated, useOnMobile
 import SideBarNavList from './SideBarNavList';
 import { SIDE_BAR_WIDTH, TOP_BAR_DESKTOP_HEIGHT } from '../config';
 import useAppStore from '../../store/AppStore';
-import UserInfo from '../../components/user-info';
-import AppIconButton from '../../components/app-icon-button/AppIconButton';
+import UserInfo from '../../components/UserInfo';
+import AppIconButton from '../../components/AppIconButton/AppIconButton';
 
 
 interface Props extends Pick<DrawerProps, 'anchor' | 'className' | 'open' | 'variant' | 'onClose'> {

@@ -16,10 +16,10 @@ import {
   Typography,
 } from '@mui/material';
 import { SHARED_CONTROL_PROPS, eventPreventDefault, useAppForm } from '../../utils/form';
-import AppForm from '../../components/app-form/AppForm';
-import AppIconButton from '../../components/app-icon-button/AppIconButton';
-import AppAlert from '../../components/app-alert/AppAlert';
-import AppButton from '../../components/app-button/AppButton';
+import AppForm from '../../components/AppForm/AppForm';
+import AppIconButton from '../../components/AppIconButton/AppIconButton';
+import AppAlert from '../../components/AppAlert/AppAlert';
+import AppButton from '../../components/AppButton/AppButton';
 import { signUp } from '../../services/auth/auth.service';
 
 const VALIDATE_FORM_SIGNUP = {

@@ -1,12 +1,12 @@
 import { Box, Button, Card, CardContent, CardHeader, CardMedia, Container, Grid, InputAdornment, TextField, Typography } from "@mui/material";
-import AppForm from "../../components/app-form/AppForm";
-import AppButton from "../../components/app-button/AppButton";
-import AppLink from "../../components/app-link/AppLink";
+import AppForm from "../../components/AppForm/AppForm";
+import AppButton from "../../components/AppButton/AppButton";
+import AppLink from "../../components/AppLink/AppLink";
 import { useNavigate } from "react-router-dom";
 import { useCallback, useState, SyntheticEvent } from "react";
 import { SHARED_CONTROL_PROPS, eventPreventDefault, useAppForm } from "../../utils/form";
-import AppIconButton from "../../components/app-icon-button/AppIconButton";
-import AppAlert from "../../components/app-alert/AppAlert";
+import AppIconButton from "../../components/AppIconButton/AppIconButton";
+import AppAlert from "../../components/AppAlert/AppAlert";
 import useAppStore from "../../store/AppStore";
 import { signIn } from "../../services/auth/auth.service";
 import { MCRM_ACCESS_TOKEN_KEY, MCRM_REFRESH_TOKEN_KEY } from "../../services/app.constants";

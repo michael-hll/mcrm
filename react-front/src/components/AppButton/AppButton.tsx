@@ -1,8 +1,8 @@
 import { Button, ButtonProps } from "@mui/material";
 import { ElementType, ReactNode, useMemo } from "react";
 import { APP_BUTTON_VARIANT } from "../config";
-import AppIcon from "../app-icon/AppIcon";
-import AppLink from "../app-link/AppLink";
+import AppIcon from "../AppIcon/AppIcon";
+import AppLink from "../AppLink/AppLink";
 
 const MUI_BUTTON_COLORS = ['inherit', 'primary', 'secondary', 'success', 'error', 'info', 'warning'];
 

@@ -1,9 +1,9 @@
 import { useNavigate } from 'react-router-dom';
 import { Stack, Typography } from '@mui/material';
-import AppAlert from '../components/app-alert/AppAlert';
-import AppButton from '../components/app-button/AppButton';
-import AppLink from '../components/app-link/AppLink';
-import AppView from '../components/app-view/AppView';
+import AppAlert from '../components/AppAlert/AppAlert';
+import AppButton from '../components/AppButton/AppButton';
+import AppLink from '../components/AppLink/AppLink';
+import AppView from '../components/AppView/AppView';
 
 /**
  * "Not Found" aka "Error 404" view

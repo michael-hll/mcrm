@@ -4,11 +4,11 @@ import { useEventSwitchDarkMode, useOnMobile } from "../hooks";
 import useAppStore from "../store/AppStore";
 import { BOTTOM_BAR_DESKTOP_VISIBLE, TOP_BAR_DESKTOP_HEIGHT, TOP_BAR_MOBILE_HEIGHT } from "./config";
 import { LinkToPage } from "../utils/type";
-import TopBar from "./top-bar/TopBar";
-import AppIconButton from "../components/app-icon-button/AppIconButton";
-import SideBar from "./side-bar/SideBar";
+import TopBar from "./TopBar/TopBar";
+import AppIconButton from "../components/AppIconButton/AppIconButton";
+import SideBar from "./SideBar/SideBar";
 import ErrorBoundary from "../components/ErrorBoundary";
-import BottomBar from "./bottom-bar";
+import BottomBar from "./BottomBar";
 
 const TITLE_PUBLIC = 'MCRM App';
 

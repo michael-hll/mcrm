@@ -1,5 +1,5 @@
 import { Avatar, Stack, Typography } from '@mui/material';
-import AppLink from '../app-link/AppLink';
+import AppLink from '../AppLink/AppLink';
 import { User } from '../../store/interfaces/User';
 
 interface UserInfoProps {

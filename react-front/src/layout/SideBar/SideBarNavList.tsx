@@ -3,7 +3,6 @@ import List from '@mui/material/List';
 import SideBarNavItem from './SideBarNavItem';
 import { LinkToPage } from '../../utils/type';
 import useAppStore from '../../store/AppStore';
-import { NONAME } from 'dns';
 
 interface Props {
   items: Array<LinkToPage>;
