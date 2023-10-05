@@ -21,5 +21,5 @@ export class Role {
     users: User[];
 
     @ManyToMany(type => Api, api => api.roles)
-    api: Api[];
+    apis: Api[];
 }

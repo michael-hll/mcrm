@@ -45,6 +45,6 @@ export class Api {
             referencedColumnName: "code"
         }
     })
-    @ManyToMany(type => Role, role => role.users)
+    @ManyToMany(type => Role, role => role.apis)
     roles: Role[];
 }

@@ -53,19 +53,27 @@ export class RolesService {
     const role = await this.rolesRepository.findOne({
       where: { code },
       relations: {
-        users: true
+        users: true,
+        apis: true,
       }});
     if(!role){
       throw new NotFoundException('Role doesnot exists.');
     }
     const userRelations = role.users.map(user => user.id);
+    const apiRelations = role.apis.map(api => api.key);
     await this.rolesRepository.manager.transaction(
       async (transactionalEntityManager) => {
-        // delete linked users
+        // delete linked user roles
         await transactionalEntityManager
           .createQueryBuilder()
           .relation(Role, 'users')
           .of(role).remove(userRelations);
+
+        // delete linked api roles
+        await transactionalEntityManager
+          .createQueryBuilder()
+          .relation(Role, 'apis')
+          .of(role).remove(apiRelations);
 
         // delete role
         await transactionalEntityManager.remove(role);
