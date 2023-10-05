@@ -3,7 +3,7 @@ Recently studied nestjs and found it's much convinent then nodejs to develop an 
 So spent some time write a small application include both front & backend.
 
 ## A high level design idea
-![alt text](https://github.com/michael-hll/mcrm/blob/main/design/High%20Level%20Design.png)
+<img src="https://github.com/michael-hll/mcrm/blob/main/design/High%20Level%20Design.png" alt="drawing" width="500"/>
 
 ## Main Features
 ### Backend
@@ -50,7 +50,8 @@ email address: 'admin@test.com', password: Password123
 Now the backend is ready. If you want to see all the apis available, from
 browser enter this address: http://localhost:3001/swagger
 You will see each api useage there:
-![alt text](https://github.com/michael-hll/mcrm/blob/main/design/backend-apis.png)
+
+<img src="https://github.com/michael-hll/mcrm/blob/main/design/backend-apis.png" alt="drawing" width="200"/>
 
 ### Step 3 Start the Frontend
 3.1 Go to directory react-front and run command 'npm install'
@@ -58,4 +59,6 @@ You will see each api useage there:
 3.2 Then run command 'npm start', this will start the front end at port 3000
 
 3.3 From browser enter address: http://localhost:3000, you should see the login page:
-![alt text](https://github.com/michael-hll/mcrm/blob/main/design/login.png)
+
+<img src="https://github.com/michael-hll/mcrm/blob/main/design/login.png" alt="drawing" width="200"/>
+
