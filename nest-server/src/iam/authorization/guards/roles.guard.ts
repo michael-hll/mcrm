@@ -32,15 +32,15 @@ export class RolesGuard implements CanActivate {
       ];
 
       // get current user roles
-      const userEntity = await this.usersRepository.findOne({ where: { id: user.sub }, relations: ['roles'] });
-      if (!userEntity) {
-        throw error;
-      }
       const cachedUserRoles = await this.roleCachService.get(user.sub.toString());
       let userRoles: Set<string>;
       if (cachedUserRoles) {
         userRoles = new Set(JSON.parse(cachedUserRoles));
       } else {
+        const userEntity = await this.usersRepository.findOne({ where: { id: user.sub }, relations: ['roles'] });
+        if (!userEntity) {
+          throw error;
+        }
         userRoles = new Set(userEntity.roles.map(role => role.code));
         this.roleCachService.set(user.sub.toString(), JSON.stringify(userEntity.roles.map(role => role.code)));
       }
