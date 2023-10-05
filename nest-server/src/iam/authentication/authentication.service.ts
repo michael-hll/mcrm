@@ -168,6 +168,7 @@ export class AuthenticationService {
       return {
         accessToken,
         refreshToken,
+        username: user.username,
       };
     } catch (err) {
       throw new UnauthorizedException(err);

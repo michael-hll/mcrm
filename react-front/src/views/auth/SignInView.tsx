@@ -9,7 +9,7 @@ import AppIconButton from "../../components/app-icon-button/AppIconButton";
 import AppAlert from "../../components/app-alert/AppAlert";
 import useAppStore from "../../store/AppStore";
 import { signIn } from "../../services/auth/auth.service";
-import { ACCESS_TOKEN_KEY } from "../../services/app.constants";
+import { MCRM_ACCESS_TOKEN_KEY, MCRM_REFRESH_TOKEN_KEY } from "../../services/app.constants";
 
 const VALIDATE_FORM_LOGIN_EMAIL = {
   email: {
@@ -51,9 +51,17 @@ const SignInView = () => {
     async (event: SyntheticEvent) => {
       event.preventDefault();
       signIn(values.email, values.password)
-        .then(response => {
-          appStore.set({ currentUser: { email: values.email }, isAuthenticated: true })
-          localStorage.setItem(ACCESS_TOKEN_KEY, response.accessToken);
+        .then(data => {
+          appStore.set({
+            currentUser:
+            {
+              email: values.email,
+              username: data.username
+            },
+            isAuthenticated: true
+          })
+          localStorage.setItem(MCRM_ACCESS_TOKEN_KEY, data.accessToken);
+          localStorage.setItem(MCRM_REFRESH_TOKEN_KEY, data.refreshToken);
           navigate('/', { replace: true });
         }).catch(
           err => {
@@ -61,7 +69,7 @@ const SignInView = () => {
             return;
           });
     },
-    [appStore.currentUser, values, navigate]
+    [appStore, values, navigate]
   );
 
   const handleCloseError = useCallback(() => setError(undefined), []);
@@ -81,17 +89,17 @@ const SignInView = () => {
               image="/images/cat.jpeg"
             />
             <CardContent>
-              <Typography gutterBottom variant="h4" 
-                component="div" 
+              <Typography gutterBottom variant="h4"
+                component="div"
                 sx={{
                   textAlign: 'left',
                   margin: '0px 0px 20px 10px',
-                  padding: '0px',                  
-                }}>                
+                  padding: '0px',
+                }}>
                 Login
               </Typography>
               <TextField
-                sx={{margin: '0px 0px 15px 0px', width:'470px'}}
+                sx={{ margin: '0px 0px 15px 0px', width: '470px' }}
                 required
                 label="Email"
                 name="email"
@@ -102,7 +110,7 @@ const SignInView = () => {
                 {...SHARED_CONTROL_PROPS}
               />
               <TextField
-                sx={{margin: '0px 0px 15px 0px', width:'470px'}}
+                sx={{ margin: '0px 0px 15px 0px', width: '470px' }}
                 required
                 type={showPassword ? 'text' : 'password'}
                 label="Password"

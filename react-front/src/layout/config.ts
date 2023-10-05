@@ -18,4 +18,4 @@ export const TOP_BAR_DESKTOP_HEIGHT = '0px';
 /**
  * BottomBar configuration
  */
-export const BOTTOM_BAR_DESKTOP_VISIBLE = false; // true;
+export const BOTTOM_BAR_DESKTOP_VISIBLE = false;

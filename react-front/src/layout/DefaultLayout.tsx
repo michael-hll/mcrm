@@ -87,18 +87,18 @@ const DefaultLayout: React.FC<PropsWithChildren> = ({ children }) => {
   const onSideBarClose = useCallback(() => {
     if (sideBarVisible) setSideBarVisible(false); // Don't re-render Layout when SideBar is already closed
   }, [sideBarVisible]);
+
   return (
     <Stack
       sx={{
         minHeight: '95vh', // Full screen height
         padding: '0px',
-        margin:  onMobile ? TOP_BAR_MOBILE_HEIGHT : TOP_BAR_DESKTOP_HEIGHT,
+        margin: onMobile ? TOP_BAR_MOBILE_HEIGHT : TOP_BAR_DESKTOP_HEIGHT,
         overflow: 'hidden !important',
       }}
-      
+
     >
       <Stack component="header">
-
 
         <TopBar
           startNode={<AppIconButton icon="logo" onClick={onSideBarOpen} />}

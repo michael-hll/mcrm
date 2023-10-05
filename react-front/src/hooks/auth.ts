@@ -1,6 +1,7 @@
 import { useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useAppStore from '../store/AppStore';
+import { MCRM_ACCESS_TOKEN_KEY, MCRM_REFRESH_TOKEN_KEY } from '../services/app.constants';
 
 type CurrentUser = {
   id?: string;
@@ -24,13 +25,9 @@ export function useCurrentUser(): CurrentUser | undefined {
  * @returns {boolean} true if user is authenticated, false otherwise
  */
 export function useIsAuthenticated() {
-  const store = useAppStore();
-  let result = store.isAuthenticated;
+  const isAuth = useAppStore(s => s.isAuthenticated);
 
-  // TODO: AUTH: add access token verification or other authentication check here
-  // result = Boolean(sessionStorageGet('access_token', ''));
-
-  return result;
+  return isAuth;
 }
 
 /**
@@ -39,16 +36,15 @@ export function useIsAuthenticated() {
  */
 export function useEventLogout() {
   const navigate = useNavigate();
-  const ctore = useAppStore();
+  const store = useAppStore();
 
   return useCallback(() => {
-    // TODO: AUTH: add auth and tokens cleanup here
-    // sessionStorageDelete('access_token');
-
-    //TODO: logout
-    //dispatch({ type: 'LOG_OUT' });
-    navigate('/', { replace: true }); // Redirect to home page by reloading the App
-  }, [navigate]);
+    localStorage.removeItem(MCRM_ACCESS_TOKEN_KEY);
+    localStorage.removeItem(MCRM_REFRESH_TOKEN_KEY);
+    store.isAuthenticated = false;
+    store.currentUser = undefined;
+    navigate('/auth', { replace: true }); // Redirect to home page by reloading the App
+  }, [store, navigate]);
 }
 
 /**
@@ -65,7 +61,5 @@ export function useAuthWatchdog(afterLogin: () => void, afterLogout: () => void)
     } else {
       afterLogout?.();
     }
-  }, [store.isAuthenticated, () => {
-    //TODO
-  }, afterLogin, afterLogout]);
+  }, [store.isAuthenticated, afterLogin, afterLogout]);
 }

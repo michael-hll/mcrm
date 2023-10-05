@@ -172,7 +172,7 @@ export class AuthorizationService {
         })
       
       // clear role cache
-      this.roleCacheService.del(api.api_key);
+      this.roleCacheService.del(api.api_key); 
     })
   }
 }
