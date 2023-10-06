@@ -142,13 +142,13 @@ const SignUpView = () => {
   if (loading) return <LinearProgress />;
 
   return (
-    <Container maxWidth={false} disableGutters>
-      <Box sx={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: '100vh'
-      }}>
+    <Container maxWidth={false} disableGutters sx={{
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      flexGrow: 1,
+    }}>
+      <Box>
         <AppForm onSubmit={handleFormSubmit}>
           <Card sx={{ maxWidth: 500 }}>
             <CardMedia

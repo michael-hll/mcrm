@@ -90,12 +90,10 @@ const DefaultLayout: React.FC<PropsWithChildren> = ({ children }) => {
 
   return (
     <Stack
-      sx={{
-        minHeight: '95vh', // Full screen height
-        padding: '0px',
-        margin: onMobile ? TOP_BAR_MOBILE_HEIGHT : TOP_BAR_DESKTOP_HEIGHT,
-        overflow: 'hidden !important',
-      }}
+    sx={{
+      minHeight: '100vh', // Full screen height
+      paddingTop: onMobile ? TOP_BAR_MOBILE_HEIGHT : TOP_BAR_DESKTOP_HEIGHT,
+    }}
 
     >
       <Stack component="header">

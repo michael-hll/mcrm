@@ -90,8 +90,11 @@ export function useAppForm({ validationSchema, initialValues = {} }: UseAppFormP
     throw new Error('useAppForm() - the option `initialValues` should be an object');
   }
 
+  console.log('init values:', initialValues);
+
   // Create Form state and apply initialValues if set
   const [formState, setFormState] = useState({ ...DEFAULT_FORM_STATE, values: initialValues });
+  console.log('formstate values:', formState);
 
   // Validation by 'validate.js' on every formState.values change
   useEffect(() => {

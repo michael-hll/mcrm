@@ -1,8 +1,9 @@
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import DefaultLayout from "../layout/DefaultLayout";
-import AuthRoutes from "../views/auth";
+import AuthRoutes from "../views/Auth";
 import useAppStore from "../store/AppStore";
-import SignInView from "../views/auth/SignInView";
+import UserRoutes from "../views/User";
+import WelcomeView from "../views/Welcome";
 
 const HomeRoutes = () => {
   const hasLogin = useAppStore(s => s.isAuthenticated)
@@ -11,9 +12,10 @@ const HomeRoutes = () => {
     <DefaultLayout>
       <Routes>
         <Route path='/' element={
-          hasLogin ? <DefaultLayout /> : <SignInView />
+          hasLogin ? <WelcomeView /> : <AuthRoutes />
         } />
         <Route path='/auth/*' element={<AuthRoutes />} />
+        <Route path='/user/' element={<UserRoutes />} />
       </Routes>
     </DefaultLayout>
 

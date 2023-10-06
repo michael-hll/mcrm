@@ -19,6 +19,16 @@ export class CreateUserDto {
     email: string; 
 
     @IsString()
+    @IsOptional()
+    @ApiProperty()
+    firstname: string;
+
+    @IsString()
+    @IsOptional()
+    @ApiProperty()
+    lastname: string;
+
+    @IsString()
     @Length(5)
     @IsOptional()
     @ApiProperty()

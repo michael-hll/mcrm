@@ -1,7 +1,7 @@
 import { Route, Routes } from 'react-router-dom';
 
-import SignInView from './SignInView';
 import NotFoundView from '../NotFoundView';
+import SignInView from './SignInView';
 import SignUpView from './SignUpView';
 
 /**

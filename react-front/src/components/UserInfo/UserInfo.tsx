@@ -1,11 +1,11 @@
 import { Avatar, Stack, Typography } from '@mui/material';
 import AppLink from '../AppLink/AppLink';
-import { User } from '../../store/interfaces/User';
+import { CurrentUser } from '../../store/interfaces/CurrentUser';
 
 interface UserInfoProps {
   className?: string;
   showAvatar?: boolean;
-  user?: User;
+  user?: CurrentUser;
 }
 
 /**
@@ -17,7 +17,7 @@ interface UserInfoProps {
  */
 const UserInfo = ({ className, showAvatar = false, user, ...restOfProps }: UserInfoProps) => {
   const fullName = user?.username
-  const srcAvatar = user?.username.substring(0,1);
+  const srcAvatar = user?.username.substring(0,1); 
   const userPhoneOrEmail = user?.email;
 
   return (

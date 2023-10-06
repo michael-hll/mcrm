@@ -12,6 +12,12 @@ export class ReturnUserDto {
     email: string; 
 
     @Expose()
+    firstname: string;
+
+    @Expose()
+    lastname: string;
+
+    @Expose()
     phone: string;
 
     @Expose()

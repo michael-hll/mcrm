@@ -2,22 +2,15 @@ import { useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useAppStore from '../store/AppStore';
 import { MCRM_ACCESS_TOKEN_KEY, MCRM_REFRESH_TOKEN_KEY } from '../services/app.constants';
-
-type CurrentUser = {
-  id?: string;
-  email?: string;
-  phone?: string;
-  avatar?: string;
-  name?: string;
-};
+import { CurrentUser } from '../store/interfaces/CurrentUser';
 
 /**
  * Hook to get currently logged user
  * @returns {object | undefined} user data as object or undefined if user is not logged in
  */
 export function useCurrentUser(): CurrentUser | undefined {
-  const store = useAppStore();
-  return store.currentUser;
+  const currentUser = useAppStore(s => s.currentUser);
+  return currentUser;
 }
 
 /**
@@ -62,4 +55,26 @@ export function useAuthWatchdog(afterLogin: () => void, afterLogout: () => void)
       afterLogout?.();
     }
   }, [store.isAuthenticated, afterLogin, afterLogout]);
+}
+
+export function useAccessToken() {
+  const accessToken = localStorage.getItem(MCRM_ACCESS_TOKEN_KEY);
+  if (accessToken) {
+    return { Authorization: 'Bearer ' + accessToken }; 
+    // return { 'x-access-token': user.accessToken };       // for Node.js Express back-end
+  } else {
+    return { Authorization: '' }; 
+    // return { 'x-access-token': null }; // for Node Express back-end
+  }
+}
+
+export function useRefreshToken() {
+  const refreshToken = localStorage.getItem(MCRM_REFRESH_TOKEN_KEY);
+  if (refreshToken) {
+    return { Authorization: 'Bearer ' + refreshToken }; 
+    // return { 'x-access-token': user.accessToken };       // for Node.js Express back-end
+  } else {
+    return { Authorization: '' }; 
+    // return { 'x-access-token': null }; // for Node Express back-end
+  }
 }

@@ -12,8 +12,8 @@ export const SIDE_BAR_WIDTH = '240px';
 /**
  * TopBar configuration
  */
-export const TOP_BAR_MOBILE_HEIGHT = '0px';
-export const TOP_BAR_DESKTOP_HEIGHT = '0px';
+export const TOP_BAR_MOBILE_HEIGHT = '32px';
+export const TOP_BAR_DESKTOP_HEIGHT = '64px';
 
 /**
  * BottomBar configuration

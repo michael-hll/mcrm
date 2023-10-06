@@ -10,6 +10,7 @@ import AppAlert from "../../components/AppAlert/AppAlert";
 import useAppStore from "../../store/AppStore";
 import { signIn } from "../../services/auth/auth.service";
 import { MCRM_ACCESS_TOKEN_KEY, MCRM_REFRESH_TOKEN_KEY } from "../../services/app.constants";
+import { TOP_BAR_DESKTOP_HEIGHT } from "../../layout/config";
 
 const VALIDATE_FORM_LOGIN_EMAIL = {
   email: {
@@ -54,9 +55,10 @@ const SignInView = () => {
         .then(data => {
           appStore.set({
             currentUser:
-            {
+            { 
+              id: data.id,
               email: values.email,
-              username: data.username
+              username: data.username,
             },
             isAuthenticated: true
           })
@@ -75,13 +77,13 @@ const SignInView = () => {
   const handleCloseError = useCallback(() => setError(undefined), []);
 
   return (
-    <Container maxWidth={false} disableGutters>
-      <Box sx={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: '95vh'
-      }}>
+    <Container maxWidth={false} disableGutters sx={{
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      flexGrow: 1,
+    }}>
+      <Box>
         <AppForm onSubmit={handleFormSubmit}>
           <Card sx={{ maxWidth: 500 }}>
             <CardMedia

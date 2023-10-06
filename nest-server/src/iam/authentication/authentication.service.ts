@@ -169,6 +169,7 @@ export class AuthenticationService {
         accessToken,
         refreshToken,
         username: user.username,
+        id: user.id,
       };
     } catch (err) {
       throw new UnauthorizedException(err);
