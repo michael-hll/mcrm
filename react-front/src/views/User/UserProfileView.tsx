@@ -1,16 +1,14 @@
-import { AlertTitle, Container, Snackbar, Stack, TextField, Typography } from "@mui/material";
-import { SyntheticEvent, useCallback, useState } from "react";
+import { Container, Stack, TextField, Typography } from "@mui/material";
+import React, { SyntheticEvent, useCallback, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import AppAlert from "../../components/AppAlert/AppAlert";
 import AppButton from "../../components/AppButton/AppButton";
 import AppForm from "../../components/AppForm/AppForm";
+import CustomSnackbar from "../../components/SnackBarAlert/CustomSnackbar";
 import { useUpdateUser, useUser } from "../../hooks/user";
 import useAppStore from "../../store/AppStore";
 import { User } from "../../store/interfaces/User";
 import { SHARED_CONTROL_PROPS, useAppForm } from "../../utils/form";
-import { useNavigate } from "react-router-dom";
-import React from "react";
-import SnackbarAlert from "../../components/SnackBarAlert/SnackBarAlert";
-import CustomSnackbar from "../../components/SnackBarAlert/CustomSnackbar";
 
 const VALIDATE_FORM_EMAIL = {
   email: {
@@ -21,33 +19,32 @@ const VALIDATE_FORM_EMAIL = {
 
 const UserProfileView = () => {
 
+  const [error, setError] = useState<string>('');
+  const { formState, onFieldChange, fieldGetError, fieldHasError, setFormState } = useAppForm({
+    validationSchema: VALIDATE_FORM_EMAIL,
+    initialValues: {},
+  });
   const currentUser = useAppStore(s => s.currentUser);
-  const userQuery = useUser(currentUser ? currentUser.id : -1);
+  const values = formState.values as User;
+  const userQuery = useUser(currentUser, (data) => {
+    setFormState(({
+      ...formState,
+      values: data,
+    }));
+  }, () => {
+    setError(userQuery.error?.message ?? '');
+  });
   const [SnackBarOpen, setSnackBarOpen] = useState<boolean>(false);
   const userUpdateQuery = useUpdateUser(() => {
     setSnackBarOpen(true);
+  }, () => {
+    setError(userUpdateQuery.error?.message ?? '');
   });
-  const { formState, onFieldChange, fieldGetError, fieldHasError, isFormValid, setFormState } = useAppForm({
-    validationSchema: VALIDATE_FORM_EMAIL,
-    initialValues: { ...userQuery.data },
-  });
+  
   const navigate = useNavigate();
   if (!currentUser) {
     navigate('/auth', { replace: true });
   }
-  // we need this below logic, since when create useAppForm, the initial state is still undefined
-  // And react useState only use the first render initial state
-  // so we need to reset the state values when we have
-  const values = formState.values as User; // Typed alias to formState.values as the "Source of Truth"
-  if (Object.keys(values).length === 0 && userQuery.data) {
-    setFormState(({
-      ...formState,
-      values: userQuery.data,
-    }));
-  }
-
-  const [error, setError] = useState<string>('');
-  const [showError, setShowError] = useState<boolean>(true);
 
   const handleSnackClose = (event: React.SyntheticEvent | Event, reason?: string) => {
     if (reason === 'clickaway') {
@@ -63,28 +60,15 @@ const UserProfileView = () => {
       userUpdateQuery.mutate({
         ...values
       });
-      setShowError(true);
     }, [userUpdateQuery, values]
   );
 
   const handleCloseError = useCallback(() => {
-    setShowError(false);
     setError('')
   }, []);
 
   if (userQuery.isLoading) return <p> Loading... </p>;
   if (userUpdateQuery.isLoading) return <p> Loading... </p>;
-
-  if (userQuery.isError) {
-    if (showError && error !== userQuery.error.message) {
-      setError(userQuery.error.message);
-    }
-  }
-  if (userUpdateQuery.isError) {
-    if (showError && error !== userUpdateQuery.error.message) {
-      setError(userUpdateQuery.error.message);
-    }
-  }
 
   return (
     <Container disableGutters sx={{

@@ -3,15 +3,21 @@ import { useAccessToken } from "./auth";
 import { User } from "../store/interfaces/User";
 import ApiClient from "../services/apiClient";
 import useAppStore from "../store/AppStore";
-import { MCRM_QUERY_CURRENT_USER, MCRM_QUERY_KEY_USERS } from "../services/app.constants";
+import { MCRM_QUERY_CURRENT_USER } from "../services/app.constants";
+import { CurrentUser } from "../store/interfaces/CurrentUser";
 
-export const useUser = (currentUserId: number) => {
+export const useUser = (currentUser: CurrentUser | undefined,
+    handleSuccess? : (data: User) => void, 
+    handleError? : () => void) => {
 
   const authorizationHeader = useAccessToken();
 
   const fetchUser = () => {
+    if(!currentUser){
+      throw new Error(`Current user doesn't exist.`);
+    }
     const api = new ApiClient<User>('user');
-    return api.getOne({ headers: authorizationHeader }, currentUserId);
+    return api.getOne({ headers: authorizationHeader }, currentUser.id);
   }
 
   return useQuery<User, Error>({
@@ -20,18 +26,20 @@ export const useUser = (currentUserId: number) => {
     staleTime: Infinity,
     cacheTime: 0,
     keepPreviousData: true, // only data is back then refresh notice the observers
-    onError: (error: Error) => {
-      console.log(error);
+    onError: (error: Error) => {  
+      console.log('handle error');
+      handleError?.();
       return error;
     },
     onSuccess: (data: User) => {
-      //console.log('success', data);
+      console.log('handle success', data);
+
+      handleSuccess?.(data);
     }
   });
 };
 
-
-export const useUpdateUser = (cleanUp?: () => void) => {
+export const useUpdateUser = (handleSuccess?: () => void, handleError?: () => void) => {
   const queryClient = useQueryClient();
   const authHeader = useAccessToken();
   const currentUser = useAppStore(s => s.currentUser);
@@ -56,10 +64,11 @@ export const useUpdateUser = (cleanUp?: () => void) => {
       queryClient.invalidateQueries({
         queryKey: [MCRM_QUERY_CURRENT_USER],
       });
-      cleanUp?.();
+      handleSuccess?.();
     },
 
     onError: (error: Error, variables: User) => {
+      handleError?.();
       return error;
     },
   });
