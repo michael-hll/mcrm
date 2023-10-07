@@ -1,12 +1,12 @@
-import { Button, Container, Stack, TextField, Typography } from "@mui/material";
-import { SyntheticEvent, useCallback, useRef, useState } from "react";
+import { Container, Stack, TextField, Typography } from "@mui/material";
+import { SyntheticEvent, useCallback, useState } from "react";
+import AppAlert from "../../components/AppAlert/AppAlert";
+import AppButton from "../../components/AppButton/AppButton";
 import AppForm from "../../components/AppForm/AppForm";
 import { useUpdateUser, useUser } from "../../hooks/user";
 import useAppStore from "../../store/AppStore";
-import AppButton from "../../components/AppButton/AppButton";
-import { SHARED_CONTROL_PROPS, useAppForm } from "../../utils/form";
 import { User } from "../../store/interfaces/User";
-import AppAlert from "../../components/AppAlert/AppAlert";
+import { SHARED_CONTROL_PROPS, useAppForm } from "../../utils/form";
 
 const VALIDATE_FORM_EMAIL = {
   email: {
