@@ -51,7 +51,7 @@ Now the backend is ready. If you want to see all the apis available, from
 browser enter this address: http://localhost:3001/swagger
 You will see each api useage there:
 
-<img src="https://github.com/michael-hll/mcrm/blob/main/design/backend-apis.png" alt="drawing" width="200"/>
+<img src="https://github.com/michael-hll/mcrm/blob/main/design/backend-apis.png" alt="drawing" width="260"/>
 
 ### Step 3 Start the Frontend
 3.1 Go to directory react-front and run command 'npm install'
@@ -60,5 +60,9 @@ You will see each api useage there:
 
 3.3 From browser enter address: http://localhost:3000, you should see the login page:
 
-<img src="https://github.com/michael-hll/mcrm/blob/main/design/login.png" alt="drawing" width="200"/>
+<img src="https://github.com/michael-hll/mcrm/blob/main/design/login.png" alt="drawing" width="260"/>
+
+Play with the Update Profile page:
+
+<img src="https://github.com/michael-hll/mcrm/blob/main/design/UpdateProfile.jpg" alt="drawing" width="350"/>
 
