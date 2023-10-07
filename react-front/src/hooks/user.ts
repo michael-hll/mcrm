@@ -25,13 +25,13 @@ export const useUser = (currentUserId: number) => {
       return error;
     },
     onSuccess: (data: User) => {
-      console.log('success', data);
+      //console.log('success', data);
     }
   });
 };
 
 
-export const useUpdateUser = () => {
+export const useUpdateUser = (cleanUp?: () => void) => {
   const queryClient = useQueryClient();
   const authHeader = useAccessToken();
   const currentUser = useAppStore(s => s.currentUser);
@@ -55,7 +55,8 @@ export const useUpdateUser = () => {
     onSuccess: (savedUser: User, newUser: User) => {
       queryClient.invalidateQueries({
         queryKey: [MCRM_QUERY_CURRENT_USER],
-      })
+      });
+      cleanUp?.();
     },
 
     onError: (error: Error, variables: User) => {

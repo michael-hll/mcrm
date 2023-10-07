@@ -1,7 +1,8 @@
 import axios, { AxiosRequestConfig } from "axios";
+import { MCRM_AXIOS_BASE_URL } from "./config";
 
 const axiosInstance = axios.create({
-  baseURL: 'http://localhost:3001/api/'
+  baseURL: MCRM_AXIOS_BASE_URL,
 });
 
 type UpdateTResponse<T> = {
@@ -13,7 +14,7 @@ type CreateTResponse<T> = {
 };
 
 class ApiClient<T> {
-  
+
   constructor(private endpoint: string) { }
 
   getAll = async (config: AxiosRequestConfig) => {

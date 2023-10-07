@@ -1,4 +1,4 @@
-import { Container, Stack, TextField, Typography } from "@mui/material";
+import { AlertTitle, Container, Snackbar, Stack, TextField, Typography } from "@mui/material";
 import { SyntheticEvent, useCallback, useState } from "react";
 import AppAlert from "../../components/AppAlert/AppAlert";
 import AppButton from "../../components/AppButton/AppButton";
@@ -8,6 +8,9 @@ import useAppStore from "../../store/AppStore";
 import { User } from "../../store/interfaces/User";
 import { SHARED_CONTROL_PROPS, useAppForm } from "../../utils/form";
 import { useNavigate } from "react-router-dom";
+import React from "react";
+import SnackbarAlert from "../../components/SnackBarAlert/SnackBarAlert";
+import CustomSnackbar from "../../components/SnackBarAlert/CustomSnackbar";
 
 const VALIDATE_FORM_EMAIL = {
   email: {
@@ -20,13 +23,16 @@ const UserProfileView = () => {
 
   const currentUser = useAppStore(s => s.currentUser);
   const userQuery = useUser(currentUser ? currentUser.id : -1);
-  const userUpdateQuery = useUpdateUser();
+  const [SnackBarOpen, setSnackBarOpen] = useState<boolean>(false);
+  const userUpdateQuery = useUpdateUser(() => {
+    setSnackBarOpen(true);
+  });
   const { formState, onFieldChange, fieldGetError, fieldHasError, isFormValid, setFormState } = useAppForm({
     validationSchema: VALIDATE_FORM_EMAIL,
     initialValues: { ...userQuery.data },
   });
   const navigate = useNavigate();
-  if(!currentUser) {
+  if (!currentUser) {
     navigate('/auth', { replace: true });
   }
   // we need this below logic, since when create useAppForm, the initial state is still undefined
@@ -42,6 +48,13 @@ const UserProfileView = () => {
 
   const [error, setError] = useState<string>('');
   const [showError, setShowError] = useState<boolean>(true);
+
+  const handleSnackClose = (event: React.SyntheticEvent | Event, reason?: string) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setSnackBarOpen(false);
+  };
 
   // submit form 
   const handleFormSubmit = useCallback(
@@ -61,9 +74,8 @@ const UserProfileView = () => {
 
   if (userQuery.isLoading) return <p> Loading... </p>;
   if (userUpdateQuery.isLoading) return <p> Loading... </p>;
-  
+
   if (userQuery.isError) {
-    console.log('user query error:', userQuery.error);
     if (showError && error !== userQuery.error.message) {
       setError(userQuery.error.message);
     }
@@ -212,6 +224,10 @@ const UserProfileView = () => {
           <AppButton type="submit" color="primary" disabled={userUpdateQuery.isLoading}>
             Update
           </AppButton>
+          <CustomSnackbar 
+            open={SnackBarOpen} 
+            onClose={handleSnackClose} 
+            message={'Update user profile success!'}/>
         </Stack>
       </AppForm>
     </Container>
