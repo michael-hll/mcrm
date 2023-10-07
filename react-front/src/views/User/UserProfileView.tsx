@@ -32,13 +32,13 @@ const UserProfileView = () => {
       values: data,
     }));
   }, (error) => {
-    setError(error?.message ?? '');
+    setError(error.message);
   });
   const [SnackBarOpen, setSnackBarOpen] = useState<boolean>(false);
   const userUpdateQuery = useUpdateUser((user) => {
     setSnackBarOpen(true);
   }, (error) => {
-    setError(error?.message ?? '');
+    setError(error.message);
   });
   
   const navigate = useNavigate();

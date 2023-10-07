@@ -16,28 +16,28 @@ const CustomSnackbar = ({ open, onClose, message }: CustomSnackbarProps) => {
     <>
       {darkMode && <Snackbar
         open={open}
-        autoHideDuration={6000}
+        autoHideDuration={5000}
         onClose={onClose}
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
       >
         <SnackbarAlert
           onClose={onClose}
-          severity="info"
-          sx={{ width: '100%', backgroundColor: '#1975D2', color: '#fff' }}>
+          severity="success"
+          sx={{ width: '100%', backgroundColor: '#37b24d', color: '#fff' }}>
           <AlertTitle>Success</AlertTitle>
           {message}
         </SnackbarAlert>
       </Snackbar>}
       {!darkMode && <Snackbar
         open={open}
-        autoHideDuration={6000}
+        autoHideDuration={5000}
         onClose={onClose}
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
       >
         <SnackbarAlert
           onClose={onClose}
-          severity="info"
-          sx={{ width: '100%', backgroundColor: '#34383C', color: '#fff' }}>
+          severity="success"
+          sx={{ width: '100%', backgroundColor: '#37b24d', color: '#fff' }}>
           <AlertTitle>Success</AlertTitle>
           {message}
         </SnackbarAlert>

@@ -27,13 +27,10 @@ export const useUser = (currentUser: CurrentUser | undefined,
     cacheTime: 0,
     keepPreviousData: true, // only data is back then refresh notice the observers
     onError: (error: Error) => {  
-      console.log('handle error');
       handleError?.(error);
       return error;
     },
     onSuccess: (data: User) => {
-      console.log('handle success', data);
-
       handleSuccess?.(data);
     }
   });
