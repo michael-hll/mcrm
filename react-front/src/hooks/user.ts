@@ -8,7 +8,7 @@ import { CurrentUser } from "../store/interfaces/CurrentUser";
 
 export const useUser = (currentUser: CurrentUser | undefined,
     handleSuccess? : (data: User) => void, 
-    handleError? : () => void) => {
+    handleError? : (error: Error) => void) => {
 
   const authorizationHeader = useAccessToken();
 
@@ -28,7 +28,7 @@ export const useUser = (currentUser: CurrentUser | undefined,
     keepPreviousData: true, // only data is back then refresh notice the observers
     onError: (error: Error) => {  
       console.log('handle error');
-      handleError?.();
+      handleError?.(error);
       return error;
     },
     onSuccess: (data: User) => {
@@ -39,7 +39,9 @@ export const useUser = (currentUser: CurrentUser | undefined,
   });
 };
 
-export const useUpdateUser = (handleSuccess?: () => void, handleError?: () => void) => {
+export const useUpdateUser = (
+  handleSuccess?: (user: User) => void, 
+  handleError?: (error: Error) => void) => {
   const queryClient = useQueryClient();
   const authHeader = useAccessToken();
   const currentUser = useAppStore(s => s.currentUser);
@@ -64,11 +66,11 @@ export const useUpdateUser = (handleSuccess?: () => void, handleError?: () => vo
       queryClient.invalidateQueries({
         queryKey: [MCRM_QUERY_CURRENT_USER],
       });
-      handleSuccess?.();
+      handleSuccess?.(savedUser);
     },
 
     onError: (error: Error, variables: User) => {
-      handleError?.();
+      handleError?.(error);
       return error;
     },
   });

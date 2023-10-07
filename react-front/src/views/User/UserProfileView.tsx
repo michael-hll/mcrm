@@ -31,14 +31,14 @@ const UserProfileView = () => {
       ...formState,
       values: data,
     }));
-  }, () => {
-    setError(userQuery.error?.message ?? '');
+  }, (error) => {
+    setError(error?.message ?? '');
   });
   const [SnackBarOpen, setSnackBarOpen] = useState<boolean>(false);
-  const userUpdateQuery = useUpdateUser(() => {
+  const userUpdateQuery = useUpdateUser((user) => {
     setSnackBarOpen(true);
-  }, () => {
-    setError(userUpdateQuery.error?.message ?? '');
+  }, (error) => {
+    setError(error?.message ?? '');
   });
   
   const navigate = useNavigate();
