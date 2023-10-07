@@ -16,7 +16,7 @@ So spent some time write a small application include both front & backend.
 ### Frontend
 (The UI code is referenced a another github project: react-typescript-mui-with-auth-starter)
 1. Signup/Signin - Done
-2. User Maintain - TODO
+2. User Maintain - Done
 3. Role Maintain - TODO
 4. User's Role Maintain - TODO
 5. API's Role maintian - TODO
