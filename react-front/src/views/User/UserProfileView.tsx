@@ -7,6 +7,7 @@ import { useUpdateUser, useUser } from "../../hooks/user";
 import useAppStore from "../../store/AppStore";
 import { User } from "../../store/interfaces/User";
 import { SHARED_CONTROL_PROPS, useAppForm } from "../../utils/form";
+import { useNavigate } from "react-router-dom";
 
 const VALIDATE_FORM_EMAIL = {
   email: {
@@ -19,24 +20,28 @@ const UserProfileView = () => {
 
   const currentUser = useAppStore(s => s.currentUser);
   const userQuery = useUser(currentUser ? currentUser.id : -1);
-  const user = userQuery.data;
   const userUpdateQuery = useUpdateUser();
   const { formState, onFieldChange, fieldGetError, fieldHasError, isFormValid, setFormState } = useAppForm({
     validationSchema: VALIDATE_FORM_EMAIL,
-    initialValues: { ...user },
+    initialValues: { ...userQuery.data },
   });
+  const navigate = useNavigate();
+  if(!currentUser) {
+    navigate('/auth', { replace: true });
+  }
   // we need this below logic, since when create useAppForm, the initial state is still undefined
   // And react useState only use the first render initial state
   // so we need to reset the state values when we have
   const values = formState.values as User; // Typed alias to formState.values as the "Source of Truth"
-  if(!values.email && user){
+  if (Object.keys(values).length === 0 && userQuery.data) {
     setFormState(({
       ...formState,
-      values: user,
+      values: userQuery.data,
     }));
   }
 
   const [error, setError] = useState<string>('');
+  const [showError, setShowError] = useState<boolean>(true);
 
   // submit form 
   const handleFormSubmit = useCallback(
@@ -45,19 +50,28 @@ const UserProfileView = () => {
       userUpdateQuery.mutate({
         ...values
       });
+      setShowError(true);
     }, [userUpdateQuery, values]
   );
 
-  const handleCloseError = useCallback(() => setError(''), []);
+  const handleCloseError = useCallback(() => {
+    setShowError(false);
+    setError('')
+  }, []);
 
   if (userQuery.isLoading) return <p> Loading... </p>;
-  if (userQuery.isError){
-    setError(userQuery.error.message);
-    
+  if (userUpdateQuery.isLoading) return <p> Loading... </p>;
+  
+  if (userQuery.isError) {
+    console.log('user query error:', userQuery.error);
+    if (showError && error !== userQuery.error.message) {
+      setError(userQuery.error.message);
+    }
   }
-  if(userUpdateQuery.isError){
-    setError(userUpdateQuery.error.message);
-    console.log('mutation error', userUpdateQuery.error);
+  if (userUpdateQuery.isError) {
+    if (showError && error !== userUpdateQuery.error.message) {
+      setError(userUpdateQuery.error.message);
+    }
   }
 
   return (
