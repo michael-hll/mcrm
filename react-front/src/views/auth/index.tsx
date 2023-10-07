@@ -2,7 +2,8 @@ import { Route, Routes } from 'react-router-dom';
 
 import NotFoundView from '../NotFoundView';
 import SignInView from './SignInView';
-import SignUpView from './SignUpView';
+import SignUpView from './SignUpView'; 
+
 
 /**
  * Routes for "Auth" flow

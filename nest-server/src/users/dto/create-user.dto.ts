@@ -29,43 +29,36 @@ export class CreateUserDto {
     lastname: string;
 
     @IsString()
-    @Length(5)
     @IsOptional()
     @ApiProperty()
     phone: string;
 
     @IsString()
-    @Length(5)
     @IsOptional()
     @ApiProperty()
     cellphone: string;
 
     @IsString()
-    @Length(2)
     @IsOptional()
     @ApiProperty()
     country: string;
 
     @IsString()
-    @Length(2)
     @IsOptional()
     @ApiProperty()
     city: string;
 
     @IsString()
-    @Length(2)
     @IsOptional()
     @ApiProperty()
     address1: string;
 
     @IsString()
-    @Length(2)
     @IsOptional()
     @ApiProperty()
     address2: string;
 
     @IsString()
-    @Length(2)
     @IsOptional()
     @ApiProperty()
     zipcode: string;

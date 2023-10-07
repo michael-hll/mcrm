@@ -23,11 +23,20 @@ const UserProfileView = () => {
   const userUpdateQuery = useUpdateUser();
   const { formState, onFieldChange, fieldGetError, fieldHasError, isFormValid, setFormState } = useAppForm({
     validationSchema: VALIDATE_FORM_EMAIL,
-    initialValues: { ...{email:'admin@test.com'} },
+    initialValues: { ...user },
   });
-
+  // we need this below logic, since when create useAppForm, the initial state is still undefined
+  // And react useState only use the first render initial state
+  // so we need to reset the state values when we have
   const values = formState.values as User; // Typed alias to formState.values as the "Source of Truth"
-  const [error, setError] = useState<string>();
+  if(!values.email && user){
+    setFormState(({
+      ...formState,
+      values: user,
+    }));
+  }
+
+  const [error, setError] = useState<string>('');
 
   // submit form 
   const handleFormSubmit = useCallback(
@@ -39,11 +48,18 @@ const UserProfileView = () => {
     }, [userUpdateQuery, values]
   );
 
-  const handleCloseError = useCallback(() => setError(undefined), []);
+  const handleCloseError = useCallback(() => setError(''), []);
 
   if (userQuery.isLoading) return <p> Loading... </p>;
-  if (userQuery.isError) return <p>{JSON.stringify(userQuery.error)}</p>;
-  
+  if (userQuery.isError){
+    setError(userQuery.error.message);
+    
+  }
+  if(userUpdateQuery.isError){
+    setError(userUpdateQuery.error.message);
+    console.log('mutation error', userUpdateQuery.error);
+  }
+
   return (
     <Container disableGutters sx={{
       display: 'flex',
@@ -180,7 +196,7 @@ const UserProfileView = () => {
             </AppAlert>
           ) : null}
           <AppButton type="submit" color="primary" disabled={userUpdateQuery.isLoading}>
-            Save
+            Update
           </AppButton>
         </Stack>
       </AppForm>

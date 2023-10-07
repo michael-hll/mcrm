@@ -8,7 +8,7 @@ import UserProfileView from './UserProfileView';
 const UserRoutes = () => {
   return (
     <Routes>
-      <Route path="/" element={<UserProfileView />} />
+      <Route path="*" element={<UserProfileView />} /> 
     </Routes>
   );
 };
