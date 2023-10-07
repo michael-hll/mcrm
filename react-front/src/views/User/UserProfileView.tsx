@@ -25,7 +25,7 @@ const UserProfileView = () => {
     initialValues: {},
   });
   const currentUser = useAppStore(s => s.currentUser);
-  const values = formState.values as User;
+  
   const userQuery = useUser(currentUser, (data) => {
     setFormState(({
       ...formState,
@@ -52,14 +52,12 @@ const UserProfileView = () => {
     }
     setSnackBarOpen(false);
   };
-
+  const values = formState.values as User;
   // submit form 
   const handleFormSubmit = useCallback(
     async (event: SyntheticEvent) => {
       event.preventDefault();
-      userUpdateQuery.mutate({
-        ...values
-      });
+      userUpdateQuery.mutate(values);
     }, [userUpdateQuery, values]
   );
 
@@ -312,7 +310,7 @@ const UserProfileView = () => {
               Update
             </AppButton>
           </Box>
-          {/* Row 10 */}
+          {/* Row 10 */} 
           <Box sx={{
             gridColumnStart: '1',
             gridColumnEnd: 'span 6',
