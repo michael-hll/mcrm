@@ -22,7 +22,20 @@ const UserProfileView = () => {
   const [error, setError] = useState<string>('');
   const { formState, onFieldChange, fieldGetError, fieldHasError, setFormState } = useAppForm({
     validationSchema: VALIDATE_FORM_EMAIL,
-    initialValues: {},
+    initialValues: {
+      email: '', 
+      username: '',
+      active: true,
+      address1: '',
+      address2: '',
+      cellphone: '',
+      phone: '',
+      country: '',
+      city: '',
+      zipcode: '',
+      firstname: '',
+      lastname: '',  
+    },
   });
   const currentUser = useAppStore(s => s.currentUser);
   
