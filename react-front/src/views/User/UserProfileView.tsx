@@ -87,7 +87,7 @@ const UserProfileView = () => {
             gridColumnStart: '1',
             gridColumnEnd: 'span 6',
             justifyContent: 'center',    
-            padding: '20px 0px'       
+            padding: '24px 0px'       
           }}>
             <Typography gutterBottom variant="h4"
               component="div" sx={{
@@ -100,7 +100,7 @@ const UserProfileView = () => {
           <Box sx={{
             gridColumnStart: '1',
             gridColumnEnd: 'span 3',
-            paddingRight: '15px',
+            paddingRight: '16px',
           }}>
             <TextField
               sx={{ margin: '0px 0px 15px 0px' }}
@@ -118,7 +118,7 @@ const UserProfileView = () => {
           <Box sx={{
             gridColumnStart: '4',
             gridColumnEnd: 'span 3',
-            paddingRight: '15px',
+            paddingRight: '16px',
           }}>
             <TextField
               sx={{ margin: '0px 0px 15px 0px' }}
@@ -137,7 +137,7 @@ const UserProfileView = () => {
           <Box sx={{
             gridColumnStart: '1',
             gridColumnEnd: 'span 3',
-            paddingRight: '15px',
+            paddingRight: '16px',
           }}>
             <TextField
               sx={{ margin: '0px 0px 15px 0px' }}
@@ -153,7 +153,7 @@ const UserProfileView = () => {
           <Box sx={{
             gridColumnStart: '4',
             gridColumnEnd: 'span 3',
-            paddingRight: '15px',
+            paddingRight: '16px',
           }}>
             <TextField
               sx={{ margin: '0px 0px 15px 0px'}}
@@ -170,7 +170,7 @@ const UserProfileView = () => {
           <Box sx={{
             gridColumnStart: '1',
             gridColumnEnd: 'span 3',
-            paddingRight: '15px',
+            paddingRight: '16px',
           }}>
             <TextField
               sx={{ margin: '0px 0px 15px 0px' }}
@@ -186,7 +186,7 @@ const UserProfileView = () => {
           <Box sx={{
             gridColumnStart: '4',
             gridColumnEnd: 'span 3',
-            paddingRight: '15px',
+            paddingRight: '16px',
           }}>
             <TextField
               sx={{ margin: '0px 0px 15px 0px' }}
@@ -203,7 +203,7 @@ const UserProfileView = () => {
           <Box sx={{
             gridColumnStart: '1',
             gridColumnEnd: 'span 2',
-            paddingRight: '15px',
+            paddingRight: '16px',
           }}>
             <TextField
               sx={{ margin: '0px 0px 15px 0px' }}
@@ -219,7 +219,7 @@ const UserProfileView = () => {
           <Box sx={{
             gridColumnStart: '3',
             gridColumnEnd: 'span 2',
-            paddingRight: '15px',
+            paddingRight: '16px',
           }}>
             <TextField
               sx={{ margin: '0px 0px 15px 0px' }}
@@ -235,7 +235,7 @@ const UserProfileView = () => {
           <Box sx={{
             gridColumnStart: '5',
             gridColumnEnd: 'span 2',
-            paddingRight: '15px',
+            paddingRight: '16px',
           }}>
             <TextField
               sx={{ margin: '0px 0px 15px 0px' }}
@@ -252,7 +252,7 @@ const UserProfileView = () => {
           <Box sx={{
             gridColumnStart: '1',
             gridColumnEnd: 'span 6',
-            paddingRight: '15px',
+            paddingRight: '16px',
           }}>
             <TextField
               sx={{ margin: '0px 0px 15px 0px' }}
@@ -270,7 +270,7 @@ const UserProfileView = () => {
           <Box sx={{
             gridColumnStart: '1',
             gridColumnEnd: 'span 6',
-            paddingRight: '15px',
+            paddingRight: '16px',
           }}>
             <TextField
               sx={{ margin: '0px 0px 15px 0px' }}
@@ -288,7 +288,7 @@ const UserProfileView = () => {
           <Box sx={{
             gridColumnStart: '1',
             gridColumnEnd: 'span 6',
-            paddingRight: '15px',
+            paddingRight: '16px',
           }}>
             {error ? (
               <AppAlert severity="error" onClose={handleCloseError}>
@@ -302,7 +302,7 @@ const UserProfileView = () => {
             gridColumnStart: '1',
             gridColumnEnd: 'span 6',
             justifyContent: 'center',
-            paddingRight: '15px',
+            paddingRight: '16px',
           }}>
             <AppButton type="submit" color="primary" disabled={userUpdateQuery.isLoading} sx={{
               width: '200px',
@@ -314,7 +314,7 @@ const UserProfileView = () => {
           <Box sx={{
             gridColumnStart: '1',
             gridColumnEnd: 'span 6',
-            paddingRight: '15px',
+            paddingRight: '16px',
           }}>
             <CustomSnackbar
               open={SnackBarOpen}
