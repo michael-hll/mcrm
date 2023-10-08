@@ -1,7 +1,7 @@
 export interface User {
     username?: string;
     password?: string;
-    email?: string; 
+    email?: string;
     firstname?: string;
     lastname?: string;
     phone?: string;
@@ -13,3 +13,18 @@ export interface User {
     zipcode?: string;
     active?: true;
 }
+
+export const InitUserInstance = {
+    email: '',
+    username: '',
+    active: true,
+    address1: '',
+    address2: '',
+    cellphone: '',
+    phone: '',
+    country: '',
+    city: '',
+    zipcode: '',
+    firstname: '',
+    lastname: '',
+};

@@ -7,7 +7,7 @@ import AppForm from "../../components/AppForm/AppForm";
 import CustomSnackbar from "../../components/SnackBarAlert/CustomSnackbar";
 import { useUpdateUser, useUser } from "../../hooks/user";
 import useAppStore from "../../store/AppStore";
-import { User } from "../../store/interfaces/User";
+import { InitUserInstance, User } from "../../store/interfaces/User";
 import { SHARED_CONTROL_PROPS, useAppForm } from "../../utils/form";
 
 const VALIDATE_FORM_EMAIL = {
@@ -22,20 +22,7 @@ const UserProfileView = () => {
   const [error, setError] = useState<string>('');
   const { formState, onFieldChange, fieldGetError, fieldHasError, setFormState } = useAppForm({
     validationSchema: VALIDATE_FORM_EMAIL,
-    initialValues: {
-      email: '', 
-      username: '',
-      active: true,
-      address1: '',
-      address2: '',
-      cellphone: '',
-      phone: '',
-      country: '',
-      city: '',
-      zipcode: '',
-      firstname: '',
-      lastname: '',  
-    },
+    initialValues: InitUserInstance
   });
   const currentUser = useAppStore(s => s.currentUser);
   
