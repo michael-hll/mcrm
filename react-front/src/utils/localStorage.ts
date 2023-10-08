@@ -1,3 +1,5 @@
+import { MCRM_APP_STORE_BACKUP } from '../services/app.constants';
+import { Store } from '../store/interfaces/Store';
 import { IS_SERVER } from './environment';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -59,4 +61,13 @@ export function localStorageDelete(name?: string) {
   } else {
     localStorage.clear();
   }
+}
+
+export function RefreshCheck(store: Store) {
+  if(!store.currentUser){
+    const backupStore = localStorageGet(MCRM_APP_STORE_BACKUP) as Store;
+    if(backupStore){
+      store.set({...backupStore});
+    }
+  }  
 }

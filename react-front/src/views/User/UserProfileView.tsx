@@ -1,15 +1,14 @@
 import { Box, Container, TextField, Typography } from "@mui/material";
-import React, { SyntheticEvent, useCallback, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { SyntheticEvent, useCallback, useEffect, useState } from "react";
 import AppAlert from "../../components/AppAlert/AppAlert";
 import AppButton from "../../components/AppButton/AppButton";
 import AppForm from "../../components/AppForm/AppForm";
 import CustomSnackbar from "../../components/SnackBarAlert/CustomSnackbar";
 import { useUpdateUser, useUser } from "../../hooks/user";
-import useAppStore from "../../store/AppStore";
 import { InitUserInstance, User } from "../../store/interfaces/User";
 import { SHARED_CONTROL_PROPS, useAppForm } from "../../utils/form";
-import { useBrowerRefreshCheck } from "../../hooks";
+import useAppStore from "../../store/AppStore";
+import { RefreshCheck } from "../../utils/localStorage";
 
 const VALIDATE_FORM_EMAIL = {
   email: {
@@ -20,16 +19,19 @@ const VALIDATE_FORM_EMAIL = {
 
 const UserProfileView = () => {
 
+  let store = useAppStore();
   const [error, setError] = useState<string>('');
-  useBrowerRefreshCheck();
-  const navigate = useNavigate();
+  const [SnackBarOpen, setSnackBarOpen] = useState<boolean>(false);
   const { formState, onFieldChange, fieldGetError, fieldHasError, setFormState } = useAppForm({
     validationSchema: VALIDATE_FORM_EMAIL,
     initialValues: InitUserInstance
   });
-  const currentUser = useAppStore(s => s.currentUser);
-  
-  const userQuery = useUser(currentUser, (data) => {
+
+  useEffect(() => {
+    RefreshCheck(store);
+  }, []); 
+
+  const userQuery = useUser(store.currentUser, (data) => {
     setFormState(({
       ...formState,
       values: data,
@@ -37,7 +39,7 @@ const UserProfileView = () => {
   }, (error) => {
     setError(error.message);
   });
-  const [SnackBarOpen, setSnackBarOpen] = useState<boolean>(false);
+
   const userUpdateQuery = useUpdateUser((user) => {
     setSnackBarOpen(true);
   }, (error) => {
@@ -62,8 +64,6 @@ const UserProfileView = () => {
   const handleCloseError = useCallback(() => {
     setError('')
   }, []);
-
-  
 
   if (userQuery.isLoading) return <p> Loading... </p>;
   if (userUpdateQuery.isLoading) return <p> Loading... </p>;

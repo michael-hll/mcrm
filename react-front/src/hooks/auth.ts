@@ -4,6 +4,7 @@ import useAppStore from '../store/AppStore';
 import { MCRM_ACCESS_TOKEN_KEY, MCRM_APP_STORE_BACKUP, MCRM_REFRESH_TOKEN_KEY } from '../services/app.constants';
 import { CurrentUser } from '../store/interfaces/CurrentUser';
 import { localStorageDelete, localStorageGet } from '../utils/localStorage';
+import { Store } from '../store/interfaces/Store';
 
 /**
  * Hook to get currently logged user
@@ -60,10 +61,10 @@ export function useAuthWatchdog(afterLogin: () => void, afterLogout: () => void)
 export function useAccessToken() {
   const accessToken = localStorage.getItem(MCRM_ACCESS_TOKEN_KEY);
   if (accessToken) {
-    return { Authorization: 'Bearer ' + accessToken }; 
+    return { Authorization: 'Bearer ' + accessToken };
     // return { 'x-access-token': user.accessToken };       // for Node.js Express back-end
   } else {
-    return { Authorization: '' }; 
+    return { Authorization: '' };
     // return { 'x-access-token': null }; // for Node Express back-end
   }
 }
@@ -71,22 +72,10 @@ export function useAccessToken() {
 export function useRefreshToken() {
   const refreshToken = localStorage.getItem(MCRM_REFRESH_TOKEN_KEY);
   if (refreshToken) {
-    return { Authorization: 'Bearer ' + refreshToken }; 
+    return { Authorization: 'Bearer ' + refreshToken };
     // return { 'x-access-token': user.accessToken };       // for Node.js Express back-end
   } else {
-    return { Authorization: '' }; 
+    return { Authorization: '' };
     // return { 'x-access-token': null }; // for Node Express back-end
-  }
-}
-
-export function useBrowerRefreshCheck() {
-  const store = useAppStore();
-  if(!store.currentUser){
-    const backupStore = localStorageGet(MCRM_APP_STORE_BACKUP);
-    if(backupStore){
-      store.set({
-        ...backupStore
-      })
-    }
   }
 }
