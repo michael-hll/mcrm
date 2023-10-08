@@ -9,8 +9,9 @@ import AppIconButton from "../../components/AppIconButton/AppIconButton";
 import AppAlert from "../../components/AppAlert/AppAlert";
 import useAppStore from "../../store/AppStore";
 import { signIn } from "../../services/auth/auth.service";
-import { MCRM_ACCESS_TOKEN_KEY, MCRM_REFRESH_TOKEN_KEY } from "../../services/app.constants";
+import { MCRM_ACCESS_TOKEN_KEY, MCRM_APP_STORE_BACKUP, MCRM_REFRESH_TOKEN_KEY } from "../../services/app.constants";
 import { TOP_BAR_DESKTOP_HEIGHT } from "../../layout/config";
+import { localStorageSet } from "../../utils/localStorage";
 
 const VALIDATE_FORM_LOGIN_EMAIL = {
   email: {
@@ -53,17 +54,20 @@ const SignInView = () => {
       event.preventDefault();
       signIn(values.email, values.password)
         .then(data => {
-          appStore.set({
-            currentUser:
-            { 
+          const store = {
+            currentUser: {
               id: data.id,
               email: values.email,
               username: data.username,
             },
-            isAuthenticated: true
+            isAuthenticated: true,
+          };
+          appStore.set({
+            ...store,
           })
-          localStorage.setItem(MCRM_ACCESS_TOKEN_KEY, data.accessToken);
-          localStorage.setItem(MCRM_REFRESH_TOKEN_KEY, data.refreshToken);
+          localStorageSet(MCRM_ACCESS_TOKEN_KEY, data.accessToken);
+          localStorageSet(MCRM_REFRESH_TOKEN_KEY, data.refreshToken);
+          localStorageSet(MCRM_APP_STORE_BACKUP, {...store, darkMode: appStore.darkMode});
           navigate('/', { replace: true });
         }).catch(
           err => {

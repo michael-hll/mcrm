@@ -23,6 +23,7 @@ export const useUser = (currentUser: CurrentUser | undefined,
   return useQuery<User, Error>({
     queryKey: [MCRM_QUERY_CURRENT_USER],
     queryFn: fetchUser,
+    enabled: currentUser !== undefined,
     staleTime: Infinity,
     cacheTime: 0,
     keepPreviousData: true, // only data is back then refresh notice the observers

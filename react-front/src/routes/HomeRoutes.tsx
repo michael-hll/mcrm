@@ -15,7 +15,7 @@ const HomeRoutes = () => {
           hasLogin ? <WelcomeView /> : <AuthRoutes />
         } />
         <Route path='/auth/*' element={<AuthRoutes />} />
-        <Route path='/user/' element={<UserRoutes />} />
+        <Route path='/user//*' element={<UserRoutes />} />
       </Routes>
     </DefaultLayout>
 

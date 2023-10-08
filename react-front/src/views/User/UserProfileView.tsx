@@ -9,6 +9,7 @@ import { useUpdateUser, useUser } from "../../hooks/user";
 import useAppStore from "../../store/AppStore";
 import { InitUserInstance, User } from "../../store/interfaces/User";
 import { SHARED_CONTROL_PROPS, useAppForm } from "../../utils/form";
+import { useBrowerRefreshCheck } from "../../hooks";
 
 const VALIDATE_FORM_EMAIL = {
   email: {
@@ -20,6 +21,8 @@ const VALIDATE_FORM_EMAIL = {
 const UserProfileView = () => {
 
   const [error, setError] = useState<string>('');
+  useBrowerRefreshCheck();
+  const navigate = useNavigate();
   const { formState, onFieldChange, fieldGetError, fieldHasError, setFormState } = useAppForm({
     validationSchema: VALIDATE_FORM_EMAIL,
     initialValues: InitUserInstance
@@ -41,11 +44,6 @@ const UserProfileView = () => {
     setError(error.message);
   });
 
-  const navigate = useNavigate();
-  if (!currentUser) {
-    navigate('/auth', { replace: true });
-  }
-
   const handleSnackClose = (event: React.SyntheticEvent | Event, reason?: string) => {
     if (reason === 'clickaway') {
       return;
@@ -64,6 +62,8 @@ const UserProfileView = () => {
   const handleCloseError = useCallback(() => {
     setError('')
   }, []);
+
+  
 
   if (userQuery.isLoading) return <p> Loading... </p>;
   if (userUpdateQuery.isLoading) return <p> Loading... </p>;
