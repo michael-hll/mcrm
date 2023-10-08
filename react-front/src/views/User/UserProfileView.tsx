@@ -22,14 +22,21 @@ const UserProfileView = () => {
   let store = useAppStore();
   const [error, setError] = useState<string>('');
   const [SnackBarOpen, setSnackBarOpen] = useState<boolean>(false);
-  const { formState, onFieldChange, fieldGetError, fieldHasError, setFormState } = useAppForm({
+  const [SubmitEnabled, setSubmitEnabled] = useState<boolean>(false);
+  const { formState, onFieldChange, fieldGetError, fieldHasError, setFormState, isFormTouched } = useAppForm({
     validationSchema: VALIDATE_FORM_EMAIL,
     initialValues: InitUserInstance
   });
 
   useEffect(() => {
     RefreshCheck(store);
-  }, []); 
+  }, []);
+
+  useEffect(() => {
+    if(isFormTouched()){
+      setSubmitEnabled(true);
+    }
+  }, [isFormTouched]);
 
   const userQuery = useUser(store.currentUser, (data) => {
     setFormState(({
@@ -42,6 +49,11 @@ const UserProfileView = () => {
 
   const userUpdateQuery = useUpdateUser((user) => {
     setSnackBarOpen(true);
+    setSubmitEnabled(false);
+    setFormState(({
+      ...formState,
+      touched: {},
+    }));
   }, (error) => {
     setError(error.message);
   });
@@ -57,6 +69,7 @@ const UserProfileView = () => {
   const handleFormSubmit = useCallback(
     async (event: SyntheticEvent) => {
       event.preventDefault();
+      setSubmitEnabled(false);
       userUpdateQuery.mutate(values);
     }, [userUpdateQuery, values]
   );
@@ -64,9 +77,6 @@ const UserProfileView = () => {
   const handleCloseError = useCallback(() => {
     setError('')
   }, []);
-
-  if (userQuery.isLoading) return <p> Loading... </p>;
-  if (userUpdateQuery.isLoading) return <p> Loading... </p>;
 
   return (
     <Container disableGutters sx={{
@@ -86,12 +96,12 @@ const UserProfileView = () => {
             display: 'flex',
             gridColumnStart: '1',
             gridColumnEnd: 'span 6',
-            justifyContent: 'center',    
-            padding: '24px 0px'       
+            justifyContent: 'center',
+            padding: '24px 0px'
           }}>
             <Typography gutterBottom variant="h4"
               component="div" sx={{
-                alignSelf: 'center',                
+                alignSelf: 'center',
               }}>
               Update Profile
             </Typography>
@@ -156,7 +166,7 @@ const UserProfileView = () => {
             paddingRight: '16px',
           }}>
             <TextField
-              sx={{ margin: '0px 0px 15px 0px'}}
+              sx={{ margin: '0px 0px 15px 0px' }}
               label="Lastname"
               name="lastname"
               value={values.lastname}
@@ -304,13 +314,13 @@ const UserProfileView = () => {
             justifyContent: 'center',
             paddingRight: '16px',
           }}>
-            <AppButton type="submit" color="primary" disabled={userUpdateQuery.isLoading} sx={{
+            <AppButton type="submit" color="primary" disabled={!SubmitEnabled || userQuery.isLoading} sx={{
               width: '200px',
             }}>
               Update
             </AppButton>
           </Box>
-          {/* Row 10 */} 
+          {/* Row 10 */}
           <Box sx={{
             gridColumnStart: '1',
             gridColumnEnd: 'span 6',
