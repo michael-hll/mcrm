@@ -2,6 +2,8 @@ import { AppBar, Box, SxProps, Toolbar, Typography } from '@mui/material';
 import { FunctionComponent, ReactNode } from 'react';
 import { MenuItemData, NestedDropdown } from 'mui-nested-menu';
 import useAppStore from '../../store/AppStore';
+import {useNavigate} from "react-router-dom"
+
 
 interface Props {
   endNode?: ReactNode;
@@ -15,52 +17,43 @@ const props: SxProps = {
   width: '100px',
 };
 
-const menuItemsData: MenuItemData = {
-  label: 'Navigation',
-  items: [
-    {
-      label: 'Security',
-      sx: { width: MENU_ITEM_WIDTH },
-      items: [
-        {
-          label: 'Role',
-          callback: (event, item) => console.log('Save As > Option 1 clicked', event, item),
-          sx: { width: MENU_ITEM_WIDTH },
-          items: [
-            {
-              label: 'Create',
-              sx: { width: MENU_ITEM_WIDTH},
-            },
-            {
-              label: 'View',
-              sx: { width: MENU_ITEM_WIDTH, display: hide },
-            }
-          ]
-        },
-        {
-          label: 'Api Permissions',
-          callback: (event, item) => console.log('Save As > Option 2 clicked', event, item),
-          sx: { width: MENU_ITEM_WIDTH },
-        },
-        {
-          label: 'Menu Permissions',
-          callback: (event, item) => console.log('Save As > Option 2 clicked', event, item),
-          sx: { width: MENU_ITEM_WIDTH },
-        },
-      ],
-    },
-    {
-      label: 'Settings',
-    },
-  ],
-};
-
 /**
  * Renders TopBar composition
  * @component TopBar
  */
 const TopBar: FunctionComponent<Props> = ({ endNode, startNode, title = '', ...restOfProps }) => {
   const isAuthenticated = useAppStore(s => s.isAuthenticated);
+  const navigate = useNavigate(); 
+  // TODO: dynamic genearte menu item data based on roles from database
+  const menuItemsData: MenuItemData = {
+    label: 'Navigation',
+    items: [
+      {
+        label: 'Security',
+        sx: { width: MENU_ITEM_WIDTH },
+        items: [
+          {
+            label: 'Roles',
+            callback: (event, item) => navigate('/role'),
+            sx: { width: MENU_ITEM_WIDTH },
+          },
+          {
+            label: 'Api Permissions',
+            callback: (event, item) => console.log('Save As > Option 2 clicked', event, item),
+            sx: { width: MENU_ITEM_WIDTH },
+          },
+          {
+            label: 'Menu Permissions',
+            callback: (event, item) => console.log('Save As > Option 2 clicked', event, item),
+            sx: { width: MENU_ITEM_WIDTH },
+          },
+        ],
+      },
+      {
+        label: 'Settings',
+      },
+    ],
+  };
   let display = 'none';
   if(isAuthenticated) {
     display = 'flex';
@@ -78,7 +71,7 @@ const TopBar: FunctionComponent<Props> = ({ endNode, startNode, title = '', ...r
       <Toolbar disableGutters sx={{ paddingX: 1 }}>
         {startNode}
         <Box sx={{
-          marginLeft: '36px', 
+          marginX: '36px', 
           display: {display},
         }}
         >
@@ -102,9 +95,9 @@ const TopBar: FunctionComponent<Props> = ({ endNode, startNode, title = '', ...r
         <Typography
           variant="h6"
           sx={{
-            marginX: 1,
+            marginX: '36px',
             flexGrow: 1,
-            textAlign: 'center',
+            textAlign: 'right',
             whiteSpace: 'nowrap',
           }}
         >

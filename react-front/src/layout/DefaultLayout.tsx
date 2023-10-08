@@ -10,7 +10,7 @@ import SideBar from "./SideBar/SideBar";
 import ErrorBoundary from "../components/ErrorBoundary";
 import BottomBar from "./BottomBar";
 
-const TITLE_PUBLIC = 'MCRM App';
+const TITLE_PUBLIC = 'MCRM';
 
 /**
  * SideBar navigation items with links

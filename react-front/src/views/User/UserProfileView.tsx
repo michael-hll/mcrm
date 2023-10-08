@@ -30,7 +30,7 @@ const UserProfileView = () => {
 
   useEffect(() => {
     RefreshCheck(store);
-  }, []);
+  }, [store]);
 
   useEffect(() => {
     if(isFormTouched()){
