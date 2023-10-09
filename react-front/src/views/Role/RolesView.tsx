@@ -26,6 +26,7 @@ import DataGridToolbar from '../../components/DataGrid/DataGridToolBar';
 import { Stack } from '@mui/system';
 import { RefreshCheck } from '../../utils/localStorage';
 import useAppStore from '../../store/AppStore';
+import { RoleCodes } from '../../store/enum/RoleCodes';
 
 const RolesView = () => {
 
@@ -148,7 +149,9 @@ const RolesView = () => {
     if (oldRow) {
       roleDeleteQuery.mutate(oldRow as Role)
     }
-    setRows(rows.filter((row) => row.code !== code));
+    if(code !== RoleCodes.ADMIN && code !== RoleCodes.DEFAULT){
+      setRows(rows.filter((row) => row.code !== code));
+    }    
   }
 
   const columns: GridColDef[] = [
