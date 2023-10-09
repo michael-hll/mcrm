@@ -17,9 +17,10 @@ So spent some time write a small application include both front & backend.
 (The UI code is referenced a another github project: react-typescript-mui-with-auth-starter)
 1. Signup/Signin - Done
 2. User Maintain - Done
-3. Role Maintain - TODO
-4. User's Role Maintain - TODO
-5. API's Role maintian - TODO
+3. Role Maintain - Done
+4. User's Role maintenance - TODO
+5. API's Role maintenance - TODO
+6. Menu's Role maintenance - TODO
 
 ## How To Run
 Prerequisite: NodeJs, Docker Desktop
@@ -65,4 +66,9 @@ You will see each api useage there:
 Play with the Update Profile page:
 
 <img src="https://github.com/michael-hll/mcrm/blob/main/design/UpdateProfile.jpg" alt="drawing" width="350"/>
+
+And the Role maintenance:
+
+<img src="https://github.com/michael-hll/mcrm/blob/main/design/Roles.jpg" alt="drawing" width="700"/>
+
 
