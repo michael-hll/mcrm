@@ -89,13 +89,13 @@ const CreateRoleView = (props: CreateRoleViewProps) => {
       border: 1,
       borderRadius: '5px',
       borderColor: '#868e96',
-      paddingTop: '8px',
+      paddingTop: '20px',
       width: '580px',
-      height: '480px',
+      height: '495px',
     }}>
       <AppForm onSubmit={handleFormSubmit}>
         <Box sx={{ width: '550px', display: 'flex', flexDirection: 'column' }}>
-          <Grid container spacing={0} sx={{height: '32px', marginBottom: '16px'}}>
+          <Grid container spacing={0} sx={{height: '32px', marginBottom: '20px'}}>
             <Grid item xs={12}>
               <Typography gutterBottom variant="h5"
                 component="div" sx={{
