@@ -314,7 +314,7 @@ const UserProfileView = () => {
             justifyContent: 'center',
             paddingRight: '16px',
           }}>
-            <AppButton type="submit" color="primary" disabled={!SubmitEnabled || userQuery.isLoading} sx={{
+            <AppButton type="submit" disabled={!SubmitEnabled || userQuery.isLoading} sx={{
               width: '200px',
             }}>
               Update

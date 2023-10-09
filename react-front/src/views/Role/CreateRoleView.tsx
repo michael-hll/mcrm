@@ -1,16 +1,13 @@
-import { Box, Container, Stack } from "@mui/material";
-import AppForm from "../../components/AppForm/AppForm";
-import { SyntheticEvent, useCallback, useEffect, useState } from "react";
-import { Grid, TextField, Typography } from "@mui/material";
-import { SHARED_CONTROL_PROPS, useAppForm } from "../../utils/form";
-import { InitRoleInstance, Role, RoleGrid } from "../../store/interfaces/Role";
-import AppButton from "../../components/AppButton/AppButton";
-import CustomSnackbar from "../../components/SnackBarAlert/CustomSnackbar";
-import AppAlert from "../../components/AppAlert/AppAlert";
-import { useCreateRole } from "../../hooks/role";
+import { Box, Container, Grid, TextField, Typography } from "@mui/material";
 import { AxiosError } from "axios";
+import { SyntheticEvent, useCallback, useEffect, useState } from "react";
 import validate from "validate.js";
-
+import AppAlert from "../../components/AppAlert/AppAlert";
+import AppButton from "../../components/AppButton/AppButton";
+import AppForm from "../../components/AppForm/AppForm";
+import { useCreateRole } from "../../hooks/role";
+import { InitRoleInstance, RoleGrid } from "../../store/interfaces/Role";
+import { SHARED_CONTROL_PROPS, useAppForm } from "../../utils/form";
 
 const VALIDATE_FORM = {
   code: {
@@ -19,7 +16,7 @@ const VALIDATE_FORM = {
     format: {
       pattern: /^([A-Z])*$/,
       message: function (value: string, attribute: any, validatorOptions: any, attributes: any, globalOptions: any) {
-        return validate.format("^%{code} is not valid. Only capitals letters allowed.", {
+        return validate.format("^Code is not valid. Only capitals letters are allowed.", {
           code: value
         });
       }
@@ -43,7 +40,7 @@ const CreateRoleView = (props: CreateRoleViewProps) => {
 
   const [error, setError] = useState<string>('');
   const [SubmitEnabled, setSubmitEnabled] = useState<boolean>(false);
-  const { formState, onFieldChange, fieldGetError, fieldHasError, setFormState, isFormTouched, isFormValid } = useAppForm({
+  const { formState, onFieldChange, fieldGetError, fieldHasError, setFormState, isFormValid } = useAppForm({
     validationSchema: VALIDATE_FORM,
     initialValues: InitRoleInstance
   });
@@ -58,7 +55,6 @@ const CreateRoleView = (props: CreateRoleViewProps) => {
   const handleFormSubmit = useCallback(
     async (event: SyntheticEvent) => {
       event.preventDefault();
-      console.log(formState.errors);
       if (!isFormValid()) {
         return;
       }
@@ -69,7 +65,7 @@ const CreateRoleView = (props: CreateRoleViewProps) => {
       }));
       const { isNew, ...newRole } = values;
       roleCreateQuery.mutate(newRole);
-    }, [values, formState.errors]
+    }, [values, formState, isFormValid, roleCreateQuery, setFormState]
   );
 
   useEffect(() => {
@@ -78,13 +74,7 @@ const CreateRoleView = (props: CreateRoleViewProps) => {
     } else {
       setSubmitEnabled(true);
     }
-  }, [roleCreateQuery.isLoading, formState.errors])
-
-  useEffect(() => {
-    if(isFormValid()){
-      setError('');
-    }
-  }, [values]);
+  }, [roleCreateQuery.isLoading, formState.errors, isFormValid])
 
   const handleCloseError = useCallback(() => {
     setError('')
@@ -99,23 +89,25 @@ const CreateRoleView = (props: CreateRoleViewProps) => {
       border: 1,
       borderRadius: '5px',
       borderColor: '#868e96',
-      paddingTop: '24px',
+      paddingTop: '8px',
+      width: '580px',
+      height: '480px',
     }}>
       <AppForm onSubmit={handleFormSubmit}>
-        <Box sx={{ width: '600px' }}>
-          <Grid container spacing={0}>
+        <Box sx={{ width: '550px', display: 'flex', flexDirection: 'column' }}>
+          <Grid container spacing={0} sx={{height: '32px', marginBottom: '16px'}}>
             <Grid item xs={12}>
               <Typography gutterBottom variant="h5"
                 component="div" sx={{
-                  textAlign: 'center',
-                  padding: '16px 0px'
+                  textAlign: 'start',
+                  margin: '0px 0px 0px 0px'
                 }}>
-                Create Role
+                {`< Create Role >`}
               </Typography>
             </Grid>
           </Grid>
-          <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-            <Box sx={{ width: '400px', boder: 'solid', borderRadius: '5px', paddingTop: '16px' }}>
+          <Box sx={{ display: 'flex', justifyContent: 'center', marginBottom: '24px' }}>
+            <Box sx={{ width: '400px', height: '350px', boder: 'solid', borderRadius: '5px', paddingTop: '16px' }}>
               <Grid container spacing={0}>
                 <Grid item xs={2} />
                 <Grid item xs={10}>
@@ -171,25 +163,27 @@ const CreateRoleView = (props: CreateRoleViewProps) => {
               </Grid>
             </Box>
           </Box>
-          <Grid container spacing={0} sx={{ marginBottom: '24px' }}>
-            <Grid item xs={4} />
-            <Grid item xs={2}>
-              <AppButton variant="text" onClick={() => props.closeDialog?.(false)} color="primary" sx={{
+          <Box sx={{display: 'flex', justifyContent: 'right', alignSelf: 'flex-end'}}>
+            <AppButton variant="contained" onClick={() => props.closeDialog?.(false)} 
+              sx={{
+              width: '100px',
+              marginRight: '8px',
+            }}>
+              Close
+            </AppButton>
+            <AppButton
+              onKeyDown={ event => {
+                if(event.code === 'Enter'){
+                  handleFormSubmit(event);
+                }
+              }}
+              disabled={!SubmitEnabled}
+              variant="outlined" type="submit" sx={{
                 width: '100px',
               }}>
-                Close
-              </AppButton>
-            </Grid>
-            <Grid item xs={3}>
-              <AppButton
-                disabled={!SubmitEnabled}
-                variant="text" type="submit" color="primary" sx={{
-                  width: '100px',
-                }}>
-                Save
-              </AppButton>
-            </Grid>
-          </Grid>
+              Save
+            </AppButton>
+          </Box>
         </Box>
       </AppForm>
     </Container>

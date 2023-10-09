@@ -71,7 +71,7 @@ const TopBar: FunctionComponent<Props> = ({ endNode, startNode, title = '', ...r
       <Toolbar disableGutters sx={{ paddingX: 1 }}>
         {startNode}
         <Box sx={{
-          marginX: '36px', 
+          marginX: '24px', 
           display: {display},
         }}
         >
@@ -79,7 +79,7 @@ const TopBar: FunctionComponent<Props> = ({ endNode, startNode, title = '', ...r
             menuItemsData={menuItemsData}
             MenuProps={{
               elevation: 1, sx: {
-                marginLeft: '16px',
+                marginLeft: '-8px',
                 fontSize: '36px',
               }
             }}

@@ -1,10 +1,8 @@
-import AddIcon from '@mui/icons-material/Add';
 import CancelIcon from '@mui/icons-material/Close';
 import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
-import { Box, Dialog, DialogActions, DialogContent, DialogTitle, Grid } from '@mui/material';
-import Button from '@mui/material/Button';
+import { Box, Dialog, DialogContent, Grid, Typography } from '@mui/material';
 import {
   DataGrid,
   GridActionsCellItem,
@@ -14,45 +12,27 @@ import {
   GridRowId,
   GridRowModel,
   GridRowModes,
-  GridRowModesModel,
-  GridRowsProp,
-  GridToolbarContainer,
-  GridToolbarFilterButton,
-  GridToolbarQuickFilter
+  GridRowModesModel
 } from '@mui/x-data-grid';
+import { AxiosError } from 'axios';
 import * as React from 'react';
 import AppAlert from '../../components/AppAlert/AppAlert';
-import { useCreateRole, useDeleteRole, useRoles, useUpdateRole } from '../../hooks/role';
+import AppDeleteDialog from '../../components/AppDeleteDialog/AppDeleteDialog';
+import CustomSnackbar from '../../components/SnackBarAlert/CustomSnackbar';
+import { useDeleteRole, useRoles, useUpdateRole } from '../../hooks/role';
 import { Role, RoleGrid } from '../../store/interfaces/Role';
 import CreateRoleView from './CreateRoleView';
-import CustomSnackbar from '../../components/SnackBarAlert/CustomSnackbar';
-import { AxiosError } from 'axios';
-
-interface EditToolbarProps {
-  openRoleDialog: (open: boolean) => void;
-}
-
-function EditToolbar(props: EditToolbarProps) {
-
-  const handleAddRoleClick = () => {
-    props.openRoleDialog(true);
-  };
-
-  return (
-    <GridToolbarContainer>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-        <Button color="primary" startIcon={<AddIcon />} onClick={handleAddRoleClick}
-          sx={{ textTransform: 'none' }}>
-          Add Role
-        </Button>
-        <GridToolbarFilterButton sx={{ textTransform: 'none' }} />
-        <GridToolbarQuickFilter />
-      </Box>
-    </GridToolbarContainer>
-  );
-}
+import DataGridToolbar from '../../components/DataGrid/DataGridToolBar';
+import { Stack } from '@mui/system';
+import { RefreshCheck } from '../../utils/localStorage';
+import useAppStore from '../../store/AppStore';
 
 const RolesView = () => {
+
+  const store = useAppStore();
+  React.useEffect(() => {
+    RefreshCheck(store);
+  }, [store]);
   const init_rows: RoleGrid[] = [];
 
   const [rows, setRows] = React.useState(init_rows);
@@ -60,9 +40,11 @@ const RolesView = () => {
   const [SnackBarMessage, setSnackBarMessage] = React.useState<string>('');
   const [SnackBarOpen, setSnackBarOpen] = React.useState<boolean>(false);
   const [roleDialogOpen, setRoleDialogOpen] = React.useState(false);
+  const [deleteConfirmDialogOpen, setDeleteConfirmDialogOpen] = React.useState(false);
+  const [deleteRoleCode, setDeleteRoleCode] = React.useState<string>('');
   const [rowModesModel, setRowModesModel] = React.useState<GridRowModesModel>({});
 
-  const rolesQuery = useRoles((data) => {
+  useRoles((data) => {
     setRows(data.map(role => ({ ...role, isNew: false })));
   }, (error) => {
     setError(error.message);
@@ -80,7 +62,11 @@ const RolesView = () => {
   const roleDeleteQuery = useDeleteRole((role: Role) => {
     setSnackBarMessage('Delete role success!');
     setSnackBarOpen(true);
+    setDeleteRoleCode('');
+    setDeleteConfirmDialogOpen(false);
   }, (error: AxiosError, inputRole: Role) => {
+    setDeleteRoleCode('');
+    setDeleteConfirmDialogOpen(false);
     setError((error.response?.data as { message: string }).message);
   });
 
@@ -99,11 +85,8 @@ const RolesView = () => {
   };
 
   const handleDeleteClick = (id: GridRowId) => () => {
-    let oldRow = rows.find(row => row.code === id);
-    if(oldRow){
-      roleDeleteQuery.mutate(oldRow as Role)
-    }
-    setRows(rows.filter((row) => row.code !== id));
+    setDeleteRoleCode(id.toString());
+    setDeleteConfirmDialogOpen(true);
   };
 
   const handleCancelClick = (id: GridRowId) => () => {
@@ -121,13 +104,12 @@ const RolesView = () => {
   const processRowUpdate = (newRow: GridRowModel) => {
     const updatedRow = { ...newRow, isNew: false };
     setRows(rows.map((row: RoleGrid) => (row.code === newRow.code ? updatedRow : row)));
-    
-    const {isNew, ...newRole} = updatedRow as RoleGrid;
+
+    const { isNew, ...newRole } = updatedRow as RoleGrid;
     let oldRow = rows.find(row => row.code === newRole.code);
-    if(oldRow) {
+    if (oldRow) {
       Object.assign(oldRow, updatedRow);
     }
-    console.log(newRole);
     roleUpdateQuery.mutate(newRole);
     return updatedRow;
   };
@@ -161,25 +143,33 @@ const RolesView = () => {
     setSnackBarOpen(false);
   };
 
+  const handleDeleteConfirm = (code: string) => {
+    let oldRow = rows.find(row => row.code === code);
+    if (oldRow) {
+      roleDeleteQuery.mutate(oldRow as Role)
+    }
+    setRows(rows.filter((row) => row.code !== code));
+  }
+
   const columns: GridColDef[] = [
     { field: 'code', headerName: 'Code', width: 128, editable: false },
     {
       field: 'name',
       headerName: 'Name',
-      width: 150,
+      width: 200,
       editable: true,
     },
     {
       field: 'description',
       headerName: 'Description',
-      width: 300,
+      width: 350,
       editable: true,
     },
     {
       field: 'actions',
       type: 'actions',
       headerName: 'Actions',
-      width: 100,
+      width: 200,
       cellClassName: 'actions',
       getActions: ({ id }) => {
         const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
@@ -224,49 +214,72 @@ const RolesView = () => {
   ]
 
   return (
-    <div style={{ height: 400, width: '100%' }}>
-      <DataGrid
-        rows={rows}
-        columns={columns}
-        editMode="row"
-        rowModesModel={rowModesModel}
-        onRowModesModelChange={handleRowModesModelChange}
-        onRowEditStop={handleRowEditStop}
-        processRowUpdate={processRowUpdate}
-        disableRowSelectionOnClick
-        initialState={{
-          pagination: {
-            paginationModel: {
-              pageSize: 5,
-            },
-          },
-        }}
-        pageSizeOptions={[5]}
-        slots={{
-          toolbar: EditToolbar,
-        }}
-        slotProps={{
-          toolbar: { openRoleDialog: setRoleDialogOpen, showQuickFilter: true },
-        }}
-        getRowId={(row: RoleGrid) => row.code || ((new Date()).toDateString())}
-      />
-      {error ? (
-        <AppAlert severity="error" onClose={handleCloseError}>
-          {error}
-        </AppAlert>
-      ) : null}
-      <Grid item xs={12}>
-        <CustomSnackbar
-          open={SnackBarOpen}
-          onClose={handleSnackClose}
-          message={SnackBarMessage} />
-      </Grid>
-      <Dialog open={roleDialogOpen} onClose={handleRoleDialogClose}>
-        <DialogContent sx={{ padding: '1px', borderRadius: '5px' }}>
-          <CreateRoleView closeDialog={handleCreateRoleSuccess} />
-        </DialogContent>
-      </Dialog>
-    </div>
+    <Stack>
+      <Box sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        padding: '24px 0px'
+      }}>
+        <Typography gutterBottom variant="h4"
+          component="div" sx={{
+            alignSelf: 'center',
+          }}>
+          Roles
+        </Typography>
+      </Box>
+      <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+        <Box>
+          <DataGrid
+            sx={{width: '900px'}}
+            rows={rows}
+            columns={columns}
+            editMode="row"
+            rowModesModel={rowModesModel}
+            onRowModesModelChange={handleRowModesModelChange}
+            onRowEditStop={handleRowEditStop}
+            processRowUpdate={processRowUpdate}
+            disableRowSelectionOnClick
+            initialState={{
+              pagination: {
+                paginationModel: {
+                  pageSize: 10,
+                },
+              },
+            }}
+            pageSizeOptions={[10, 25, 50]}
+            slots={{
+              toolbar: DataGridToolbar,
+            }}
+            slotProps={{
+              toolbar: { openRoleDialog: setRoleDialogOpen, showQuickFilter: true },
+            }}
+            getRowId={(row: RoleGrid) => row.code || ((new Date()).toDateString())}
+          />
+          {error ? (
+            <AppAlert severity="error" onClose={handleCloseError}>
+              {error}
+            </AppAlert>
+          ) : null}
+          <Grid item xs={12}>
+            <CustomSnackbar
+              open={SnackBarOpen}
+              onClose={handleSnackClose}
+              message={SnackBarMessage} />
+          </Grid>
+          <Dialog open={roleDialogOpen} onClose={handleRoleDialogClose}>
+            <DialogContent sx={{ padding: '1px', borderRadius: '5px' }}>
+              <CreateRoleView closeDialog={handleCreateRoleSuccess} />
+            </DialogContent>
+          </Dialog>
+          <AppDeleteDialog<string>
+            message={'Are you sure do delete this role? All the permissions linked with this role will also be removed.'}
+            args={deleteRoleCode}
+            open={deleteConfirmDialogOpen}
+            handleClose={() => { setDeleteConfirmDialogOpen(false) }}
+            handleConfim={handleDeleteConfirm} />
+        </Box>
+      </Box>
+    </Stack>
   );
 }
 
