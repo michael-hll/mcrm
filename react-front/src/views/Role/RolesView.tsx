@@ -1,67 +1,88 @@
-import * as React from 'react';
+import AddIcon from '@mui/icons-material/Add';
+import CancelIcon from '@mui/icons-material/Close';
+import DeleteIcon from '@mui/icons-material/DeleteOutlined';
+import EditIcon from '@mui/icons-material/Edit';
+import SaveIcon from '@mui/icons-material/Save';
+import { Box, Dialog, DialogActions, DialogContent, DialogTitle, Grid } from '@mui/material';
+import Button from '@mui/material/Button';
 import {
-  GridRowsProp,
-  GridRowModesModel,
-  GridRowModes,
   DataGrid,
-  GridColDef,
-  GridToolbarContainer,
   GridActionsCellItem,
+  GridColDef,
   GridEventListener,
+  GridRowEditStopReasons,
   GridRowId,
   GridRowModel,
-  GridRowEditStopReasons,
-  GridToolbar,
+  GridRowModes,
+  GridRowModesModel,
+  GridRowsProp,
+  GridToolbarContainer,
+  GridToolbarFilterButton,
+  GridToolbarQuickFilter
 } from '@mui/x-data-grid';
-import { randomId, useDemoData } from '@mui/x-data-grid-generator';
-import { Role } from '../../store/interfaces/Role';
-import AddIcon from '@mui/icons-material/Add';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/DeleteOutlined';
-import SaveIcon from '@mui/icons-material/Save';
-import CancelIcon from '@mui/icons-material/Close';
-import Button from '@mui/material/Button';
-
-const VISIBLE_FIELDS = ['name', 'rating', 'country', 'dateCreated', 'isAdmin'];
-
-
+import * as React from 'react';
+import AppAlert from '../../components/AppAlert/AppAlert';
+import { useCreateRole, useDeleteRole, useRoles, useUpdateRole } from '../../hooks/role';
+import { Role, RoleGrid } from '../../store/interfaces/Role';
+import CreateRoleView from './CreateRoleView';
+import CustomSnackbar from '../../components/SnackBarAlert/CustomSnackbar';
+import { AxiosError } from 'axios';
 
 interface EditToolbarProps {
-  setRows: (newRows: (oldRows: GridRowsProp) => GridRowsProp) => void;
-  setRowModesModel: (
-    newModel: (oldModel: GridRowModesModel) => GridRowModesModel,
-  ) => void;
+  openRoleDialog: (open: boolean) => void;
 }
 
 function EditToolbar(props: EditToolbarProps) {
-  const { setRows, setRowModesModel } = props;
 
-  const handleClick = () => {
-    const code = (new Date()).toISOString();
-    setRows((oldRows) => [...oldRows, { code, name: '', description: '', isNew: true }]);
-    setRowModesModel((oldModel) => ({
-      ...oldModel,
-      [code]: { mode: GridRowModes.Edit, fieldToFocus: 'name' },
-    }));
+  const handleAddRoleClick = () => {
+    props.openRoleDialog(true);
   };
 
   return (
     <GridToolbarContainer>
-      <Button color="primary" startIcon={<AddIcon />} onClick={handleClick}>
-        Add record
-      </Button>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+        <Button color="primary" startIcon={<AddIcon />} onClick={handleAddRoleClick}
+          sx={{ textTransform: 'none' }}>
+          Add Role
+        </Button>
+        <GridToolbarFilterButton sx={{ textTransform: 'none' }} />
+        <GridToolbarQuickFilter />
+      </Box>
     </GridToolbarContainer>
   );
 }
 
 const RolesView = () => {
-  const init_rows: Role[] = [
-    { code: 'cc', name: 'Snow', description: 'adfaf' },
-    { code: 'aa', name: 'adsfasdf', description: 'asdfasdf' },
-  ];
+  const init_rows: RoleGrid[] = [];
 
   const [rows, setRows] = React.useState(init_rows);
+  const [error, setError] = React.useState('');
+  const [SnackBarMessage, setSnackBarMessage] = React.useState<string>('');
+  const [SnackBarOpen, setSnackBarOpen] = React.useState<boolean>(false);
+  const [roleDialogOpen, setRoleDialogOpen] = React.useState(false);
   const [rowModesModel, setRowModesModel] = React.useState<GridRowModesModel>({});
+
+  const rolesQuery = useRoles((data) => {
+    setRows(data.map(role => ({ ...role, isNew: false })));
+  }, (error) => {
+    setError(error.message);
+  });
+
+  const roleUpdateQuery = useUpdateRole((role: Role) => {
+    setSnackBarMessage('Update role success!');
+    setSnackBarOpen(true);
+    setRowModesModel({ ...rowModesModel, [role.code!]: { mode: GridRowModes.View } });
+  }, (error: AxiosError, inputRole: Role) => {
+    setRowModesModel({ ...rowModesModel, [inputRole.code!]: { mode: GridRowModes.Edit } });
+    setError((error.response?.data as { message: string }).message);
+  });
+
+  const roleDeleteQuery = useDeleteRole((role: Role) => {
+    setSnackBarMessage('Delete role success!');
+    setSnackBarOpen(true);
+  }, (error: AxiosError, inputRole: Role) => {
+    setError((error.response?.data as { message: string }).message);
+  });
 
   const handleRowEditStop: GridEventListener<'rowEditStop'> = (params, event) => {
     if (params.reason === GridRowEditStopReasons.rowFocusOut) {
@@ -78,7 +99,11 @@ const RolesView = () => {
   };
 
   const handleDeleteClick = (id: GridRowId) => () => {
-    setRows(rows.filter((row: Role) => row.code !== id));
+    let oldRow = rows.find(row => row.code === id);
+    if(oldRow){
+      roleDeleteQuery.mutate(oldRow as Role)
+    }
+    setRows(rows.filter((row) => row.code !== id));
   };
 
   const handleCancelClick = (id: GridRowId) => () => {
@@ -87,15 +112,23 @@ const RolesView = () => {
       [id]: { mode: GridRowModes.View, ignoreModifications: true },
     });
 
-    const editedRow = rows.find((row: Role) => row.code === id);
-    if (editedRow!.isNew) {
-      setRows(rows.filter((row: Role) => row.code !== id));
+    const editedRow = rows.find((row: RoleGrid) => row.code === id);
+    if (editedRow && editedRow.isNew) {
+      setRows(rows.filter((row: RoleGrid) => row.code !== id));
     }
   };
 
   const processRowUpdate = (newRow: GridRowModel) => {
     const updatedRow = { ...newRow, isNew: false };
-    setRows(rows.map((row: Role) => (row.code === newRow.code ? updatedRow : row)));
+    setRows(rows.map((row: RoleGrid) => (row.code === newRow.code ? updatedRow : row)));
+    
+    const {isNew, ...newRole} = updatedRow as RoleGrid;
+    let oldRow = rows.find(row => row.code === newRole.code);
+    if(oldRow) {
+      Object.assign(oldRow, updatedRow);
+    }
+    console.log(newRole);
+    roleUpdateQuery.mutate(newRole);
     return updatedRow;
   };
 
@@ -103,8 +136,33 @@ const RolesView = () => {
     setRowModesModel(newRowModesModel);
   };
 
+  const handleCloseError = React.useCallback(() => {
+    setError('')
+  }, []);
+
+  const handleRoleDialogClose = (_: {}, reason: string) => {
+    if (reason !== 'backdropClick') {
+      setRoleDialogOpen(false);
+    };
+  };
+
+  const handleCreateRoleSuccess = (success: boolean) => {
+    if (success) {
+      setSnackBarMessage('Create role success!');
+      setSnackBarOpen(true);
+    }
+    setRoleDialogOpen(false);
+  }
+
+  const handleSnackClose = (event: React.SyntheticEvent | Event, reason?: string) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setSnackBarOpen(false);
+  };
+
   const columns: GridColDef[] = [
-    { field: 'code', headerName: 'Code', width: 128 },
+    { field: 'code', headerName: 'Code', width: 128, editable: false },
     {
       field: 'name',
       headerName: 'Name',
@@ -125,7 +183,7 @@ const RolesView = () => {
       cellClassName: 'actions',
       getActions: ({ id }) => {
         const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
-  
+
         if (isInEditMode) {
           return [
             <GridActionsCellItem
@@ -145,7 +203,7 @@ const RolesView = () => {
             />,
           ];
         }
-  
+
         return [
           <GridActionsCellItem
             icon={<EditIcon />}
@@ -164,10 +222,6 @@ const RolesView = () => {
       },
     },
   ]
-  
-  
-  
-
 
   return (
     <div style={{ height: 400, width: '100%' }}>
@@ -192,11 +246,26 @@ const RolesView = () => {
           toolbar: EditToolbar,
         }}
         slotProps={{
-          toolbar: { setRows, setRowModesModel },
+          toolbar: { openRoleDialog: setRoleDialogOpen, showQuickFilter: true },
         }}
-        getRowId={(row: Role) => row.code || ((new Date()).toDateString())}
+        getRowId={(row: RoleGrid) => row.code || ((new Date()).toDateString())}
       />
-      
+      {error ? (
+        <AppAlert severity="error" onClose={handleCloseError}>
+          {error}
+        </AppAlert>
+      ) : null}
+      <Grid item xs={12}>
+        <CustomSnackbar
+          open={SnackBarOpen}
+          onClose={handleSnackClose}
+          message={SnackBarMessage} />
+      </Grid>
+      <Dialog open={roleDialogOpen} onClose={handleRoleDialogClose}>
+        <DialogContent sx={{ padding: '1px', borderRadius: '5px' }}>
+          <CreateRoleView closeDialog={handleCreateRoleSuccess} />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

@@ -9,6 +9,10 @@ type UpdateTResponse<T> = {
   data: T;
 };
 
+type DeleteTResponse<T> = {
+  data: T;
+};
+
 type CreateTResponse<T> = {
   data: T;
 };
@@ -40,7 +44,7 @@ class ApiClient<T> {
   post = async (config: AxiosRequestConfig, input: T) => {
     try {
       const { data, status } = await axiosInstance
-        .patch<CreateTResponse<T>>(this.endpoint, input, config)
+        .post<CreateTResponse<T>>(this.endpoint, input, config)
       return data as T;
     }
     catch (err) {
@@ -48,10 +52,21 @@ class ApiClient<T> {
     }
   }
 
-  patch = async (config: AxiosRequestConfig, input: T, id: number): Promise<T> => {
+  patch = async (config: AxiosRequestConfig, input: T, key: number | string): Promise<T> => {
     try {
       const { data, status } = await axiosInstance
-        .patch<UpdateTResponse<T>>(`${this.endpoint}/${id}`, input, config)
+        .patch<UpdateTResponse<T>>(`${this.endpoint}/${key}`, input, config)
+      return data as T;
+    }
+    catch (err) {
+      throw err;
+    }
+  }
+
+  delete = async (config: AxiosRequestConfig, key: number | string): Promise<T> => {
+    try {
+      const { data, status } = await axiosInstance
+        .delete<DeleteTResponse<T>>(`${this.endpoint}/${key}`, config)
       return data as T;
     }
     catch (err) {

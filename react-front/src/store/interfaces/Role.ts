@@ -2,12 +2,17 @@ export interface Role {
   code?: string;
   name?: string;
   description?: string;
+}
+export interface RoleGrid {
+  code?: string;
+  name?: string;
+  description?: string;
   isNew?: boolean;
 }
 
-export const InitRoleInstance = {
+export const InitRoleInstance: RoleGrid = {
   code: '',
   name: '',
-  describe: '',
+  description: '',
   isNew: false,
 };

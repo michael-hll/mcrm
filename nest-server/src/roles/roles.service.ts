@@ -26,7 +26,7 @@ export class RolesService {
   }
 
   async findAll() {
-    return await this.rolesRepository.find();
+    return await this.rolesRepository.find({order: { code: 'ASC'}});
   }
 
   findOne(code: string) {
