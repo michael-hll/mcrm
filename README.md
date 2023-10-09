@@ -14,7 +14,7 @@ So spent some time write a small application include both front & backend.
 5. Global authentication guard and role guard - Done
 
 ### Frontend
-(The UI code is referenced a another github project: react-typescript-mui-with-auth-starter)
+(The UI code structure is referenced a github project: react-typescript-mui-with-auth-starter)
 1. Signup/Signin - Done
 2. User Maintain - Done
 3. Role Maintain - Done
