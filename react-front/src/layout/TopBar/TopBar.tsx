@@ -38,8 +38,20 @@ const TopBar: FunctionComponent<Props> = ({ endNode, startNode, title = '', ...r
             sx: { width: MENU_ITEM_WIDTH },
           },
           {
+            label: 'Delete User',            
+            sx: { width: MENU_ITEM_WIDTH },
+          },
+          {
+            label: 'User Roles',            
+            sx: { width: MENU_ITEM_WIDTH },
+          },
+          {
             label: 'Api Permissions',
             callback: (event, item) => console.log('Save As > Option 2 clicked', event, item),
+            sx: { width: MENU_ITEM_WIDTH },
+          },
+          {
+            label: 'Menus',            
             sx: { width: MENU_ITEM_WIDTH },
           },
           {
