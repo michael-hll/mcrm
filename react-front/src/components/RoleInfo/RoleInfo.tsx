@@ -89,7 +89,7 @@ function RoleCard({ id, code, deleteHandler }: RoleCardProps) {
   }
   return (
     <Box
-      sx={{ marginX: '2px', backgroundColor: 'red' }}
+      sx={{ marginX: '2px', border: 1, borderColor: 'gray'}}
     >
       <Box
         sx={{
@@ -101,17 +101,23 @@ function RoleCard({ id, code, deleteHandler }: RoleCardProps) {
           variant='caption'
           align='center'
           sx={{
-            margin: '0px 4px 0px 2px',
+            margin: '0px px 0px 0px',
+            padding: '0px 4px 0px 4px',
             fontSize: '12px',
+            backgroundColor: 'red',
           }}
         >
           {code}
         </Typography>
-        <IconButton aria-label="delete" onClick={() => deleteHandler(id, code)}
+        <IconButton aria-label="delete"                   
+          onClick={() => deleteHandler(id, code)}
           sx={{
             width: '8px',
             height: '8px',
             display: showDeleteButton,
+            marginLeft: '2px',
+            marginRight: '2px',
+            border: 0,            
           }}>
           <ClearIcon sx={{ fontSize: '16px' }} />
         </IconButton>
