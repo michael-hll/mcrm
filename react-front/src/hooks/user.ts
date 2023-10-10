@@ -1,22 +1,23 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAccessToken } from "./auth";
-import { User } from "../store/interfaces/User";
+import { UpdateUserRoles, User } from "../store/interfaces/User";
 import ApiClient from "../services/apiClient";
 import useAppStore from "../store/AppStore";
 import { MCRM_QUERY_CURRENT_USER, MCRM_QUERY_USER_ROLES } from "../services/app.constants";
 import { CurrentUser } from "../store/interfaces/CurrentUser";
+import { AddRemoveRoles } from "../store/interfaces/AddRemoveRoles";
 
 export const useUser = (currentUser: CurrentUser | undefined,
-    handleSuccess? : (data: User) => void, 
-    handleError? : (error: Error) => void) => {
+  handleSuccess?: (data: User) => void,
+  handleError?: (error: Error) => void) => {
 
   const authorizationHeader = useAccessToken();
 
   const fetchUser = () => {
-    if(!currentUser){
+    if (!currentUser) {
       throw new Error(`Current user doesn't exist.`);
     }
-    const api = new ApiClient<User>('user');
+    const api = new ApiClient<User, User>('user');
     return api.getOne({ headers: authorizationHeader }, currentUser.id);
   }
 
@@ -27,7 +28,7 @@ export const useUser = (currentUser: CurrentUser | undefined,
     staleTime: Infinity,
     cacheTime: 0,
     keepPreviousData: true, // only data is back then refresh notice the observers
-    onError: (error: Error) => {  
+    onError: (error: Error) => {
       handleError?.(error);
       return error;
     },
@@ -38,34 +39,34 @@ export const useUser = (currentUser: CurrentUser | undefined,
 };
 
 export const useUserRoles = (
-  handleSuccess? : (data: User[]) => void, 
-  handleError? : (error: Error) => void) => {
+  handleSuccess?: (data: User[]) => void,
+  handleError?: (error: Error) => void) => {
 
-const authorizationHeader = useAccessToken();
+  const authorizationHeader = useAccessToken();
 
-const fetchUserRoles = () => {
-  const api = new ApiClient<User>('user');
-  return api.getAll({ headers: authorizationHeader });
-}
-
-return useQuery<User[], Error>({
-  queryKey: [MCRM_QUERY_USER_ROLES],
-  queryFn: fetchUserRoles,
-  staleTime: Infinity,
-  cacheTime: 0,
-  keepPreviousData: true, // only data is back then refresh notice the observers
-  onError: (error: Error) => {  
-    handleError?.(error);
-    return error;
-  },
-  onSuccess: (data: User[]) => {
-    handleSuccess?.(data);
+  const fetchUserRoles = () => {
+    const api = new ApiClient<User, User>('user');
+    return api.getAll({ headers: authorizationHeader });
   }
-});
+
+  return useQuery<User[], Error>({
+    queryKey: [MCRM_QUERY_USER_ROLES],
+    queryFn: fetchUserRoles,
+    staleTime: Infinity,
+    cacheTime: 0,
+    keepPreviousData: true, // only data is back then refresh notice the observers
+    onError: (error: Error) => {
+      handleError?.(error);
+      return error;
+    },
+    onSuccess: (data: User[]) => {
+      handleSuccess?.(data);
+    }
+  });
 };
 
 export const useUpdateUser = (
-  handleSuccess?: (user: User) => void, 
+  handleSuccess?: (user: User) => void,
   handleError?: (error: Error) => void) => {
   const queryClient = useQueryClient();
   const authHeader = useAccessToken();
@@ -74,11 +75,12 @@ export const useUpdateUser = (
   return useMutation({
 
     mutationFn: async (user: User) => {
-      const api = new ApiClient<User>('user');
+      const {id, ...updateUser} = user;
+      const api = new ApiClient<User, User>('user');
       if (currentUser) {
-        return await api.patch({ headers: authHeader }, user, currentUser.id);
+        return await api.patch({ headers: authHeader }, updateUser, currentUser.id);
       }
-      else{
+      else {
         throw new Error(`Current user doesn't exist.`);
       }
     },
@@ -95,6 +97,37 @@ export const useUpdateUser = (
     },
 
     onError: (error: Error, variables: User) => {
+      handleError?.(error);
+      return error;
+    },
+  });
+};
+
+export const useUpdateUserRoles = (
+  handleSuccess?: () => void,
+  handleError?: (error: Error) => void) => {
+  const queryClient = useQueryClient();
+  const authHeader = useAccessToken();
+
+  return useMutation<boolean, Error, UpdateUserRoles, UpdateUserRoles>({
+
+    mutationFn: async (updateRoles: UpdateUserRoles) => {
+      const api = new ApiClient<UpdateUserRoles[], boolean>('user/roles');
+      return await api.patch({ headers: authHeader }, [], '');
+    },
+    
+    onMutate: (variables: UpdateUserRoles) => {
+      return variables;
+    },
+    
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [MCRM_QUERY_USER_ROLES],
+      });
+      handleSuccess?.();
+    },
+
+    onError: (error: Error, variables: any) => {
       handleError?.(error);
       return error;
     },

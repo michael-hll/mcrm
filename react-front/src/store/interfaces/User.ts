@@ -1,3 +1,4 @@
+import { AddRemoveRoles } from "./AddRemoveRoles";
 import { Role } from "./Role";
 
 export interface User {
@@ -14,8 +15,13 @@ export interface User {
     address1?: string;
     address2?: string;
     zipcode?: string;
-    active?: true;
+    active?: boolean;
     roles?: Role[];
+}
+
+export interface UpdateUserRoles {
+    id: string;
+    roles: {roles: AddRemoveRoles[]};
 }
 
 export const InitUserInstance = {

@@ -13,7 +13,7 @@ export const useRoles = (
   const authorizationHeader = useAccessToken();
 
   const fetchRoles = () => {
-    const api = new ApiClient<Role>('role');
+    const api = new ApiClient<Role, Role>('role');
     return api.getAll({ headers: authorizationHeader });
   }
 
@@ -42,7 +42,7 @@ export const useCreateRole = (
   return useMutation({
 
     mutationFn: async (role: Role) => {
-      const api = new ApiClient<Role>('role');
+      const api = new ApiClient<Role, Role>('role');
       return await api.post({ headers: authHeader }, role);
     },
 
@@ -73,7 +73,7 @@ export const useUpdateRole = (
   return useMutation({
 
     mutationFn: async (role: Role) => {
-      const api = new ApiClient<Role>('role');
+      const api = new ApiClient<Role, Role>('role');
       const {code, ...newRole} = role;
       return await api.patch({ headers: authHeader }, newRole, code!);
     },
@@ -105,7 +105,7 @@ export const useDeleteRole = (
   return useMutation({
 
     mutationFn: async (role: Role) => {
-      const api = new ApiClient<Role>('role');
+      const api = new ApiClient<Role, Role>('role');
       const {code, ...newRole} = role;
       return await api.delete({ headers: authHeader }, code!);
     },

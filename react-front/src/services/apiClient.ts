@@ -17,24 +17,24 @@ type CreateTResponse<T> = {
   data: T;
 };
 
-class ApiClient<T> {
+class ApiClient<T, W> {
 
   constructor(private endpoint: string) { }
 
   getAll = async (config: AxiosRequestConfig) => {
     try{
-      const {data, status } = await axiosInstance.get<T[]>(this.endpoint, config)
-      return data as T[];
+      const {data, status } = await axiosInstance.get<W[]>(this.endpoint, config)
+      return data as W[];
     }
     catch(err) {
       throw err;
     }
   }
 
-  getOne = async (config: AxiosRequestConfig, id: number): Promise<T> => {
+  getOne = async (config: AxiosRequestConfig, id: number): Promise<W> => {
     try{
-      const {data, status } = await axiosInstance.get<T>(`${this.endpoint}/${id}`, config);
-      return data as T;
+      const {data, status } = await axiosInstance.get<W>(`${this.endpoint}/${id}`, config);
+      return data as W;
     }
     catch(err) {
       throw err;
@@ -44,30 +44,30 @@ class ApiClient<T> {
   post = async (config: AxiosRequestConfig, input: T) => {
     try {
       const { data, status } = await axiosInstance
-        .post<CreateTResponse<T>>(this.endpoint, input, config)
-      return data as T;
+        .post<CreateTResponse<W>>(this.endpoint, input, config)
+      return data as W;
     }
     catch (err) {
       throw err;
     }
   }
 
-  patch = async (config: AxiosRequestConfig, input: T, key: number | string): Promise<T> => {
+  patch = async (config: AxiosRequestConfig, input: T, key: number | string): Promise<W> => {
     try {
       const { data, status } = await axiosInstance
-        .patch<UpdateTResponse<T>>(`${this.endpoint}/${key}`, input, config)
-      return data as T;
+        .patch<UpdateTResponse<W>>(`${this.endpoint}/${key}`, input, config)
+      return data as W;
     }
     catch (err) {
       throw err;
     }
   }
 
-  delete = async (config: AxiosRequestConfig, key: number | string): Promise<T> => {
+  delete = async (config: AxiosRequestConfig, key: number | string): Promise<W> => {
     try {
       const { data, status } = await axiosInstance
-        .delete<DeleteTResponse<T>>(`${this.endpoint}/${key}`, config)
-      return data as T;
+        .delete<DeleteTResponse<W>>(`${this.endpoint}/${key}`, config)
+      return data as W;
     }
     catch (err) {
       throw err;
