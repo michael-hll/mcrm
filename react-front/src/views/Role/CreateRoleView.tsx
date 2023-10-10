@@ -12,11 +12,11 @@ import { SHARED_CONTROL_PROPS, useAppForm } from "../../utils/form";
 const VALIDATE_FORM = {
   code: {
     presence: true,
-    length: { minimum: 2 },
+    length: { minimum: 2, maximum: 16 },
     format: {
-      pattern: /^([A-Z])*$/,
+      pattern: /^([A-Z_0-9])*$/,
       message: function (value: string, attribute: any, validatorOptions: any, attributes: any, globalOptions: any) {
-        return validate.format("^Code is not valid. Only capitals letters are allowed.", {
+        return validate.format("^Only capitals letters, numbers and underscore are allowed.", {
           code: value
         });
       }
@@ -25,10 +25,6 @@ const VALIDATE_FORM = {
   name: {
     presence: true,
     length: { minimum: 2 },
-  },
-  description: {
-    presence: true,
-    length: { minimum: 5 },
   },
 };
 
@@ -141,7 +137,6 @@ const CreateRoleView = (props: CreateRoleViewProps) => {
                 <Grid item xs={10}>
                   <TextField
                     sx={{ margin: '0px 0px 0px 0px', width: '300px' }}
-                    required
                     label="Description"
                     name="description"
                     multiline

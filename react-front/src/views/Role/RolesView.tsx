@@ -149,9 +149,9 @@ const RolesView = () => {
     if (oldRow) {
       roleDeleteQuery.mutate(oldRow as Role)
     }
-    if(code !== RoleCodes.ADMIN && code !== RoleCodes.DEFAULT){
+    if (code !== RoleCodes.ADMIN && code !== RoleCodes.DEFAULT) {
       setRows(rows.filter((row) => row.code !== code));
-    }    
+    }
   }
 
   const columns: GridColDef[] = [
@@ -233,7 +233,7 @@ const RolesView = () => {
       <Box sx={{ display: 'flex', justifyContent: 'center' }}>
         <Box>
           <DataGrid
-            sx={{width: '900px'}}
+            sx={{ width: '900px' }}
             rows={rows}
             columns={columns}
             editMode="row"
@@ -251,10 +251,16 @@ const RolesView = () => {
             }}
             pageSizeOptions={[10, 25, 50]}
             slots={{
-              toolbar: DataGridToolbar,
+              toolbar: DataGridToolbar<boolean>,
             }}
             slotProps={{
-              toolbar: { openRoleDialog: setRoleDialogOpen, showQuickFilter: true },
+              toolbar: {
+                action: setRoleDialogOpen,
+                actionArgs: true,
+                actionLabel: 'Add Role',
+                enableFilter: true,
+                enableQuickFilter: true,
+              },
             }}
             getRowId={(row: RoleGrid) => row.code || ((new Date()).toDateString())}
           />
