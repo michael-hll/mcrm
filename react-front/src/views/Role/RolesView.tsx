@@ -149,9 +149,7 @@ const RolesView = () => {
     if (oldRow) {
       roleDeleteQuery.mutate(oldRow as Role)
     }
-    if (code !== RoleCodes.ADMIN && code !== RoleCodes.DEFAULT) {
-      setRows(rows.filter((row) => row.code !== code));
-    }
+    setRows(rows.filter((row) => row.code !== code));
   }
 
   const columns: GridColDef[] = [
@@ -176,6 +174,7 @@ const RolesView = () => {
       cellClassName: 'actions',
       getActions: ({ id }) => {
         const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
+        const canDelete = (id === RoleCodes.ADMIN || id === RoleCodes.DEFAULT) ? false : true;
 
         if (isInEditMode) {
           return [
@@ -197,7 +196,7 @@ const RolesView = () => {
           ];
         }
 
-        return [
+        const actions = [
           <GridActionsCellItem
             icon={<EditIcon />}
             label="Edit"
@@ -210,8 +209,11 @@ const RolesView = () => {
             label="Delete"
             onClick={handleDeleteClick(id)}
             color="inherit"
+            disabled={!canDelete}
           />,
         ];
+
+        return actions;
       },
     },
   ]
