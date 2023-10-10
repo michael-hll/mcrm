@@ -42,7 +42,8 @@ const TopBar: FunctionComponent<Props> = ({ endNode, startNode, title = '', ...r
             sx: { width: MENU_ITEM_WIDTH },
           },
           {
-            label: 'User Roles',            
+            label: 'User Roles',      
+            callback: (event, item) => navigate('/role/user'),      
             sx: { width: MENU_ITEM_WIDTH },
           },
           {

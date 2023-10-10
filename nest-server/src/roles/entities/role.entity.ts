@@ -1,6 +1,7 @@
 import { Api } from 'src/iam/authorization/apis/entities/api.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Entity, Column, PrimaryColumn, ManyToMany } from 'typeorm';
+import { Expose } from "class-transformer";
 
 @Entity({name: "roles"})
 export class Role {
@@ -9,9 +10,11 @@ export class Role {
     }
 
     @PrimaryColumn() 
+    @Expose()
     code: string;
 
     @Column({nullable: false})
+    @Expose()
     name: string;
 
     @Column({nullable: false})

@@ -3,7 +3,7 @@ import { useAccessToken } from "./auth";
 import { User } from "../store/interfaces/User";
 import ApiClient from "../services/apiClient";
 import useAppStore from "../store/AppStore";
-import { MCRM_QUERY_CURRENT_USER } from "../services/app.constants";
+import { MCRM_QUERY_CURRENT_USER, MCRM_QUERY_USER_ROLES } from "../services/app.constants";
 import { CurrentUser } from "../store/interfaces/CurrentUser";
 
 export const useUser = (currentUser: CurrentUser | undefined,
@@ -35,6 +35,33 @@ export const useUser = (currentUser: CurrentUser | undefined,
       handleSuccess?.(data);
     }
   });
+};
+
+export const useUserRoles = (
+  handleSuccess? : (data: User[]) => void, 
+  handleError? : (error: Error) => void) => {
+
+const authorizationHeader = useAccessToken();
+
+const fetchUserRoles = () => {
+  const api = new ApiClient<User>('user');
+  return api.getAll({ headers: authorizationHeader });
+}
+
+return useQuery<User[], Error>({
+  queryKey: [MCRM_QUERY_USER_ROLES],
+  queryFn: fetchUserRoles,
+  staleTime: Infinity,
+  cacheTime: 0,
+  keepPreviousData: true, // only data is back then refresh notice the observers
+  onError: (error: Error) => {  
+    handleError?.(error);
+    return error;
+  },
+  onSuccess: (data: User[]) => {
+    handleSuccess?.(data);
+  }
+});
 };
 
 export const useUpdateUser = (

@@ -1,7 +1,11 @@
 import { Exclude, Expose } from "class-transformer";
+import { Role } from "src/roles/entities/role.entity";
 
 export class ReturnUserDto {
 
+    @Expose()
+    id: number;
+        
     @Expose()
     username: string;
 
@@ -40,4 +44,7 @@ export class ReturnUserDto {
 
     @Expose()
     active: boolean;
+
+    @Expose()
+    roles: Role[];
 }

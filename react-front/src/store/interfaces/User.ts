@@ -1,4 +1,7 @@
+import { Role } from "./Role";
+
 export interface User {
+    id? : number;
     username?: string;
     password?: string;
     email?: string;
@@ -12,6 +15,7 @@ export interface User {
     address2?: string;
     zipcode?: string;
     active?: true;
+    roles?: Role[];
 }
 
 export const InitUserInstance = {
