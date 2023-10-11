@@ -13,7 +13,7 @@ import { RefreshCheck } from '../../utils/localStorage';
 const WelcomeView = () => {
     return (
     <AppView>
-      <Typography variant="h4">Welcome to React App with MUI</Typography>
+      <Typography variant="h4">Welcome to MCRM !</Typography>
 
     </AppView>
   );
