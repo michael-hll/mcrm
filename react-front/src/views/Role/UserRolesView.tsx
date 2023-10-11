@@ -15,10 +15,7 @@ function UserRolesView() {
 
   const [error, setError] = useState<string>('');
   const [users, setUsers] = useState<User[]>([]);
-
-  useEffect(() => {
-    RefreshCheck(store);
-  }, [store]);
+  const [roles, setRoles] = useState<Role[]>([]);
 
   const userRolesQuery = useUserRoles((data) => {
     setUsers(data);
@@ -29,8 +26,11 @@ function UserRolesView() {
     setRoles(data);
   }, (error) => {
     setError(error.message);
-  });
-  const [roles, setRoles] = useState<Role[]>(rolesQuery.data || []);
+  }); 
+
+  useEffect(() => {
+    RefreshCheck(store);
+  }, [store]);
 
   return (
     <Stack>

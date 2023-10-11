@@ -18,13 +18,13 @@ function RoleCard({ id, code, roles, deleteHandler }: RoleCardProps) {
   const currentUser = useAppStore(s => s.currentUser);
 
   const [cardColor, setCardColor] = useState<string>('#339af0');
+
   useEffect(() => {
     const role = roles.find(value => value.code === code);
     if (role) {
       setCardColor(role.color!);
     }
-  }, [])
-
+  }, [roles]);
 
   let showDeleteButton = '';
   let borderRightRadius = '0px';
