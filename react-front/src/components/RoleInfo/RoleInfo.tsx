@@ -10,13 +10,15 @@ import {
   Typography,
   useTheme
 } from "@mui/material";
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useUpdateRoleSelector } from '../../hooks/role';
 import { AddRemoveRoles } from '../../store/interfaces/AddRemoveRoles';
 import { EntityOperations } from '../../store/interfaces/EntityOperations';
 import CustomSnackbar from '../SnackBarAlert/CustomSnackbar';
 import RoleCard from './RoleCard';
 import { Role } from '../../store/interfaces/Role';
+import useAppStore from '../../store/AppStore';
+import { dark } from '@mui/material/styles/createPalette';
 
 interface RoleInfoProps {
   id: string;
@@ -50,8 +52,11 @@ function getStyles(code: string, codes: string[], theme: Theme) {
 
 function RoleInfo({ id, name, description, roles, allRoles, updateSelector }: RoleInfoProps) {
 
+  const darkMode = useAppStore(s => s.darkMode);
   const theme = useTheme();
-
+  const [borderColor, setBorderColor] = useState<string>('#495057');
+  const [headerTextColor, setHeaderTextColor] = useState<string>('#fff');
+  const [headerColor, setHeaderColor] = useState<string>('#fff');
   const [error, setError] = useState<string>('');
   const [SnackBarOpen, setSnackBarOpen] = useState<boolean>(false);
   const [SnackBarMessage, setSnackBarMessage] = useState<string>('');
@@ -60,6 +65,18 @@ function RoleInfo({ id, name, description, roles, allRoles, updateSelector }: Ro
   const [selectRoles, setSelectRoles] = useState<string[]>([]);
   const [enableSave, setEnableSave] = useState<boolean>(false);
   const [enableAdd, setEnableAdd] = useState<boolean>(false);
+
+  useEffect(() => {
+    if(darkMode){
+      setBorderColor('#495057');
+      setHeaderTextColor('#f8f9fa');
+      setHeaderColor('#495057');
+    }else{
+      setBorderColor('#ced4da');
+      setHeaderTextColor('#212529');
+      setHeaderColor('#ced4da');
+    }
+  }, [darkMode]);
 
   const UpdateQuery = useUpdateRoleSelector(updateSelector)(() => {
     setInputRolesOriginal(inputRoles);
@@ -108,9 +125,10 @@ function RoleInfo({ id, name, description, roles, allRoles, updateSelector }: Ro
       <Box sx={{
         display: 'flex',
         width: '100%',
-        backgroundColor: '#1c7ed6',
         border: 1,
-        borderBottomColor: 'gray',
+        borderColor: borderColor,
+        backgroundColor: headerColor,
+        color: headerTextColor,
       }}>
         <Typography variant="body1"
           sx={{
@@ -136,8 +154,7 @@ function RoleInfo({ id, name, description, roles, allRoles, updateSelector }: Ro
         borderLeft: 1,
         borderRight: 1,
         borderBottom: 1,
-        borderBottomColor: 'gray',
-        borderTopColor: 'gray',
+        borderColor: borderColor,
       }}>
         <Typography variant="body1"
           sx={{
@@ -165,6 +182,7 @@ function RoleInfo({ id, name, description, roles, allRoles, updateSelector }: Ro
         borderLeft: 1,
         borderRight: 1,
         borderBottom: 1,
+        borderColor: borderColor,
         padding: '2px'
       }}>
         {/** Cards */}

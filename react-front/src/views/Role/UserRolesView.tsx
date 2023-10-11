@@ -1,4 +1,4 @@
-import { Box } from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
 import { useState } from "react";
 import RoleInfo from "../../components/RoleInfo/RoleInfo";
 import { useRoles } from "../../hooks/role";
@@ -21,23 +21,38 @@ function UserRolesView() {
     setRoles(data);
   }, (error) => {
     setError(error.message);
-  });  
+  });
   const [roles, setRoles] = useState<Role[]>(rolesQuery.data || []);
 
   return (
-    
-    <Box>
-      {users.map(user => (
-        <RoleInfo
-          key={user.id}
-          id={user.id!.toString()}
-          name={user.username!}
-          description={`Email: ${user.email} Phone: ${user.cellphone} Country: ${user.country} Address: ${user.address1}`}
-          roles={user.roles?.map(role => role.code!) || []}
-          allRoles={roles}
-          updateSelector={UpdateRoleType.USER}
-        />))}
-    </Box>
+    <Stack>
+      <Box sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        padding: '24px 0px'
+      }}>
+        <Typography gutterBottom variant="h4"
+          component="div" sx={{
+            alignSelf: 'center',
+          }}>
+          Update User Roles
+        </Typography>
+      </Box>
+      <Box sx={{ display: 'flex', justifyContent: 'center'}}>
+        <Box sx={{flex: '0 0 auto', width: '90%'}}>
+          {users.map(user => (
+            <RoleInfo
+              key={user.id}
+              id={user.id!.toString()}
+              name={user.username!}
+              description={`Email: ${user.email} Phone: ${user.cellphone} Country: ${user.country} Address: ${user.address1}`}
+              roles={user.roles?.map(role => role.code!) || []}
+              allRoles={roles}
+              updateSelector={UpdateRoleType.USER}
+            />))}
+        </Box>
+      </Box>
+    </Stack>
   );
 };
 
