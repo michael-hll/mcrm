@@ -18,7 +18,7 @@ So spent some time write a small application include both front & backend.
 1. Signup/Signin - Done
 2. User Maintain - Done
 3. Role Maintain - Done
-4. User's Role maintenance - TODO
+4. User's Role maintenance - Done
 5. API's Role maintenance - TODO
 6. Menu's Role maintenance - TODO
 
@@ -63,12 +63,21 @@ You will see each api useage there:
 
 <img src="https://github.com/michael-hll/mcrm/blob/main/design/login.png" alt="drawing" width="260"/>
 
+Navigation:
+
+<img src="https://github.com/michael-hll/mcrm/blob/main/design/Navigation.png" alt="drawing" width="260"/>
+
 Play with the Update Profile page:
 
 <img src="https://github.com/michael-hll/mcrm/blob/main/design/UpdateProfile.jpg" alt="drawing" width="350"/>
 
 And the Role maintenance:
 
-<img src="https://github.com/michael-hll/mcrm/blob/main/design/Roles.jpg" alt="drawing" width="700"/>
+<img src="https://github.com/michael-hll/mcrm/blob/main/design/Roles.png" alt="drawing" width="700"/>
+
+User Role maintenance:
+
+<img src="https://github.com/michael-hll/mcrm/blob/main/design/UpdateUserRoles.png" alt="drawing" width="700"/>
+
 
 
