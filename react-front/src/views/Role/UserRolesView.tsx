@@ -1,16 +1,24 @@
 import { Box, Stack, Typography } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import RoleInfo from "../../components/RoleInfo/RoleInfo";
 import { useRoles } from "../../hooks/role";
 import { useUserRoles } from "../../hooks/user";
 import { Role } from "../../store/interfaces/Role";
 import { User } from "../../store/interfaces/User";
 import { UpdateRoleType } from "../../store/enum/UpdateRoleType";
+import useAppStore from "../../store/AppStore";
+import { RefreshCheck } from "../../utils/localStorage";
 
 function UserRolesView() {
 
+  const store = useAppStore();
+
   const [error, setError] = useState<string>('');
   const [users, setUsers] = useState<User[]>([]);
+
+  useEffect(() => {
+    RefreshCheck(store);
+  }, [store]);
 
   const userRolesQuery = useUserRoles((data) => {
     setUsers(data);
