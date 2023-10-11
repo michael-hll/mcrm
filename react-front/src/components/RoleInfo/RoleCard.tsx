@@ -1,11 +1,9 @@
 import ClearIcon from '@mui/icons-material/Clear';
 import { Box, IconButton, Typography } from "@mui/material";
+import { useEffect, useState } from 'react';
 import useAppStore from "../../store/AppStore";
 import { RoleCodes } from "../../store/enum/RoleCodes";
-import { useQueryClient } from '@tanstack/react-query';
-import { MCRM_QUERY_ROLES } from '../../services/app.constants';
 import { Role } from '../../store/interfaces/Role';
-import { useEffect, useState } from 'react';
 
 interface RoleCardProps {
   id: string,
@@ -24,7 +22,7 @@ function RoleCard({ id, code, roles, deleteHandler }: RoleCardProps) {
     if (role) {
       setCardColor(role.color!);
     }
-  }, [roles]);
+  }, [roles, code]);
 
   let showDeleteButton = '';
   let borderRightRadius = '0px';
@@ -33,6 +31,7 @@ function RoleCard({ id, code, roles, deleteHandler }: RoleCardProps) {
     showDeleteButton = 'none';
     borderRightRadius = '2px';
   }
+
   return (
     <Box
       sx={{
@@ -41,7 +40,6 @@ function RoleCard({ id, code, roles, deleteHandler }: RoleCardProps) {
         marginX: '2px',
         marginY: '0px',
         padding: '0px',
-        height: '26px',
         border: 1,
         borderColor: 'gray',
         borderRadius: '2px',
@@ -50,22 +48,21 @@ function RoleCard({ id, code, roles, deleteHandler }: RoleCardProps) {
       <Box
         sx={{
           display: 'flex',
-          alignItems: 'center',
+          alignItems: 'center',          
         }}
       >
         <Typography
-          variant='body1'
+          variant='body2'
           align='center'
           sx={{
             margin: '0px 0px 0px 0px',
-            padding: '0px 2px 0px 2px',
+            paddingX: '2px',
             backgroundColor: cardColor,
-            flex: '0 1 auto',
+            flex: '1 0 auto',
             borderTopLeftRadius: '2px',
             borderBottomLeftRadius: '2px',
             borderTopRightRadius: borderRightRadius,
             borderBottomRightRadius: borderRightRadius,
-            height: '25px',
           }}
         >
           {code}
@@ -76,14 +73,11 @@ function RoleCard({ id, code, roles, deleteHandler }: RoleCardProps) {
             width: '8px',
             height: '8px',
             display: showDeleteButton,
-            marginLeft: '2px',
-            marginRight: '2px',
-            border: 0,
+            marginX: '2px',
           }}>
-          <ClearIcon sx={{ fontSize: '18px' }} />
+          <ClearIcon sx={{ fontSize: '16px' }} />
         </IconButton>
       </Box>
-
     </Box>
   );
 }

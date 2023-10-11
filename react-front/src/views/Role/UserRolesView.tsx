@@ -51,7 +51,7 @@ function UserRolesView() {
         <Box sx={{flex: '0 0 auto', width: '90%'}}>
           {users.map(user => (
             <RoleInfo
-              key={user.id}
+              key={user.id!}
               id={user.id!.toString()}
               name={user.username!}
               description={`Email: ${user.email} Phone: ${user.cellphone} Country: ${user.country} Address: ${user.address1}`}

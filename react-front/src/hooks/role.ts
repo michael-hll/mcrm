@@ -130,7 +130,7 @@ export const useDeleteRole = (
   });
 };
 
-export const useUpdateRoleSelector = (type: string) => {
+export const useUpdateRoleSelector = (type: UpdateRoleType) => {
   if(type === UpdateRoleType.USER){
     return useUpdateUserRoles;
   }

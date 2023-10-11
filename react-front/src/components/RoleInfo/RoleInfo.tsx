@@ -12,13 +12,13 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from 'react';
 import { useUpdateRoleSelector } from '../../hooks/role';
+import useAppStore from '../../store/AppStore';
 import { AddRemoveRoles } from '../../store/interfaces/AddRemoveRoles';
 import { EntityOperations } from '../../store/interfaces/EntityOperations';
+import { Role } from '../../store/interfaces/Role';
 import CustomSnackbar from '../SnackBarAlert/CustomSnackbar';
 import RoleCard from './RoleCard';
-import { Role } from '../../store/interfaces/Role';
-import useAppStore from '../../store/AppStore';
-import { dark } from '@mui/material/styles/createPalette';
+import { UpdateRoleType } from '../../store/enum/UpdateRoleType';
 
 interface RoleInfoProps {
   id: string;
@@ -26,7 +26,7 @@ interface RoleInfoProps {
   description: string;
   roles: string[];
   allRoles: Role[];
-  updateSelector: string;
+  updateSelector: UpdateRoleType;
 }
 
 const ITEM_HEIGHT = 48;
@@ -56,7 +56,7 @@ function RoleInfo({ id, name, description, roles, allRoles, updateSelector }: Ro
   const theme = useTheme();
   const [borderColor, setBorderColor] = useState<string>('#495057');
   const [headerTextColor, setHeaderTextColor] = useState<string>('#fff');
-  const [headerColor, setHeaderColor] = useState<string>('#fff');
+  const [headerBGColor, setHeaderBGColor] = useState<string>('#fff');
   const [error, setError] = useState<string>('');
   const [SnackBarOpen, setSnackBarOpen] = useState<boolean>(false);
   const [SnackBarMessage, setSnackBarMessage] = useState<string>('');
@@ -70,11 +70,11 @@ function RoleInfo({ id, name, description, roles, allRoles, updateSelector }: Ro
     if(darkMode){
       setBorderColor('#495057');
       setHeaderTextColor('#f8f9fa');
-      setHeaderColor('#495057');
+      setHeaderBGColor('#495057');
     }else{
       setBorderColor('#ced4da');
       setHeaderTextColor('#212529');
-      setHeaderColor('#ced4da');
+      setHeaderBGColor('#ced4da');
     }
   }, [darkMode]);
 
@@ -88,7 +88,7 @@ function RoleInfo({ id, name, description, roles, allRoles, updateSelector }: Ro
     setError(error.message);
   });
 
-  function addRolesByUserId(id: string, newRoles: string[], deleteRoles: string[]) {
+  function commitRolesByUserId(id: string, newRoles: string[], deleteRoles: string[]) {
     const updateRoles: AddRemoveRoles[] = [];
     for (const role of newRoles) {
       updateRoles.push({ code: role, operation: EntityOperations.CREATE });
@@ -99,7 +99,7 @@ function RoleInfo({ id, name, description, roles, allRoles, updateSelector }: Ro
     UpdateQuery.mutate({ id: id.toString(), roles: { roles: updateRoles } });
   }
 
-  const handleChange = (event: SelectChangeEvent<typeof selectRoles>) => {
+  const handleRoleSelectChange = (event: SelectChangeEvent<typeof selectRoles>) => {
     const {
       target: { value },
     } = event;
@@ -119,7 +119,7 @@ function RoleInfo({ id, name, description, roles, allRoles, updateSelector }: Ro
   return (
     <Box sx={{
       width: '100%',
-      margin: '4px 0px 4px 0px',
+      marginY: '4px',
     }}>
       {/* Header */}
       <Box sx={{
@@ -127,13 +127,13 @@ function RoleInfo({ id, name, description, roles, allRoles, updateSelector }: Ro
         width: '100%',
         border: 1,
         borderColor: borderColor,
-        backgroundColor: headerColor,
+        backgroundColor: headerBGColor,
         color: headerTextColor,
       }}>
         <Typography variant="body1"
           sx={{
             margin: '0px 0px 0px 8px',
-            flex: '1 0 50%',
+            flex: '0 0 200px',
           }}
         >
           {name}
@@ -141,10 +141,10 @@ function RoleInfo({ id, name, description, roles, allRoles, updateSelector }: Ro
         <Typography variant="body1"
           sx={{
             margin: '0px 0px 0px 8px',
-            flex: '1 0 50%',
+            flex: '1 0 auto',
           }}
         >
-          Key: {id}
+          Id: {id}
         </Typography>
       </Box>
       {/** Description */}
@@ -210,7 +210,7 @@ function RoleInfo({ id, name, description, roles, allRoles, updateSelector }: Ro
             variant='outlined'
             multiple
             value={selectRoles}
-            onChange={handleChange}
+            onChange={handleRoleSelectChange}
             MenuProps={MenuProps}
             sx={{
               width: '100%',
@@ -268,7 +268,7 @@ function RoleInfo({ id, name, description, roles, allRoles, updateSelector }: Ro
             onClick={() => {
               const newRoles = inputRoles.filter(role => inputRolesOriginal.indexOf(role) < 0);
               const deleteRoles = inputRolesOriginal.filter(role => inputRoles.indexOf(role) < 0);
-              addRolesByUserId(id, newRoles, deleteRoles);
+              commitRolesByUserId(id, newRoles, deleteRoles);
               setSelectRoles([]);
               setEnableAdd(false);
             }}
