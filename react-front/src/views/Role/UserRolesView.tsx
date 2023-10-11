@@ -14,8 +14,6 @@ function UserRolesView() {
   const store = useAppStore();
 
   const [error, setError] = useState<string>('');
-  const [users, setUsers] = useState<User[]>([]);
-  const [roles, setRoles] = useState<Role[]>([]);
 
   const userRolesQuery = useUserRoles((data) => {
     setUsers(data);
@@ -27,6 +25,9 @@ function UserRolesView() {
   }, (error) => {
     setError(error.message);
   }); 
+
+  const [users, setUsers] = useState<User[]>(userRolesQuery.data || []);
+  const [roles, setRoles] = useState<Role[]>(rolesQuery.data || []);
 
   useEffect(() => {
     RefreshCheck(store);
