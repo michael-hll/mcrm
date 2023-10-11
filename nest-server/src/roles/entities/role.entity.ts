@@ -20,6 +20,9 @@ export class Role {
     @Column({nullable: false})
     description: string;
 
+    @Column({nullable: false, default: '#339af0'})
+    color: string;
+
     @ManyToMany(type => User, user => user.roles)
     users: User[];
 

@@ -45,11 +45,17 @@ const RolesView = () => {
   const [deleteRoleCode, setDeleteRoleCode] = React.useState<string>('');
   const [rowModesModel, setRowModesModel] = React.useState<GridRowModesModel>({});
 
-  useRoles((data) => {
+  const allRoles = useRoles((data) => {
     setRows(data.map(role => ({ ...role, isNew: false })));
   }, (error) => {
     setError(error.message);
   });
+
+  React.useEffect(() => {
+    if(allRoles.data){
+      setRows(allRoles.data.map(role => ({ ...role, isNew: false })));
+    }
+  },[allRoles.data])
 
   const roleUpdateQuery = useUpdateRole((role: Role) => {
     setSnackBarMessage('Update role success!');
@@ -153,17 +159,41 @@ const RolesView = () => {
   }
 
   const columns: GridColDef[] = [
-    { field: 'code', headerName: 'Code', width: 128, editable: false },
+    {
+      field: 'code',
+      headerName: 'Code',
+      width: 128,
+      editable: false
+    },
+    {
+      field: 'color',
+      type: 'color',
+      headerName: 'Color',
+      width: 90,
+      editable: true,
+      renderCell(values) {
+        return (
+          <Box sx={{ paddingX: '8px', paddingY: '16px', width: '100%', height: '100%' }}>
+            <Box sx={{
+              backgroundColor: values.value,
+              width: '100%',
+              height: '100%',
+            }}
+            ></Box>
+          </Box>
+        );
+      },
+    },
     {
       field: 'name',
       headerName: 'Name',
-      width: 200,
+      width: 128,
       editable: true,
     },
     {
       field: 'description',
       headerName: 'Description',
-      width: 350,
+      width: 300,
       editable: true,
     },
     {
@@ -235,7 +265,7 @@ const RolesView = () => {
       <Box sx={{ display: 'flex', justifyContent: 'center' }}>
         <Box>
           <DataGrid
-            sx={{ width: '900px' }}
+            sx={{ width: 'auto' }}
             rows={rows}
             columns={columns}
             editMode="row"

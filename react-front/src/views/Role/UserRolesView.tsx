@@ -34,7 +34,7 @@ function UserRolesView() {
           name={user.username!}
           description={`Email: ${user.email} Phone: ${user.cellphone} Country: ${user.country} Address: ${user.address1}`}
           roles={user.roles?.map(role => role.code!) || []}
-          allRoles={roles.map(role => role.code!)}
+          allRoles={roles}
           updateSelector={UpdateRoleType.USER}
         />))}
     </Box>

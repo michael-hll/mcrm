@@ -19,4 +19,9 @@ export class CreateRoleDto {
     @IsOptional()
     @ApiProperty()
     description: string;
+
+    @IsString()
+    @IsOptional()
+    @ApiProperty()
+    color: string;
 }

@@ -35,16 +35,19 @@ export class AuthenticationService {
 
   async init() {
     // create default/admin roles
+    const defaultRoleColor = '#339af0';
     const roles = [
       {
         code: RoleCodes.ADMIN,
         name: 'Administrator',
         description: 'An administrator role can update or delete user roles etc.',
+        color: defaultRoleColor,
       },
       {
         code: RoleCodes.DEFAULT,
         name: 'Default Role',
         description: 'When user sign up this default role will be assigned to the user.',
+        color: defaultRoleColor,
       }];
     await this.createDefaultRoles(roles);
     // create default admin user

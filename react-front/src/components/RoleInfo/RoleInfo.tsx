@@ -16,13 +16,14 @@ import { AddRemoveRoles } from '../../store/interfaces/AddRemoveRoles';
 import { EntityOperations } from '../../store/interfaces/EntityOperations';
 import CustomSnackbar from '../SnackBarAlert/CustomSnackbar';
 import RoleCard from './RoleCard';
+import { Role } from '../../store/interfaces/Role';
 
 interface RoleInfoProps {
   id: string;
   name: string;
   description: string;
   roles: string[];
-  allRoles: string[];
+  allRoles: Role[];
   updateSelector: string;
 }
 
@@ -174,7 +175,7 @@ function RoleInfo({ id, name, description, roles, allRoles, updateSelector }: Ro
           marginRight: '8px',
         }}>
           {inputRoles.map(role => {
-            return <RoleCard key={role} id={id} code={role} deleteHandler={(id, code) => {
+            return <RoleCard key={role} id={id} code={role} roles={allRoles} deleteHandler={(id, code) => {
               setInputRoles(inputRoles.filter(role => role !== code));
               setEnableSave(true);
             }} />
@@ -199,13 +200,13 @@ function RoleInfo({ id, name, description, roles, allRoles, updateSelector }: Ro
               fontSize: '16px',
             }}
           >
-            {allRoles.map((code) => (
+            {allRoles.map((role) => (
               <MenuItem
-                key={code}
-                value={code}
-                style={getStyles(code, allRoles, theme)}
+                key={role.code}
+                value={role.code}
+                style={getStyles(role.code!, allRoles.map(role => role.code!), theme)}
               >
-                {code}
+                {role.code}
               </MenuItem>
             ))}
           </Select>
