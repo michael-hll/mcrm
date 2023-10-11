@@ -1,11 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAccessToken } from "./auth";
-import { UpdateUserRoles, User } from "../store/interfaces/User";
+import { User } from "../store/interfaces/User";
 import ApiClient from "../services/apiClient";
 import useAppStore from "../store/AppStore";
 import { MCRM_QUERY_CURRENT_USER, MCRM_QUERY_USER_ROLES } from "../services/app.constants";
 import { CurrentUser } from "../store/interfaces/CurrentUser";
 import { AddRemoveRoles } from "../store/interfaces/AddRemoveRoles";
+import { UpdateResourceRoles } from "../store/interfaces/Role";
 
 export const useUser = (currentUser: CurrentUser | undefined,
   handleSuccess?: (data: User) => void,
@@ -109,14 +110,14 @@ export const useUpdateUserRoles = (
   const queryClient = useQueryClient();
   const authHeader = useAccessToken();
 
-  return useMutation<boolean, Error, UpdateUserRoles, UpdateUserRoles>({
+  return useMutation<boolean, Error, UpdateResourceRoles, UpdateResourceRoles>({
 
-    mutationFn: async (updateRoles: UpdateUserRoles) => {
+    mutationFn: async (updateRoles: UpdateResourceRoles) => {
       const api = new ApiClient<{roles: AddRemoveRoles[]}, boolean>('user/roles');
       return await api.patch({ headers: authHeader }, updateRoles.roles, updateRoles.id);
     },
     
-    onMutate: (variables: UpdateUserRoles) => {
+    onMutate: (variables: UpdateResourceRoles) => {
       return variables;
     },
     
@@ -127,7 +128,7 @@ export const useUpdateUserRoles = (
       handleSuccess?.();
     },
 
-    onError: (error: Error, variables: UpdateUserRoles) => {
+    onError: (error: Error, variables: UpdateResourceRoles) => {
       handleError?.(error);
       return error;
     },

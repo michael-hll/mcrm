@@ -13,7 +13,7 @@ import { IS_ADMIN_ONLY } from 'src/base/decorators/admin.decorator';
 
 @Injectable()
 export class AuthorizationService {
-  
+
   private logger = new Logger(AuthorizationService.name);
   private namedControllers = new Map<string, string>();
   private namedRoutes = new Map<string, any>();
@@ -37,7 +37,7 @@ export class AuthorizationService {
         controller.discoveredClass.name,
         controller.meta)
     }
-    
+
     // get all controller methods with useAdmin() decorators
     const useAdminsMethods = await this.discover.controllerMethodsWithMetaAtKey<boolean>(IS_ADMIN_ONLY);
     const useAdminsMethodsSet = new Set(useAdminsMethods.map(route => {
@@ -151,9 +151,9 @@ export class AuthorizationService {
         addRoles = addRoles.filter(code => !roleSet.has(code));
       }
       // check new role exists for better error message
-      for(const r of addRoles){
-        const exists = await this.rolesRepository.exist({where: {code: r}});
-        if(!exists){
+      for (const r of addRoles) {
+        const exists = await this.rolesRepository.exist({ where: { code: r } });
+        if (!exists) {
           throw new NotFoundException(`Role '${r}' doesnot exists.`);
         }
       }
@@ -170,9 +170,18 @@ export class AuthorizationService {
           this.logger.error('update api role failed with error: ', err);
           throw new BadRequestException(`Update user failed with error: ${err.message}`);
         })
-      
+
       // clear role cache
-      this.roleCacheService.del(api.api_key); 
+      this.roleCacheService.del(api.api_key);
     })
+  }
+
+  async findAllApis
+    () {
+    return this.apisRepository.find({
+      relations: {
+        roles: true
+      }
+    });
   }
 }

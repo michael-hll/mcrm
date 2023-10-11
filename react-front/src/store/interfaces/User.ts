@@ -19,11 +19,6 @@ export interface User {
     roles?: Role[];
 }
 
-export interface UpdateUserRoles {
-    id: string;
-    roles: {roles: AddRemoveRoles[]};
-}
-
 export const InitUserInstance = {
     email: '',
     username: '',

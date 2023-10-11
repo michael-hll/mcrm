@@ -48,7 +48,7 @@ const TopBar: FunctionComponent<Props> = ({ endNode, startNode, title = '', ...r
           },
           {
             label: 'Api Permissions',
-            callback: (event, item) => console.log('Save As > Option 2 clicked', event, item),
+            callback: (event, item) => navigate('/role/api'), 
             sx: { width: MENU_ITEM_WIDTH },
           },
           {

@@ -9,10 +9,11 @@ interface RoleCardProps {
   id: string,
   code: string;
   roles: Role[];
+  alwaysShowDelete?: boolean;
   deleteHandler: (id: string, code: string) => void;
 }
 
-function RoleCard({ id, code, roles, deleteHandler }: RoleCardProps) {
+function RoleCard({ id, code, roles, alwaysShowDelete = false, deleteHandler }: RoleCardProps) {
   const currentUser = useAppStore(s => s.currentUser);
 
   const [cardColor, setCardColor] = useState<string>('#339af0');
@@ -30,6 +31,9 @@ function RoleCard({ id, code, roles, deleteHandler }: RoleCardProps) {
     (code === RoleCodes.ADMIN && id === currentUser?.id.toString())) {
     showDeleteButton = 'none';
     borderRightRadius = '2px';
+  }
+  if (alwaysShowDelete){
+    showDeleteButton = '';
   }
 
   return (

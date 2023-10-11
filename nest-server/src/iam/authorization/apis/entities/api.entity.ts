@@ -1,7 +1,9 @@
 import { Role } from 'src/roles/entities/role.entity';
 import { Entity, Column, JoinTable, ManyToMany, PrimaryColumn } from 'typeorm';
 
-@Entity({name: "apis"})
+@Entity({name: "apis", orderBy: {
+    key: 'ASC'
+}})
 export class Api {
     constructor(partial?: Partial<Api>) {
         Object.assign(this, partial);

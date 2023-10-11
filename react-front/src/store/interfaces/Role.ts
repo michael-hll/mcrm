@@ -1,3 +1,5 @@
+import { AddRemoveRoles } from "./AddRemoveRoles";
+
 export interface Role {
   code?: string;
   name?: string;
@@ -19,3 +21,8 @@ export const InitRoleInstance: RoleGrid = {
   color: '#339af0',
   isNew: false,
 };
+
+export interface UpdateResourceRoles {
+  id: string;
+  roles: {roles: AddRemoveRoles[]};
+}

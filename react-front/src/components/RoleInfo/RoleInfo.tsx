@@ -81,7 +81,12 @@ function RoleInfo({ id, name, description, roles, allRoles, updateSelector }: Ro
   const UpdateQuery = useUpdateRoleSelector(updateSelector)(() => {
     setInputRolesOriginal(inputRoles);
     setEnableSave(false);
-    setSnackBarMessage('Update user role success!');
+    if(updateSelector === UpdateRoleType.USER){
+      setSnackBarMessage('Update user role success!');
+    }else if(updateSelector === UpdateRoleType.API){
+      setSnackBarMessage('Update api role success!');
+    }
+    
     setSnackBarOpen(true);
     setError('');
   }, (error) => {
@@ -128,12 +133,12 @@ function RoleInfo({ id, name, description, roles, allRoles, updateSelector }: Ro
         border: 1,
         borderColor: borderColor,
         backgroundColor: headerBGColor,
-        color: headerTextColor,
+        color: headerTextColor, 
       }}>
         <Typography variant="body1"
           sx={{
             margin: '0px 0px 0px 8px',
-            flex: '0 0 200px',
+            flex: '0 0 50%',
           }}
         >
           {name}
@@ -193,7 +198,13 @@ function RoleInfo({ id, name, description, roles, allRoles, updateSelector }: Ro
           marginRight: '8px',
         }}>
           {inputRoles.map(role => {
-            return <RoleCard key={role} id={id} code={role} roles={allRoles} deleteHandler={(id, code) => {
+            return <RoleCard 
+              key={role} 
+              id={id} 
+              code={role} 
+              roles={allRoles} 
+              alwaysShowDelete={updateSelector !== UpdateRoleType.USER}
+              deleteHandler={(id, code) => {
               setInputRoles(inputRoles.filter(role => role !== code));
               setEnableSave(true);
             }} />

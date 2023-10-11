@@ -52,7 +52,7 @@ class ApiClient<T, W> {
     }
   }
 
-  patch = async (config: AxiosRequestConfig, input: T, key: number | string): Promise<W> => {
+  patch = async (config: AxiosRequestConfig, input: T, key: number | string = ''): Promise<W> => {
     try {
       const { data, status } = await axiosInstance
         .patch<UpdateTResponse<W>>(`${this.endpoint}/${key}`, input, config)

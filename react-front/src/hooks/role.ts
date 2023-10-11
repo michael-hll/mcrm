@@ -6,6 +6,7 @@ import { useAccessToken } from "./auth";
 import { AxiosError } from "axios";
 import { useUpdateUserRoles } from "./user";
 import { UpdateRoleType } from "../store/enum/UpdateRoleType";
+import { useUpdateApiRoles } from "./api";
 
 
 export const useRoles = (
@@ -134,5 +135,8 @@ export const useUpdateRoleSelector = (type: UpdateRoleType) => {
   if(type === UpdateRoleType.USER){
     return useUpdateUserRoles;
   }
-  return useUpdateUserRoles;
+  else if(type === UpdateRoleType.API){
+    return useUpdateApiRoles;
+  }
+  throw new Error('Cannot find related update selector.');
 }

@@ -1,4 +1,4 @@
-import { Body, Controller, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { UseAdmin } from 'src/base/decorators/admin.decorator';
 import { ModuleClassName } from 'src/base/decorators/module-name.decorator';
 import { Name } from 'src/base/decorators/name.decorator';
@@ -40,5 +40,12 @@ export class AuthorizationController {
   @UseAdmin()
   async grantApiRoutes(@Body() updateApiRoleManyDto: UpdateApiRoleManyDto) {
     return await this.authorizationService.grantApiRoles(updateApiRoleManyDto); 
+  }
+
+  @Get('apis')
+  @Name('Get All Apis')
+  @UseAdmin()
+  findAllApis() {
+    return this.authorizationService.findAllApis();
   }
 }
