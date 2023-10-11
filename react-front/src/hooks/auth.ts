@@ -1,10 +1,9 @@
 import { useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { MCRM_ACCESS_TOKEN_KEY, MCRM_REFRESH_TOKEN_KEY } from '../services/app.constants';
 import useAppStore from '../store/AppStore';
-import { MCRM_ACCESS_TOKEN_KEY, MCRM_APP_STORE_BACKUP, MCRM_REFRESH_TOKEN_KEY } from '../services/app.constants';
 import { CurrentUser } from '../store/interfaces/CurrentUser';
-import { localStorageDelete, localStorageGet } from '../utils/localStorage';
-import { Store } from '../store/interfaces/Store';
+import { localStorageDelete } from '../utils/localStorage';
 
 /**
  * Hook to get currently logged user
