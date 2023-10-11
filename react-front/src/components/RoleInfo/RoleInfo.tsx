@@ -1,13 +1,21 @@
 import AddIcon from '@mui/icons-material/Add';
-import ClearIcon from '@mui/icons-material/Clear';
 import SaveIcon from '@mui/icons-material/Save';
-import { Box, IconButton, MenuItem, Select, SelectChangeEvent, Theme, Typography, useTheme } from "@mui/material";
+import {
+  Box,
+  IconButton,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+  Theme,
+  Typography,
+  useTheme
+} from "@mui/material";
 import { useState } from 'react';
 import { useUpdateRoleSelector } from '../../hooks/role';
-import useAppStore from '../../store/AppStore';
-import { RoleCodes } from '../../store/enum/RoleCodes';
 import { AddRemoveRoles } from '../../store/interfaces/AddRemoveRoles';
 import { EntityOperations } from '../../store/interfaces/EntityOperations';
+import CustomSnackbar from '../SnackBarAlert/CustomSnackbar';
+import RoleCard from './RoleCard';
 
 interface RoleInfoProps {
   id: string;
@@ -39,31 +47,38 @@ function getStyles(code: string, codes: string[], theme: Theme) {
   };
 }
 
-function RoleInfo({ id, name, description, roles, allRoles, updateSelector}: RoleInfoProps) {
+function RoleInfo({ id, name, description, roles, allRoles, updateSelector }: RoleInfoProps) {
 
   const theme = useTheme();
 
+  const [error, setError] = useState<string>('');
+  const [SnackBarOpen, setSnackBarOpen] = useState<boolean>(false);
+  const [SnackBarMessage, setSnackBarMessage] = useState<string>('');
   const [inputRoles, setInputRoles] = useState<string[]>(roles);
   const [inputRolesOriginal, setInputRolesOriginal] = useState<string[]>(roles);
   const [selectRoles, setSelectRoles] = useState<string[]>([]);
   const [enableSave, setEnableSave] = useState<boolean>(false);
+  const [enableAdd, setEnableAdd] = useState<boolean>(false);
 
   const UpdateQuery = useUpdateRoleSelector(updateSelector)(() => {
     setInputRolesOriginal(inputRoles);
     setEnableSave(false);
+    setSnackBarMessage('Update user role success!');
+    setSnackBarOpen(true);
+    setError('');
   }, (error) => {
-    console.log(error.message);
+    setError(error.message);
   });
 
   function addRolesByUserId(id: string, newRoles: string[], deleteRoles: string[]) {
     const updateRoles: AddRemoveRoles[] = [];
-    for(const role of newRoles){
-      updateRoles.push({code: role, operation: EntityOperations.CREATE});
+    for (const role of newRoles) {
+      updateRoles.push({ code: role, operation: EntityOperations.CREATE });
     }
-    for(const role of deleteRoles){
-      updateRoles.push({code: role, operation: EntityOperations.DELETE});
+    for (const role of deleteRoles) {
+      updateRoles.push({ code: role, operation: EntityOperations.DELETE });
     }
-    UpdateQuery.mutate({id: id.toString(), roles: {roles: updateRoles}});
+    UpdateQuery.mutate({ id: id.toString(), roles: { roles: updateRoles } });
   }
 
   const handleChange = (event: SelectChangeEvent<typeof selectRoles>) => {
@@ -73,6 +88,14 @@ function RoleInfo({ id, name, description, roles, allRoles, updateSelector}: Rol
     setSelectRoles(
       typeof value === 'string' ? value.split(',') : value,
     );
+    setEnableAdd(true);
+  };
+
+  const handleSnackClose = (event: React.SyntheticEvent | Event, reason?: string) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setSnackBarOpen(false);
   };
 
   return (
@@ -118,10 +141,21 @@ function RoleInfo({ id, name, description, roles, allRoles, updateSelector}: Rol
         <Typography variant="body1"
           sx={{
             margin: '0px 0px 0px 8px',
+            flex: '1 0 auto',
           }}
         >
           {description}
         </Typography>
+        {/** error message */}
+        {error && <Typography variant="body1"
+          sx={{
+            margin: '0px 8px 0px 8px',
+            marginLeft: 'auto',
+            color: '#fa5252',
+          }}
+        >
+          {error}
+        </Typography>}
       </Box>
       {/** Roles */}
       <Box sx={{
@@ -184,12 +218,14 @@ function RoleInfo({ id, name, description, roles, allRoles, updateSelector}: Rol
         }}>
           {/** Add dropdown roles to panel */}
           <IconButton aria-label="add"
+            disabled={!enableAdd}
             onClick={() => {
               // update input roles
               setInputRoles([...inputRoles, ...selectRoles].filter((value, index, array) => {
                 return array.indexOf(value) === index;
               }));
               setEnableSave(true);
+              setEnableAdd(false);
               setSelectRoles([]);
             }}
             sx={{
@@ -212,9 +248,10 @@ function RoleInfo({ id, name, description, roles, allRoles, updateSelector}: Rol
             disabled={!enableSave}
             onClick={() => {
               const newRoles = inputRoles.filter(role => inputRolesOriginal.indexOf(role) < 0);
-              const deleteRoles = inputRolesOriginal.filter(role => inputRoles.indexOf(role) < 0);              
+              const deleteRoles = inputRolesOriginal.filter(role => inputRoles.indexOf(role) < 0);
               addRolesByUserId(id, newRoles, deleteRoles);
               setSelectRoles([]);
+              setEnableAdd(false);
             }}
             sx={{
               width: '8px',
@@ -226,76 +263,11 @@ function RoleInfo({ id, name, description, roles, allRoles, updateSelector}: Rol
             <SaveIcon sx={{ fontSize: '18px' }} />
           </IconButton>
         </Box>
+        <CustomSnackbar
+          open={SnackBarOpen}
+          onClose={handleSnackClose}
+          message={SnackBarMessage} />
       </Box>
-    </Box>
-  );
-}
-
-interface RoleCardProps {
-  id: string,
-  code: string;
-  deleteHandler: (id: string, code: string) => void;
-}
-
-function RoleCard({ id, code, deleteHandler }: RoleCardProps) {
-  const currentUser = useAppStore(s => s.currentUser);
-  let showDeleteButton = '';
-  let borderRightRadius = '0px';
-  if (code === RoleCodes.DEFAULT || 
-     (code === RoleCodes.ADMIN && id === currentUser?.id.toString())) {
-    showDeleteButton = 'none';
-    borderRightRadius = '2px';
-  }
-  return (
-    <Box
-      sx={{ 
-        display: 'flex',
-        alignItems: 'center',
-        marginX: '2px', 
-        marginY: '0px',
-        padding: '0px', 
-        height: '26px',
-        border: 1, 
-        borderColor: 'gray', 
-        borderRadius: '2px', }}
-    >
-      <Box
-        sx={{
-          display: 'flex',
-          alignItems: 'center',          
-        }}
-      >
-        <Typography
-          variant='body1'
-          align='center'
-          sx={{
-            margin: '0px 0px 0px 0px',
-            padding: '0px 2px 0px 2px',
-            backgroundColor: 'red',
-            flex: '0 1 auto',
-            borderTopLeftRadius: '2px',
-            borderBottomLeftRadius: '2px',
-            borderTopRightRadius: borderRightRadius,
-            borderBottomRightRadius: borderRightRadius,
-            height: '25px',
-          }}
-        >
-          {code}
-        </Typography>
-        <IconButton aria-label="delete"
-          onClick={() => deleteHandler(id, code)}
-          sx={{
-            width: '8px',
-            height: '8px',
-            display: showDeleteButton,
-            marginLeft: '2px',
-            marginRight: '2px',
-            border: 0,
-          }}>
-          <ClearIcon sx={{ fontSize: '18px' }} />
-        </IconButton>
-      </Box>
-
     </Box>
   );
 }
