@@ -1,9 +1,13 @@
 import AddIcon from '@mui/icons-material/Add';
-import SaveIcon from '@mui/icons-material/Save';
 import ClearIcon from '@mui/icons-material/Clear';
+import SaveIcon from '@mui/icons-material/Save';
 import { Box, IconButton, MenuItem, Select, SelectChangeEvent, Theme, Typography, useTheme } from "@mui/material";
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { useUpdateRoleSelector } from '../../hooks/role';
+import useAppStore from '../../store/AppStore';
 import { RoleCodes } from '../../store/enum/RoleCodes';
+import { AddRemoveRoles } from '../../store/interfaces/AddRemoveRoles';
+import { EntityOperations } from '../../store/interfaces/EntityOperations';
 
 interface RoleInfoProps {
   id: string;
@@ -11,8 +15,7 @@ interface RoleInfoProps {
   description: string;
   roles: string[];
   allRoles: string[];
-  deleteHandler: (id: string, code: string) => void;
-  addHandler: (id: string, newRoles: string[], deleteRoles: string[]) => void;
+  updateSelector: string;
 }
 
 const ITEM_HEIGHT = 48;
@@ -36,17 +39,32 @@ function getStyles(code: string, codes: string[], theme: Theme) {
   };
 }
 
-function RoleInfo({ id, name, description, roles, allRoles, deleteHandler, addHandler}: RoleInfoProps) {
+function RoleInfo({ id, name, description, roles, allRoles, updateSelector}: RoleInfoProps) {
 
   const theme = useTheme();
 
   const [inputRoles, setInputRoles] = useState<string[]>(roles);
   const [inputRolesOriginal, setInputRolesOriginal] = useState<string[]>(roles);
   const [selectRoles, setSelectRoles] = useState<string[]>([]);
+  const [enableSave, setEnableSave] = useState<boolean>(false);
 
-  useEffect(() => {
-    setInputRolesOriginal(roles);
-  }, [roles]);  
+  const UpdateQuery = useUpdateRoleSelector(updateSelector)(() => {
+    setInputRolesOriginal(inputRoles);
+    setEnableSave(false);
+  }, (error) => {
+    console.log(error.message);
+  });
+
+  function addRolesByUserId(id: string, newRoles: string[], deleteRoles: string[]) {
+    const updateRoles: AddRemoveRoles[] = [];
+    for(const role of newRoles){
+      updateRoles.push({code: role, operation: EntityOperations.CREATE});
+    }
+    for(const role of deleteRoles){
+      updateRoles.push({code: role, operation: EntityOperations.DELETE});
+    }
+    UpdateQuery.mutate({id: id.toString(), roles: {roles: updateRoles}});
+  }
 
   const handleChange = (event: SelectChangeEvent<typeof selectRoles>) => {
     const {
@@ -123,9 +141,8 @@ function RoleInfo({ id, name, description, roles, allRoles, deleteHandler, addHa
         }}>
           {inputRoles.map(role => {
             return <RoleCard key={role} id={id} code={role} deleteHandler={(id, code) => {
-              // delete it from roles
-              console.log('before delete:', id, role, inputRoles);
               setInputRoles(inputRoles.filter(role => role !== code));
+              setEnableSave(true);
             }} />
           })}
         </Box>
@@ -172,6 +189,7 @@ function RoleInfo({ id, name, description, roles, allRoles, deleteHandler, addHa
               setInputRoles([...inputRoles, ...selectRoles].filter((value, index, array) => {
                 return array.indexOf(value) === index;
               }));
+              setEnableSave(true);
               setSelectRoles([]);
             }}
             sx={{
@@ -191,10 +209,11 @@ function RoleInfo({ id, name, description, roles, allRoles, deleteHandler, addHa
           marginLeft: 'auto',
         }}>
           <IconButton aria-label="save"
+            disabled={!enableSave}
             onClick={() => {
               const newRoles = inputRoles.filter(role => inputRolesOriginal.indexOf(role) < 0);
               const deleteRoles = inputRolesOriginal.filter(role => inputRoles.indexOf(role) < 0);              
-              addHandler(id, newRoles, deleteRoles);
+              addRolesByUserId(id, newRoles, deleteRoles);
               setSelectRoles([]);
             }}
             sx={{
@@ -219,9 +238,11 @@ interface RoleCardProps {
 }
 
 function RoleCard({ id, code, deleteHandler }: RoleCardProps) {
+  const currentUser = useAppStore(s => s.currentUser);
   let showDeleteButton = '';
   let borderRightRadius = '0px';
-  if (code === RoleCodes.DEFAULT) {
+  if (code === RoleCodes.DEFAULT || 
+     (code === RoleCodes.ADMIN && id === currentUser?.id.toString())) {
     showDeleteButton = 'none';
     borderRightRadius = '2px';
   }

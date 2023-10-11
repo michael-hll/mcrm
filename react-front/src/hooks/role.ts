@@ -4,6 +4,7 @@ import { MCRM_QUERY_ROLES } from "../services/app.constants";
 import { Role } from "../store/interfaces/Role";
 import { useAccessToken } from "./auth";
 import { AxiosError } from "axios";
+import { useUpdateUserRoles } from "./user";
 
 
 export const useRoles = (
@@ -127,3 +128,10 @@ export const useDeleteRole = (
     },
   });
 };
+
+export const useUpdateRoleSelector = (type: string) => {
+  if(type === 'user'){
+    return useUpdateUserRoles;
+  }
+  return useUpdateUserRoles;
+}
