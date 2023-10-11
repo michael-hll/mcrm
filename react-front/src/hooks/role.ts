@@ -5,6 +5,7 @@ import { Role } from "../store/interfaces/Role";
 import { useAccessToken } from "./auth";
 import { AxiosError } from "axios";
 import { useUpdateUserRoles } from "./user";
+import { UpdateRoleType } from "../store/enum/UpdateRoleType";
 
 
 export const useRoles = (
@@ -130,7 +131,7 @@ export const useDeleteRole = (
 };
 
 export const useUpdateRoleSelector = (type: string) => {
-  if(type === 'user'){
+  if(type === UpdateRoleType.USER){
     return useUpdateUserRoles;
   }
   return useUpdateUserRoles;

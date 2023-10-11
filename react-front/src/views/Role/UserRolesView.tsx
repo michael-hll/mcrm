@@ -5,6 +5,7 @@ import { useRoles } from "../../hooks/role";
 import { useUserRoles } from "../../hooks/user";
 import { Role } from "../../store/interfaces/Role";
 import { User } from "../../store/interfaces/User";
+import { UpdateRoleType } from "../../store/enum/UpdateRoleType";
 
 function UserRolesView() {
 
@@ -34,7 +35,7 @@ function UserRolesView() {
           description={`Email: ${user.email} Phone: ${user.cellphone} Country: ${user.country} Address: ${user.address1}`}
           roles={user.roles?.map(role => role.code!) || []}
           allRoles={roles.map(role => role.code!)}
-          updateSelector={'user'}
+          updateSelector={UpdateRoleType.USER}
         />))}
     </Box>
   );
