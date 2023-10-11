@@ -112,8 +112,8 @@ export const useUpdateUserRoles = (
   return useMutation<boolean, Error, UpdateUserRoles, UpdateUserRoles>({
 
     mutationFn: async (updateRoles: UpdateUserRoles) => {
-      const api = new ApiClient<UpdateUserRoles[], boolean>('user/roles');
-      return await api.patch({ headers: authHeader }, [], '');
+      const api = new ApiClient<{roles: AddRemoveRoles[]}, boolean>('user/roles');
+      return await api.patch({ headers: authHeader }, updateRoles.roles, updateRoles.id);
     },
     
     onMutate: (variables: UpdateUserRoles) => {
@@ -127,7 +127,7 @@ export const useUpdateUserRoles = (
       handleSuccess?.();
     },
 
-    onError: (error: Error, variables: any) => {
+    onError: (error: Error, variables: UpdateUserRoles) => {
       handleError?.(error);
       return error;
     },

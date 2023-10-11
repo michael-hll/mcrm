@@ -1,7 +1,8 @@
 import AddIcon from '@mui/icons-material/Add';
+import SaveIcon from '@mui/icons-material/Save';
 import ClearIcon from '@mui/icons-material/Clear';
 import { Box, IconButton, MenuItem, Select, SelectChangeEvent, Theme, Typography, useTheme } from "@mui/material";
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { RoleCodes } from '../../store/enum/RoleCodes';
 
 interface RoleInfoProps {
@@ -11,7 +12,7 @@ interface RoleInfoProps {
   roles: string[];
   allRoles: string[];
   deleteHandler: (id: string, code: string) => void;
-  addHandler: (id: string, codes: string[]) => void;
+  addHandler: (id: string, newRoles: string[], deleteRoles: string[]) => void;
 }
 
 const ITEM_HEIGHT = 48;
@@ -39,13 +40,19 @@ function RoleInfo({ id, name, description, roles, allRoles, deleteHandler, addHa
 
   const theme = useTheme();
 
-  const [roleCodes, setRoleCodes] = useState<string[]>([]);
+  const [inputRoles, setInputRoles] = useState<string[]>(roles);
+  const [inputRolesOriginal, setInputRolesOriginal] = useState<string[]>(roles);
+  const [selectRoles, setSelectRoles] = useState<string[]>([]);
 
-  const handleChange = (event: SelectChangeEvent<typeof roleCodes>) => {
+  useEffect(() => {
+    setInputRolesOriginal(roles);
+  }, [roles]);  
+
+  const handleChange = (event: SelectChangeEvent<typeof selectRoles>) => {
     const {
       target: { value },
     } = event;
-    setRoleCodes(
+    setSelectRoles(
       typeof value === 'string' ? value.split(',') : value,
     );
   };
@@ -110,11 +117,16 @@ function RoleInfo({ id, name, description, roles, allRoles, deleteHandler, addHa
         {/** Cards */}
         <Box sx={{
           display: 'flex',
+          alignItems: 'center',
           flex: 1,
-          marginRight: '12px',
+          marginRight: '8px',
         }}>
-          {roles.map(role => {
-            return <RoleCard key={role} id={id} code={role} deleteHandler={deleteHandler} />
+          {inputRoles.map(role => {
+            return <RoleCard key={role} id={id} code={role} deleteHandler={(id, code) => {
+              // delete it from roles
+              console.log('before delete:', id, role, inputRoles);
+              setInputRoles(inputRoles.filter(role => role !== code));
+            }} />
           })}
         </Box>
         {/** Role dropdown list */}
@@ -127,7 +139,7 @@ function RoleInfo({ id, name, description, roles, allRoles, deleteHandler, addHa
           <Select
             variant='outlined'
             multiple
-            value={roleCodes}
+            value={selectRoles}
             onChange={handleChange}
             MenuProps={MenuProps}
             sx={{
@@ -153,10 +165,14 @@ function RoleInfo({ id, name, description, roles, allRoles, deleteHandler, addHa
           float: 'right',
           marginLeft: 'auto',
         }}>
+          {/** Add dropdown roles to panel */}
           <IconButton aria-label="add"
             onClick={() => {
-              addHandler(id, roleCodes);
-              setRoleCodes([]);
+              // update input roles
+              setInputRoles([...inputRoles, ...selectRoles].filter((value, index, array) => {
+                return array.indexOf(value) === index;
+              }));
+              setSelectRoles([]);
             }}
             sx={{
               width: '8px',
@@ -166,6 +182,29 @@ function RoleInfo({ id, name, description, roles, allRoles, deleteHandler, addHa
               border: 0,
             }}>
             <AddIcon sx={{ fontSize: '18px' }} />
+          </IconButton>
+        </Box>
+        <Box sx={{
+          display: 'flex',
+          alignItems: 'center',
+          float: 'right',
+          marginLeft: 'auto',
+        }}>
+          <IconButton aria-label="save"
+            onClick={() => {
+              const newRoles = inputRoles.filter(role => inputRolesOriginal.indexOf(role) < 0);
+              const deleteRoles = inputRolesOriginal.filter(role => inputRoles.indexOf(role) < 0);              
+              addHandler(id, newRoles, deleteRoles);
+              setSelectRoles([]);
+            }}
+            sx={{
+              width: '8px',
+              height: '8px',
+              marginLeft: '2px',
+              marginRight: '2px',
+              border: 0,
+            }}>
+            <SaveIcon sx={{ fontSize: '18px' }} />
           </IconButton>
         </Box>
       </Box>
@@ -180,9 +219,11 @@ interface RoleCardProps {
 }
 
 function RoleCard({ id, code, deleteHandler }: RoleCardProps) {
-  let showDeleteButton = ''
+  let showDeleteButton = '';
+  let borderRightRadius = '0px';
   if (code === RoleCodes.DEFAULT) {
     showDeleteButton = 'none';
+    borderRightRadius = '2px';
   }
   return (
     <Box
@@ -190,7 +231,9 @@ function RoleCard({ id, code, deleteHandler }: RoleCardProps) {
         display: 'flex',
         alignItems: 'center',
         marginX: '2px', 
-        marginY: '0px', 
+        marginY: '0px',
+        padding: '0px', 
+        height: '26px',
         border: 1, 
         borderColor: 'gray', 
         borderRadius: '2px', }}
@@ -198,7 +241,7 @@ function RoleCard({ id, code, deleteHandler }: RoleCardProps) {
       <Box
         sx={{
           display: 'flex',
-          alignItems: 'center',
+          alignItems: 'center',          
         }}
       >
         <Typography
@@ -206,10 +249,14 @@ function RoleCard({ id, code, deleteHandler }: RoleCardProps) {
           align='center'
           sx={{
             margin: '0px 0px 0px 0px',
-            padding: '0px 1px 0px 1px',
+            padding: '0px 2px 0px 2px',
             backgroundColor: 'red',
             flex: '0 1 auto',
-            borderRadius: '2px',
+            borderTopLeftRadius: '2px',
+            borderBottomLeftRadius: '2px',
+            borderTopRightRadius: borderRightRadius,
+            borderBottomRightRadius: borderRightRadius,
+            height: '25px',
           }}
         >
           {code}

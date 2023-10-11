@@ -56,6 +56,7 @@ export class UsersService {
    * Update user except password
    */
   async updateRoles(id: number, updateUserRolesDto: UpdateUserRolesDto) {
+    this.logger.debug(JSON.stringify(updateUserRolesDto));
     // only current user itself can update
     let user = await this.usersRepositories.findOne({
       where: { id }
