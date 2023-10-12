@@ -57,7 +57,7 @@ function ApiRolesView() {
               sx={{ width: '400px', marginBottom: '4px' }}
               id="userQuickSearch"
               freeSolo
-              options={apis.map(api => `${api.controller} > ${api.api}`)}
+              options={apis.map(api => `${api.key}`)}
               onInputChange={(event, newInputValue, reason) => {
                 const filter = newInputValue;
                 if (filter) {

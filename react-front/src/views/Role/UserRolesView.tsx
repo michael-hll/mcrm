@@ -57,7 +57,7 @@ function UserRolesView() {
               sx={{ width: '200px', marginBottom: '4px' }}
               id="userQuickSearch"
               freeSolo
-              options={users.map(user => user.username)}
+              options={users.map(user => user.email)}
               onInputChange={(event, newInputValue, reason) => {
                 const filter = newInputValue;
                 if (filter) {
