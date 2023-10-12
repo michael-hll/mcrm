@@ -1,4 +1,4 @@
-import { Box, Stack, Typography } from "@mui/material";
+import { Autocomplete, Box, InputAdornment, Stack, TextField, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import RoleInfo from "../../components/RoleInfo/RoleInfo";
 import { useApis } from "../../hooks/api";
@@ -8,6 +8,7 @@ import { UpdateRoleType } from "../../store/enum/UpdateRoleType";
 import { Api } from "../../store/interfaces/Api";
 import { Role } from "../../store/interfaces/Role";
 import { RefreshCheck } from "../../utils/localStorage";
+import SearchIcon from '@mui/icons-material/Search';
 
 function ApiRolesView() {
 
@@ -24,9 +25,10 @@ function ApiRolesView() {
     setRoles(data);
   }, (error) => {
     setError(error.message);
-  }); 
+  });
 
   const [apis, setApis] = useState<Api[]>(apisQuery.data || []);
+  const [searchedApis, setSearchedApis] = useState<Api[]>(apisQuery.data || []);
   const [roles, setRoles] = useState<Role[]>(rolesQuery.data || []);
 
   useEffect(() => {
@@ -47,19 +49,58 @@ function ApiRolesView() {
           Update Api Roles
         </Typography>
       </Box>
-      <Box sx={{ display: 'flex', justifyContent: 'center'}}>
-        <Box sx={{flex: '0 0 auto', width: '90%'}}>
-          {apis.map(api => (
-            <RoleInfo
-              key={api.key}
-              id={api.key}
-              name={`${api.controller_name}:${api.api_name}`}
-              description={`[MODULE]: ${api.module_name} [CONTROLLER]: ${api.controller_name} [API]: ${api.api_name}`}
-              roles={api.roles?.map(role => role.code!) || []}
-              allRoles={roles}
-              updateSelector={UpdateRoleType.API}
-            />))}
-        </Box>
+      <Box sx={{ marginX: '5%' }}>
+        <Stack >
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <Autocomplete
+              sx={{ width: '400px', marginBottom: '4px' }}
+              id="userQuickSearch"
+              freeSolo
+              options={apis.map(api => `${api.controller} > ${api.api}`)}
+              onInputChange={(event, newInputValue, reason) => {
+                const filter = newInputValue;
+                if (filter) {
+                  setSearchedApis(apis.filter(api => {
+                    const roles = api.roles?.map(role => role.code);
+                    const rolesSearched = roles?.filter(code => code?.includes(filter.toUpperCase()));
+                    return rolesSearched.length > 0 ||
+                      api.module_name.toUpperCase()?.includes(filter.toUpperCase()) ||
+                      api.controller_name.toUpperCase()?.includes(filter.toUpperCase()) ||
+                      api.api_name?.toUpperCase()?.includes(filter.toUpperCase()) ||
+                      api.key.toUpperCase()?.includes(filter.toUpperCase())
+                  }
+                  ))
+                } else {
+                  setSearchedApis([...apis]);
+                }
+              }}
+              renderInput={(params) => {
+                params.InputProps.startAdornment = (
+                  <>
+                    <InputAdornment position="start">{<SearchIcon />}</InputAdornment>
+                    {params.InputProps.startAdornment}
+                  </>
+                );
+                return <TextField {...params} variant="standard" placeholder={'Quick Search'} />;
+              }}
+            />
+          </Box>
+          <Box sx={{
+            display: 'flex',
+            flexDirection: 'column',
+          }}>
+            {searchedApis.map(api => (
+              <RoleInfo
+                key={api.key}
+                id={api.key}
+                name={`${api.controller_name}:${api.api_name}`}
+                description={`[MODULE]: ${api.module_name} [CONTROLLER]: ${api.controller_name} [API]: ${api.api_name}`}
+                roles={api.roles?.map(role => role.code!) || []}
+                allRoles={roles}
+                updateSelector={UpdateRoleType.API}
+              />))}
+          </Box>
+        </Stack>
       </Box>
     </Stack>
   );

@@ -129,6 +129,7 @@ function RoleInfo({ id, name, description, roles, allRoles, updateSelector }: Ro
       {/* Header */}
       <Box sx={{
         display: 'flex',
+        flexWrap: 'wrap',
         width: '100%',
         border: 1,
         borderColor: borderColor,
