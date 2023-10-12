@@ -19,7 +19,7 @@ So spent some time write a small application include both front & backend.
 2. User Maintain - Done
 3. Role Maintain - Done
 4. User's Role maintenance - Done
-5. API's Role maintenance - TODO
+5. API's Role maintenance - Done
 6. Menu's Role maintenance - TODO
 
 ## How To Run
@@ -78,6 +78,10 @@ And the Role maintenance:
 User Role maintenance:
 
 <img src="https://github.com/michael-hll/mcrm/blob/main/design/UpdateUserRoles.png" alt="drawing" width="700"/>
+
+Api Role maintenance:
+
+<img src="https://github.com/michael-hll/mcrm/blob/main/design/UpdateApiRoles.png" alt="drawing" width="700"/>
 
 
 
