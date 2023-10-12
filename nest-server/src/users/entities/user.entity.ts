@@ -2,7 +2,9 @@ import { Role } from 'src/roles/entities/role.entity';
 import { Entity, PrimaryGeneratedColumn, Column, JoinTable, ManyToMany } from 'typeorm';
 import { USER_DEFAULT_ROLE } from '../users.constants';
 
-@Entity({name: "users"})
+@Entity({name: "users", orderBy: {
+    email: 'ASC',
+}})
 export class User {
     constructor(partial?: Partial<User>) {
         Object.assign(this, partial);

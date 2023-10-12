@@ -22,7 +22,9 @@ export class UsersService {
   ) { }
 
   async findAll() {
-    return await this.usersRepositories.find({relations: {roles: true}});
+    return await this.usersRepositories.find({
+      relations: {roles: true}
+    });
   }
 
   async findOne(id: number, currentUser: CurrentUserData) {

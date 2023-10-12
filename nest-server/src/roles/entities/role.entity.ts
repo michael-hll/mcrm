@@ -3,7 +3,9 @@ import { User } from 'src/users/entities/user.entity';
 import { Entity, Column, PrimaryColumn, ManyToMany } from 'typeorm';
 import { Expose } from "class-transformer";
 
-@Entity({name: "roles"})
+@Entity({name: "roles", orderBy: {
+    code: 'ASC'
+}})
 export class Role {
     constructor(partial?: Partial<Role>) {
         Object.assign(this, partial);

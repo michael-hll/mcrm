@@ -15,10 +15,14 @@ function UserRolesView() {
   const store = useAppStore();
 
   const [error, setError] = useState<string>('');
+  const [filter, setFilter] = useState<string>('');
 
   const userRolesQuery = useUserRoles((data) => {
     setUsers(data);
     setSearchedUsers(data);
+    if(filter){
+      filterResult();
+    }
   }, (error) => {
     setError(error.message);
   });
@@ -35,6 +39,23 @@ function UserRolesView() {
   useEffect(() => {
     RefreshCheck(store);
   }, [store]);
+
+  const filterResult = () => {
+    if (filter) {
+      setSearchedUsers(users.filter(user => {
+        const roles = user.roles?.map(role => role.code);
+        const rolesSearched = roles?.filter(code => code?.includes(filter.toUpperCase()));
+        return (rolesSearched ? rolesSearched?.length > 0 : false) ||
+          user.username?.toUpperCase()?.includes(filter.toUpperCase()) ||
+          user.email?.toUpperCase()?.includes(filter.toUpperCase()) ||
+          user.firstname?.toUpperCase()?.includes(filter.toUpperCase()) ||
+          user.lastname?.toUpperCase()?.includes(filter.toUpperCase())
+      }
+      ))
+    } else {
+      setSearchedUsers([...users]);
+    }
+  }
 
   return (
     <Stack>
@@ -59,21 +80,8 @@ function UserRolesView() {
               freeSolo
               options={users.map(user => user.email)}
               onInputChange={(event, newInputValue, reason) => {
-                const filter = newInputValue;
-                if (filter) {
-                  setSearchedUsers(users.filter(user => {
-                    const roles = user.roles?.map(role => role.code);
-                    const rolesSearched = roles?.filter(code => code?.includes(filter.toUpperCase()));
-                    return (rolesSearched ? rolesSearched?.length > 0 : false) ||
-                      user.username?.toUpperCase()?.includes(filter.toUpperCase()) ||
-                      user.email?.toUpperCase()?.includes(filter.toUpperCase()) ||
-                      user.firstname?.toUpperCase()?.includes(filter.toUpperCase()) ||
-                      user.lastname?.toUpperCase()?.includes(filter.toUpperCase())
-                  }
-                  ))
-                } else {
-                  setSearchedUsers([...users]);
-                }
+                setFilter(newInputValue);
+                filterResult();
               }}
               renderInput={(params) => {
                 params.InputProps.startAdornment = (

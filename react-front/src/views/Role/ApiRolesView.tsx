@@ -15,10 +15,14 @@ function ApiRolesView() {
   const store = useAppStore();
 
   const [error, setError] = useState<string>('');
+  const [filter, setFilter] = useState<string>('');
 
   const apisQuery = useApis((data) => {
     setApis(data);
     setSearchedApis(data);
+    if(filter){
+      filterResult();
+    }
   }, (error) => {
     setError(error.message);
   });
@@ -35,6 +39,23 @@ function ApiRolesView() {
   useEffect(() => {
     RefreshCheck(store);
   }, [store]);
+
+  const filterResult = () => {
+    if (filter) {
+      setSearchedApis(apis.filter(api => {
+        const roles = api.roles?.map(role => role.code);
+        const rolesSearched = roles?.filter(code => code?.includes(filter.toUpperCase()));
+        return rolesSearched.length > 0 ||
+          api.module_name.toUpperCase()?.includes(filter.toUpperCase()) ||
+          api.controller_name.toUpperCase()?.includes(filter.toUpperCase()) ||
+          api.api_name?.toUpperCase()?.includes(filter.toUpperCase()) ||
+          api.key.toUpperCase()?.includes(filter.toUpperCase())
+      }
+      ))
+    } else {
+      setSearchedApis([...apis]);
+    }
+  }
 
   return (
     <Stack>
@@ -59,21 +80,8 @@ function ApiRolesView() {
               freeSolo
               options={apis.map(api => `${api.key}`)}
               onInputChange={(event, newInputValue, reason) => {
-                const filter = newInputValue;
-                if (filter) {
-                  setSearchedApis(apis.filter(api => {
-                    const roles = api.roles?.map(role => role.code);
-                    const rolesSearched = roles?.filter(code => code?.includes(filter.toUpperCase()));
-                    return rolesSearched.length > 0 ||
-                      api.module_name.toUpperCase()?.includes(filter.toUpperCase()) ||
-                      api.controller_name.toUpperCase()?.includes(filter.toUpperCase()) ||
-                      api.api_name?.toUpperCase()?.includes(filter.toUpperCase()) ||
-                      api.key.toUpperCase()?.includes(filter.toUpperCase())
-                  }
-                  ))
-                } else {
-                  setSearchedApis([...apis]);
-                }
+                setFilter(newInputValue);
+                filterResult();
               }}
               renderInput={(params) => {
                 params.InputProps.startAdornment = (
