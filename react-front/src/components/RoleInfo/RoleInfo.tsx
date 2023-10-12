@@ -123,8 +123,8 @@ function RoleInfo({ id, name, description, roles, allRoles, updateSelector }: Ro
 
   return (
     <Box sx={{
-      width: '100%',
       marginY: '4px',
+      alignSelf: 'stretch',
     }}>
       {/* Header */}
       <Box sx={{
@@ -155,7 +155,7 @@ function RoleInfo({ id, name, description, roles, allRoles, updateSelector }: Ro
       {/** Description */}
       <Box sx={{
         display: 'flex',
-        width: '100%',
+        flexWrap: 'wrap',
         borderLeft: 1,
         borderRight: 1,
         borderBottom: 1,
@@ -164,7 +164,7 @@ function RoleInfo({ id, name, description, roles, allRoles, updateSelector }: Ro
         <Typography variant="body1"
           sx={{
             margin: '0px 0px 0px 8px',
-            flex: '1 0 auto',
+            flex: '1 1 auto',
           }}
         >
           {description}
@@ -196,6 +196,7 @@ function RoleInfo({ id, name, description, roles, allRoles, updateSelector }: Ro
           alignItems: 'center',
           flex: 1,
           marginRight: '8px',
+          flexWrap: 'wrap',
         }}>
           {inputRoles.map(role => {
             return <RoleCard 
