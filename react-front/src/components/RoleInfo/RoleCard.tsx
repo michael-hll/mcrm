@@ -42,7 +42,7 @@ function RoleCard({ id, code, roles, alwaysShowDelete = false, deleteHandler }: 
         display: 'flex',
         alignItems: 'center',
         marginX: '2px',
-        marginY: '0px',
+        marginY: '2px',
         padding: '0px',
         border: 1,
         borderColor: 'gray',
