@@ -18,6 +18,7 @@ function UserRolesView() {
 
   const userRolesQuery = useUserRoles((data) => {
     setUsers(data);
+    setSearchedUsers(data);
   }, (error) => {
     setError(error.message);
   });

@@ -18,6 +18,7 @@ function ApiRolesView() {
 
   const apisQuery = useApis((data) => {
     setApis(data);
+    setSearchedApis(data);
   }, (error) => {
     setError(error.message);
   });
