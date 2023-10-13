@@ -8,6 +8,19 @@
 /* tslint:disable */
 /* eslint-disable */
 
+export class UpdateUserInput {
+    username?: Nullable<string>;
+    firstname?: Nullable<string>;
+    lastname?: Nullable<string>;
+    cellphone?: Nullable<string>;
+    phone?: Nullable<string>;
+    country?: Nullable<string>;
+    city?: Nullable<string>;
+    address1?: Nullable<string>;
+    address2?: Nullable<string>;
+    zipcode?: Nullable<string>;
+}
+
 export class Role {
     code: string;
     name?: Nullable<string>;
@@ -35,14 +48,8 @@ export abstract class IQuery {
     user?: User;
 }
 
-export class CreateUserInput {
-    username: string;
-    password: string;
-    email: string;
-}
-
 export abstract class IMutation {
-    createUser?: Nullable<User>;
+    updateUser?: Nullable<User>;
 }
 
 type Nullable<T> = T | null;

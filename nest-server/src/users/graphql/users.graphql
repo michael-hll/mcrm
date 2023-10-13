@@ -34,14 +34,21 @@ type Query {
   user(id: ID!): User!
 }
 
-type CreateUserInput {
-  username: String!
-  password: String!
-  email: String!
+input UpdateUserInput {
+  username: String
+  firstname: String
+  lastname: String
+  cellphone: String
+  phone: String
+  country: String
+  city: String
+  address1: String
+  address2: String
+  zipcode: String
 }
 
 type Mutation {
-  createUser(createUserInput: CreateUserInput!): User
+  updateUser(id: ID!, updateUserInput: UpdateUserInput!): User
 }
 
 
