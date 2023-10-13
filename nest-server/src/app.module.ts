@@ -9,6 +9,8 @@ import { RolesModule } from './roles/roles.module';
 import { IamModule } from './iam/iam.module';
 import { RedisModule } from './redis/redis.module';
 import * as Joi from '@hapi/joi';
+import { GraphQLModule } from '@nestjs/graphql';
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 
 @Module({
   imports: [
@@ -45,6 +47,10 @@ import * as Joi from '@hapi/joi';
           autoLoadEntities: true,
           synchronize: true
         })
+    }),
+    GraphQLModule.forRoot<ApolloDriverConfig>({
+      driver: ApolloDriver,
+      typePaths: ['./**/*.graphql'],
     }),
     BaseModule,
     UsersModule,

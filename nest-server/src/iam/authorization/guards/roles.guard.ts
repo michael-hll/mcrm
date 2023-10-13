@@ -10,16 +10,19 @@ import { Api } from '../apis/entities/api.entity';
 import { IS_ADMIN_ONLY } from 'src/base/decorators/admin.decorator';
 import { RoleCodes } from '../enums/role.codes';
 import { RoleCacheService } from 'src/redis/role/role.cache.service';
+import { BaseAuthGuard } from 'src/base/guards/base-auth.guard';
 
 @Injectable()
-export class RolesGuard implements CanActivate {
+export class RolesGuard extends BaseAuthGuard {
   constructor(
     private readonly reflector: Reflector,
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
     @InjectRepository(Api)
     private readonly apisRepository: Repository<Api>,
-    private readonly roleCachService: RoleCacheService) { }
+    private readonly roleCachService: RoleCacheService) { 
+      super();
+    }
 
   async canActivate(
     context: ExecutionContext,
@@ -27,7 +30,7 @@ export class RolesGuard implements CanActivate {
     const error = new UnauthorizedException();
 
     try {
-      const user: CurrentUserData = context.switchToHttp().getRequest()[
+      const user: CurrentUserData = this.getRequest(context)[
         REQUEST_USER_KEY
       ];
 
@@ -57,6 +60,9 @@ export class RolesGuard implements CanActivate {
         throw new BadRequestException('Doesnot found the api module name.');
       }
       const apiKey = `${moduleName}.${context.getClass().name}.${context.getHandler().name}`;
+
+      // TODO: For graphql type role based security check will find a solution later
+      if(apiKey.includes('Resolver')) return true;
 
       // check user has api access rights
       const cachedApiRoles = await this.roleCachService.get(apiKey);
