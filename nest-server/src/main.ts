@@ -13,7 +13,7 @@ async function bootstrap() {
   app.enableCors();
   app.setGlobalPrefix('api');
   app.useGlobalPipes(new ValidationPipe({
-    whitelist: true,
+    //whitelist: true, // in order to test graphql, we need to turn off this flag
     //forbidNonWhitelisted: true,
     transform: true,
     transformOptions: {

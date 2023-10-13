@@ -51,7 +51,7 @@ export class UsersService {
     }
     Object.assign(user, updateUserDto);
     await this.usersRepositories.save(user);
-    return true;
+    return user;
   }
 
   /**

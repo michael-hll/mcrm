@@ -32,7 +32,6 @@ export class AccessTokenGuard extends BaseAuthGuard {
         this.jwtConfigurations,
       )
       request[REQUEST_USER_KEY] = payload;
-      console.log(request.user);
     }catch(err){
       throw new UnauthorizedException(err);
     }

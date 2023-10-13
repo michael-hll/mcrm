@@ -8,6 +8,7 @@ import { CurrentUserData } from 'src/iam/interfaces/current-user-data.interface'
 import { UsersService } from '../users.service';
 import { CurrentUser } from 'src/iam/decorators/current-user.decorator';
 import { UpdateUserGqlDto } from './dto/update-user-gql.dto';
+import { UpdateUserDto } from '../dto/update-user.dto';
 
 @Resolver()
 @ModuleClassName('UsersModule')
@@ -32,11 +33,19 @@ export class UsersResolver {
   }
 
   @Mutation('updateUser')
+  @Name('Update User with graphql')
+  @Post()
   async update(
-    @Args('id', ParseIntPipe) id: number,
+    @CurrentUser() user: CurrentUserData,
+    @Args('id', ParseIntPipe) id: number,    
     @Args('updateUserInput') updateUserInput: UpdateUserGqlDto,
   ): Promise<GraphQLTypes.User> {
-    console.log(id, updateUserInput);
-    return null;
+    /** Update user properties and roles should be seperated to different apis, since they have differeny execution rights
+     * Here is just an example of graphql update mutation with sub tables here...
+     * And the roles update doesnot work here using the userServices.update method (this method only update user properties without roles)
+     * Insteat to update roles should call userServices.updateRoles method.
+     */
+    const savedUser = await this.usersServices.update(id, {...updateUserInput} as UpdateUserDto, user);
+    return {...savedUser} as GraphQLTypes.User;  
   }
 }
