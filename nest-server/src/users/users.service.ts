@@ -29,7 +29,7 @@ export class UsersService {
 
   async findOne(id: number, currentUser: CurrentUserData) {
     if(id !== currentUser.sub){
-      throw new UnauthorizedException('You can view other user details information.');
+      throw new UnauthorizedException('You cannot view other user details information.');
     }
     const user = await this.usersRepositories.findOne({ where: { id } });
     if (!user) {

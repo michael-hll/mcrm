@@ -32,6 +32,17 @@ export class User {
 
 export abstract class IQuery {
     users: User[];
+    user?: User;
+}
+
+export class CreateUserInput {
+    username: string;
+    password: string;
+    email: string;
+}
+
+export abstract class IMutation {
+    createUser?: Nullable<User>;
 }
 
 type Nullable<T> = T | null;

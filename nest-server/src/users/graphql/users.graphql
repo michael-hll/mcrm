@@ -5,6 +5,12 @@ type Role {
 }
 
 """
+/** This is for testing purpose *
+ * For the Auth and role modules, we still use the RESTful api in the future 
+ * Since I don't want to drop the exiting codes
+ * Later for other business module like orders, contacts we will use
+ * Graphql in a real word */
+
 User model
 """
 type User {
@@ -25,6 +31,17 @@ type User {
 
 type Query {
   users: [User!]!
+  user(id: ID!): User!
+}
+
+type CreateUserInput {
+  username: String!
+  password: String!
+  email: String!
+}
+
+type Mutation {
+  createUser(createUserInput: CreateUserInput!): User
 }
 
 
