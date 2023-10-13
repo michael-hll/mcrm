@@ -83,7 +83,7 @@ export class RolesGuard extends BaseAuthGuard {
         }
       }
     } catch (err) {
-      throw new BadRequestException(err.message);
+      throw err;
     }
     throw error;
   }
