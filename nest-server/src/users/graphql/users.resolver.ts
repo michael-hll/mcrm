@@ -16,7 +16,7 @@ export class UsersResolver {
   @Query('users')
   @Name('Get All Users using graphql')
   @Post()
-  async findAll(): Promise<User[]> {
+  async findAll(): Promise<User[]> { 
     return this.usersServices.findAll();
   }
 
