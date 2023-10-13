@@ -4,6 +4,9 @@ type Role {
   description: String
 }
 
+'''
+User model
+'''
 type User {
   id: ID!
   username: String

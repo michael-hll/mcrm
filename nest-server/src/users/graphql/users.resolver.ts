@@ -17,8 +17,7 @@ export class UsersResolver {
   @Name('Get All Users using graphql')
   @Post()
   async findAll(): Promise<User[]> {
-    console.log('graphql get all users.')
-    return [{id: 100, email: 'test@test.com'} as User];
+    return this.usersServices.findAll();
   }
 
 }
