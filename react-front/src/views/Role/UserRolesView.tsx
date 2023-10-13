@@ -19,10 +19,7 @@ function UserRolesView() {
 
   const userRolesQuery = useUserRoles((data) => {
     setUsers(data);
-    setSearchedUsers(data);
-    if(filter){
-      filterResult();
-    }
+    filterResult(filter, data);
   }, (error) => {
     setError(error.message);
   });
@@ -40,7 +37,7 @@ function UserRolesView() {
     RefreshCheck(store);
   }, [store]);
 
-  const filterResult = () => {
+  const filterResult = (filter: string, users: User[]) => {
     if (filter) {
       setSearchedUsers(users.filter(user => {
         const roles = user.roles?.map(role => role.code);
@@ -81,7 +78,7 @@ function UserRolesView() {
               options={users.map(user => user.email)}
               onInputChange={(event, newInputValue, reason) => {
                 setFilter(newInputValue);
-                filterResult();
+                filterResult(newInputValue, users);
               }}
               renderInput={(params) => {
                 params.InputProps.startAdornment = (

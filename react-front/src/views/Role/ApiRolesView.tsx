@@ -19,10 +19,7 @@ function ApiRolesView() {
 
   const apisQuery = useApis((data) => {
     setApis(data);
-    setSearchedApis(data);
-    if(filter){
-      filterResult();
-    }
+    filterResult(filter, data);
   }, (error) => {
     setError(error.message);
   });
@@ -40,7 +37,7 @@ function ApiRolesView() {
     RefreshCheck(store);
   }, [store]);
 
-  const filterResult = () => {
+  const filterResult = (filter: string, apis: Api[]) => {
     if (filter) {
       setSearchedApis(apis.filter(api => {
         const roles = api.roles?.map(role => role.code);
@@ -81,7 +78,7 @@ function ApiRolesView() {
               options={apis.map(api => `${api.key}`)}
               onInputChange={(event, newInputValue, reason) => {
                 setFilter(newInputValue);
-                filterResult();
+                filterResult(newInputValue, apis);
               }}
               renderInput={(params) => {
                 params.InputProps.startAdornment = (
