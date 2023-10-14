@@ -17,6 +17,13 @@ export class WrapResponseInterceptor implements NestInterceptor {
  
   readonly logger = new Logger(WrapResponseInterceptor.name);
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+
+    // TODO: the current logic doesn't work for graphql type
+    // need to find a general solution for the graphql type
+    if (context['contextType'] && context['contextType'] === 'graphql') {
+      return next.handle();;
+    }
+
     const req = this.getRequest(context);
     this.logger.log(`Request ${req.method} ${req.originalUrl}`);
     //return next.handle().pipe(map(data => ({data})));
