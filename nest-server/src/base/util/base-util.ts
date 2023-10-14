@@ -7,7 +7,7 @@ export class BaseUtil {
     if(!request){
       const ctx = GqlExecutionContext.create(context)
       return ctx.getContext().req;
-    }    
+    }        
     return request;
   }
 }

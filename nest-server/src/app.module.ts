@@ -56,10 +56,15 @@ import { PubSubModule } from './pub-sub/pub-sub.module';
         'subscriptions-transport-ws': {
           path: '/graphql',
           onConnect: (connectionParams) => {
-            console.log('onConnect...');
+            console.log('subscriptions onConnect...', connectionParams);
+            return connectionParams;
           },
         },
-      }    
+      },
+      // context: ({ connection }) => {
+      //   // connection.context will be equal to what was returned by the "onConnect" callback
+      //   console.log('connection:', connection );
+      // },    
     }),
     BaseModule,
     UsersModule,

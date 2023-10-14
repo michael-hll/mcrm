@@ -55,6 +55,7 @@ export class UsersResolver {
 
   @Subscription()
   userUpdated() {
+    console.log('graphql subscription events happen ...');
     return this.pubSub.asyncIterator('userUpdated');
   }
 }

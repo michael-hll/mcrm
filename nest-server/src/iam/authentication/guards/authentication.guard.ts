@@ -22,18 +22,11 @@ export class AuthenticationGuard implements CanActivate {
     context: ExecutionContext,
   ): Promise<boolean> {
 
-    // TODO: the current auth doesn't work for graphql type
-    // need to find a general solution for the graphql type
-    if (context['contextType'] && context['contextType'] === 'graphql') {
-      return true;
-    }
-
     const authTypes = this.reflector.getAllAndOverride<AuthType[]>(
       AUTH_TYPE_KEY,
       [context.getHandler(), context.getClass()],
     ) ?? [AuthenticationGuard.defaultAuthType];
     if (authTypes.indexOf(AuthType.None) >= 0) return true;
-    console.log('access-token guard:', context, Object.keys(context), typeof context['contextType']);
     const guards = authTypes.map(type => this.authTypeGuardMap[type]).flat();
     let error = new UnauthorizedException();
     let authPass = false;
