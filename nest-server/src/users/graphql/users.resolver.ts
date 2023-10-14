@@ -1,6 +1,6 @@
 
 import { Controller, ParseIntPipe, Post } from '@nestjs/common';
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Query, Resolver, Subscription } from '@nestjs/graphql';
 import { ModuleClassName } from 'src/base/decorators/module-name.decorator';
 import { Name } from 'src/base/decorators/name.decorator';
 import * as GraphQLTypes from 'src/graphql/graphql-types';
@@ -9,13 +9,17 @@ import { UsersService } from '../users.service';
 import { CurrentUser } from 'src/iam/decorators/current-user.decorator';
 import { UpdateUserGqlDto } from './dto/update-user-gql.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
+import { PubSub } from 'graphql-subscriptions';
 
 @Resolver()
 @ModuleClassName('UsersModule')
 @Name('Users')
 @Controller('user')
 export class UsersResolver {
-  constructor(private readonly usersServices: UsersService) { }
+  constructor(
+    private readonly usersServices: UsersService,
+    private readonly pubSub: PubSub,
+  ) { }
 
   @Query('users')
   @Name('Get All Users using graphql')
@@ -47,5 +51,10 @@ export class UsersResolver {
      */
     const savedUser = await this.usersServices.update(id, {...updateUserInput} as UpdateUserDto, user);
     return {...savedUser} as GraphQLTypes.User;  
+  }
+
+  @Subscription()
+  userUpdated() {
+    return this.pubSub.asyncIterator('userUpdated');
   }
 }

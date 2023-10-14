@@ -1,7 +1,32 @@
 """
+/** This is for testing purpose *
+ * For the Auth and role modules, we still use the RESTful api in the future 
+ * Since I don't want to drop the exiting codes
+ * Later for other business module like orders, contacts we will use
+ * Graphql in a real word */
+
+Enum
+"""
+enum DefaultRoleType {
+  ADMIN
+  DEFAULT
+}
+
+"""
 Custom Scalar type
 """
 scalar Date
+
+"""
+Interface
+"""
+interface People {
+  username: String!
+}
+
+type Admin {
+  username: String!
+}
 
 input UpdateRole {
   code: String!
@@ -13,12 +38,20 @@ type Role {
 }
 
 """
-/** This is for testing purpose *
- * For the Auth and role modules, we still use the RESTful api in the future 
- * Since I don't want to drop the exiting codes
- * Later for other business module like orders, contacts we will use
- * Graphql in a real word */
+Union
+"""
+union RoleUnion = User | Admin
 
+
+"""
+Enum
+"""
+enum DefaultRoleType {
+  ADMIN
+  DEFAULT
+}
+
+"""
 User model
 """
 type User {
@@ -64,4 +97,7 @@ type Mutation {
   updateUser(id: ID!, updateUserInput: UpdateUserInput!): User!
 }
 
+type Subscription {
+  userUpdated: User!
+}
 

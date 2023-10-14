@@ -11,6 +11,7 @@ import { RedisModule } from './redis/redis.module';
 import * as Joi from '@hapi/joi';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+import { PubSubModule } from './pub-sub/pub-sub.module';
 
 @Module({
   imports: [
@@ -51,12 +52,21 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       typePaths: ['./**/*.graphql'],
+      subscriptions: {
+        'subscriptions-transport-ws': {
+          path: '/graphql',
+          onConnect: (connectionParams) => {
+            console.log('onConnect...');
+          },
+        },
+      }    
     }),
     BaseModule,
     UsersModule,
     RolesModule,
     IamModule,
     RedisModule,
+    PubSubModule,
   ],
   controllers: [AppController],
   providers: [AppService]

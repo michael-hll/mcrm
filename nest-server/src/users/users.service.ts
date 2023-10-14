@@ -9,6 +9,7 @@ import { Role } from 'src/roles/entities/role.entity';
 import { RoleCodes } from 'src/iam/authorization/enums/role.codes';
 import { RoleCacheService } from 'src/redis/role/role.cache.service';
 import { UpdateUserRolesDto } from './dto/update-user-roles.dto';
+import { PubSub } from 'graphql-subscriptions';
 
 @Injectable()
 export class UsersService {
@@ -19,6 +20,7 @@ export class UsersService {
     @InjectRepository(Role)
     private readonly rolesRepositories: Repository<Role>,
     private readonly roleCacheService: RoleCacheService,
+    private readonly pubSub: PubSub,
   ) { }
 
   async findAll() {
@@ -55,6 +57,9 @@ export class UsersService {
     }
     Object.assign(user, updateUserDto);
     await this.usersRepositories.save(user);
+    // below line is to test the graphql subscription
+    this.pubSub.publish('userUpdated', { userUpdated: user });
+
     return user;
   }
 

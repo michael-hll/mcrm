@@ -9,11 +9,15 @@ import { UsersService } from './users.service';
 import { UsersResolver } from './graphql/users.resolver';
 import { UserRolesResolver } from './graphql/user-roles.resolver';
 import { DateScalar } from './graphql/scalars/date.scalar';
+import { PubSubModule } from 'src/pub-sub/pub-sub.module';
+import { GraphQLModule } from '@nestjs/graphql';
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([User, Role]),
     RedisModule,
+    PubSubModule,    
   ],
   controllers: [UsersController],
   providers: [

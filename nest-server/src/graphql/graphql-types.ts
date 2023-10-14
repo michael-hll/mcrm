@@ -8,6 +8,11 @@
 /* tslint:disable */
 /* eslint-disable */
 
+export enum DefaultRoleType {
+    ADMIN = "ADMIN",
+    DEFAULT = "DEFAULT"
+}
+
 export class UpdateRole {
     code: string;
     operation: string;
@@ -27,6 +32,14 @@ export class UpdateUserInput {
     zipcode?: Nullable<string>;
     active?: Nullable<boolean>;
     roles?: Nullable<UpdateRole[]>;
+}
+
+export interface People {
+    username: string;
+}
+
+export class Admin {
+    username: string;
 }
 
 export class Role {
@@ -60,4 +73,9 @@ export abstract class IMutation {
     updateUser?: User;
 }
 
+export abstract class ISubscription {
+    userUpdated: User;
+}
+
+export type RoleUnion = User | Admin;
 type Nullable<T> = T | null;
