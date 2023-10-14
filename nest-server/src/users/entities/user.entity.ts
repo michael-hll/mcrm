@@ -1,6 +1,5 @@
 import { Role } from 'src/roles/entities/role.entity';
-import { Entity, PrimaryGeneratedColumn, Column, JoinTable, ManyToMany } from 'typeorm';
-import { USER_DEFAULT_ROLE } from '../users.constants';
+import { Entity, PrimaryGeneratedColumn, Column, JoinTable, ManyToMany, CreateDateColumn } from 'typeorm';
 
 @Entity({name: "users", orderBy: {
     email: 'ASC',
@@ -49,6 +48,12 @@ export class User {
     @Column({nullable: true, default: ''})
     zipcode: string;
 
+    @Column({default: true})
+    active: boolean; 
+
+    @CreateDateColumn({default: () => 'CURRENT_TIMESTAMP' })
+    createAt?: Date | null;
+
     @JoinTable({
         name: "user_roles",
         joinColumn: {
@@ -62,7 +67,4 @@ export class User {
     })
     @ManyToMany(type => Role, role => role.users)
     roles: Role[];
-
-    @Column({default: true})
-    active: boolean; 
 }

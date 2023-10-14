@@ -43,7 +43,7 @@ export class UsersResolver {
     /** Update user properties and roles should be seperated to different apis, since they have differeny execution rights
      * Here is just an example of graphql update mutation with sub tables here...
      * And the roles update doesnot work here using the userServices.update method (this method only update user properties without roles)
-     * Insteat to update roles should call userServices.updateRoles method.
+     * Instead, to update roles should call userServices.updateRoles method.
      */
     const savedUser = await this.usersServices.update(id, {...updateUserInput} as UpdateUserDto, user);
     return {...savedUser} as GraphQLTypes.User;  

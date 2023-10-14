@@ -7,6 +7,8 @@ import { User } from './entities/user.entity';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 import { UsersResolver } from './graphql/users.resolver';
+import { UserRolesResolver } from './graphql/user-roles.resolver';
+import { DateScalar } from './graphql/scalars/date.scalar';
 
 @Module({
   imports: [
@@ -17,6 +19,8 @@ import { UsersResolver } from './graphql/users.resolver';
   providers: [
     UsersService,
     UsersResolver,
+    UserRolesResolver,
+    DateScalar,
   ],
 })
 export class UsersModule extends Base {

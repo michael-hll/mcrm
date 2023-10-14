@@ -1,3 +1,8 @@
+"""
+Custom Scalar type
+"""
+scalar Date
+
 input UpdateRole {
   code: String!
   operation: String!
@@ -30,6 +35,7 @@ type User {
   address2: String
   zipcode: String
   active: Boolean
+  createAt: Date
   roles: [Role!]
 }
 

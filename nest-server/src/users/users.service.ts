@@ -23,15 +23,19 @@ export class UsersService {
 
   async findAll() {
     return await this.usersRepositories.find({
-      relations: {roles: true}
+      relations: { roles: true }
     });
   }
 
   async findOne(id: number, currentUser: CurrentUserData) {
-    if(id !== currentUser.sub){
+    if (id !== currentUser.sub) {
       throw new UnauthorizedException('You cannot view other user details information.');
     }
-    const user = await this.usersRepositories.findOne({ where: { id } });
+    const user = await this.usersRepositories.findOne({
+      where: {
+        id
+      },
+    });
     if (!user) {
       throw new NotFoundException('User doesnot exists.')
     }
@@ -88,15 +92,15 @@ export class UsersService {
       addRoles = addRoles.filter(code => !roleSet.has(code));
     }
     // check new role exists for better error message
-    for(const r of addRoles){
-      const exists = await this.rolesRepositories.exist({where: {code: r}});
-      if(!exists){
+    for (const r of addRoles) {
+      const exists = await this.rolesRepositories.exist({ where: { code: r } });
+      if (!exists) {
         throw new NotFoundException(`Role '${r}' doesnot exists.`);
       }
     }
     // cannot remove DEFAULT role for a user
-    for(const r of delRoles){
-      if(r === RoleCodes.DEFAULT){
+    for (const r of delRoles) {
+      if (r === RoleCodes.DEFAULT) {
         throw new BadRequestException(`Role '${r}' is not allowed to delete.`)
       }
     }
@@ -113,7 +117,7 @@ export class UsersService {
         this.logger.error('update user failed with error: ', err);
         throw new BadRequestException(`Update user failed with error: ${err.message}`);
       })
-    
+
     // clear current user roles from cache
     this.roleCacheService.del(id.toString());
     return true;

@@ -47,6 +47,7 @@ export class User {
     address2?: Nullable<string>;
     zipcode?: Nullable<string>;
     active?: Nullable<boolean>;
+    createAt?: Nullable<Date>;
     roles?: Nullable<Role[]>;
 }
 
