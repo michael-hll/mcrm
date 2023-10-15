@@ -1,17 +1,17 @@
 import { Injectable, Scope } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import DataLoader from 'dataloader';
+import * as DataLoader from 'dataloader';
 import { Role } from 'src/roles/entities/role.entity';
 import { User } from 'src/users/entities/user.entity';
 import { In, Repository } from 'typeorm';
 
 @Injectable({scope: Scope.REQUEST})
-export class RolesByUserLoader /*extends DataLoader<number, Role[]>*/ {
+export class RolesByUserLoader extends DataLoader<number, Role[]> {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
   ) {
-    //super(keys => this.batchLoadFn(keys));
+    super(keys => this.batchLoadFn(keys));
   }
 
   private async batchLoadFn(userIds: readonly number[]): Promise<Role[][]> {
