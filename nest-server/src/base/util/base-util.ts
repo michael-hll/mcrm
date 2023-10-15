@@ -6,7 +6,7 @@ export class BaseUtil {
     const request = context.switchToHttp().getRequest<Request>();
     if(!request){
       const ctx = GqlExecutionContext.create(context)
-      return ctx.getContext().req;
+      return ctx.getContext().req || ctx.getContext();
     }        
     return request;
   }

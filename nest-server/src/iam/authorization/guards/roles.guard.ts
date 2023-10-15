@@ -30,14 +30,6 @@ export class RolesGuard extends BaseAuthGuard {
     const error = new UnauthorizedException();
 
     const request = this.getRequest(context);
-    if(!request) {
-      // if there is no request instance found
-      // then probally it's a call from graphql subscription
-      // just return true currently
-      // TODO: for graphql subscription security check
-      return true;
-    }
-
     try {
       const user: CurrentUserData = request[
         REQUEST_USER_KEY
@@ -87,7 +79,7 @@ export class RolesGuard extends BaseAuthGuard {
         this.roleCachService.set(apiKey, JSON.stringify(api.roles.map(role => role.code)));
       }
       for (let apiRole of apiRoles) {
-        if (userRoles.has(apiRole)) {
+        if (userRoles.has(apiRole)) { 
           return true;
         }
       }

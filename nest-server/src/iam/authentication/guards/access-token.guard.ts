@@ -13,7 +13,7 @@ export class AccessTokenGuard extends BaseAuthGuard {
     private readonly jwtService: JwtService,
     @Inject(jwtConfig.KEY)
     private readonly jwtConfigurations: ConfigType<typeof jwtConfig>,
-  ){
+  ) {
     super();
   }
 
@@ -21,30 +21,29 @@ export class AccessTokenGuard extends BaseAuthGuard {
     context: ExecutionContext,
   ): Promise<boolean> {
     const request = this.getRequest(context);
-    if(!request) {
-      // if there is no request instance found
-      // then probally it's a call from graphql subscription
-      // just return true currently
-      // TODO: for graphql subscription security check
-      return true;
-    }
     const token = this.extractTokenFromHeader(request);
-    if(!token){
-      throw new UnauthorizedException(); 
+    if (!token) {
+      throw new UnauthorizedException();
     }
-    try{
+    try {
       const payload = await this.jwtService.verifyAsync(
         token,
         this.jwtConfigurations,
       )
       request[REQUEST_USER_KEY] = payload;
-    }catch(err){
+    } catch (err) {
       throw new UnauthorizedException(err);
     }
     return true;
   }
 
   private extractTokenFromHeader(request: Request): string | undefined {
+    if (request["Authorization"]) {
+      // For graphql subscription case
+      const [_, token] = request["Authorization"].split(' ') ?? [];
+      return token;
+    }
+    // For restful api and graphql query
     const [_, token] = request.headers.authorization?.split(' ') ?? [];
     return token;
   }
